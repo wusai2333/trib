@@ -4,19 +4,18 @@ import (
 	"time"
 )
 
+type Trib struct {
+	User    string
+	Message string
+	Time    time.Time
+}
+
 type Server interface {
 	Register(user string) error
 	Subscribe(who, whom string) error
 	Unsubscribe(who, whom string) error
-	Post(user, message string) error
-	List(user string, offset, count int) ([]*Tribble, error)
-}
-
-type Tribble struct {
-	Id      uint64
-	User    string
-	Message string
-	Time    time.Time
+	Post(user, post string) error
+	List(user string, offset, count int) ([]*Trib, error)
 }
 
 type Storage interface {
