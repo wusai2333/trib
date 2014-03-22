@@ -4,6 +4,11 @@ import (
 	"time"
 )
 
+const (
+	MaxUsernameLen = 15
+	MaxTribLen     = 140
+)
+
 type Trib struct {
 	User    string
 	Message string
@@ -11,11 +16,11 @@ type Trib struct {
 }
 
 type Server interface {
-	Register(user string) error
-	Subscribe(who, whom string) error
-	Unsubscribe(who, whom string) error
-	Post(user, post string) error
-	List(user string, offset, count int) ([]*Trib, error)
+	SignUp(user string) error
+	Follow(who, whom string) error
+	Unfollow(who, whom string) error
+	PostTrib(user, post string) error
+	ListTribs(user string, offset, count int) ([]*Trib, error)
 }
 
 type Storage interface {
