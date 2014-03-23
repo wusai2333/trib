@@ -8,15 +8,15 @@ import (
 
 type Server struct {
 	users map[string]*user
-	lock  *sync.Mutex
+	lock  sync.Mutex
+	seq   int
 }
 
 var _ trib.Server = new(Server)
 
 func NewServer() *Server {
 	ret := &Server{
-		make(map[string]*user),
-		new(sync.Mutex),
+		users: make(map[string]*user),
 	}
 	return ret
 }
@@ -106,6 +106,8 @@ func (self *Server) PostTrib(user, post string) error {
 	}
 
 	u.post(user, post)
+	self.seq++
+
 	return nil
 }
 
