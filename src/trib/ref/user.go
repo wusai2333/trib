@@ -9,16 +9,18 @@ import (
 type user struct {
 	following map[string]*user
 	followers map[string]*user
-	tribs     []*seqTrib
-	timeline  []*trib.Trib
+	seqTribs  []*seqTrib
+	tribs     []*trib.Trib
+	home      []*trib.Trib
 }
 
 func newUser() *user {
 	return &user{
-		make(map[string]*user),
-		make(map[string]*user),
-		make([]*seqTrib, 0, 1024),
-		make([]*trib.Trib, 0, 4096),
+		following: make(map[string]*user),
+		followers: make(map[string]*user),
+		seqTribs:  make([]*seqTrib, 0, 1024),
+		tribs:     make([]*trib.Trib, 0, 1024),
+		home:      make([]*trib.Trib, 0, 4096),
 	}
 }
 
@@ -27,28 +29,28 @@ func (self *user) isFollowing(whom string) bool {
 	return found
 }
 
-func (self *user) rebuildTimeline() {
-	timeline := make([]*seqTrib, 0, 4096)
+func (self *user) rebuildHome() {
+	home := make([]*seqTrib, 0, 4096)
 	for _, user := range self.following {
-		timeline = append(timeline, user.tribs...)
+		home = append(home, user.seqTribs...)
 	}
 
-	sort.Sort(bySeq(timeline))
+	sort.Sort(bySeq(home))
 
-	self.timeline = make([]*trib.Trib, 0, len(timeline))
-	for _, t := range timeline {
-		self.timeline = append(self.timeline, t.Trib)
+	self.home = make([]*trib.Trib, 0, len(home))
+	for _, t := range home {
+		self.home = append(self.home, t.Trib)
 	}
 }
 
 func (self *user) follow(whom string, u *user) {
 	self.following[whom] = u
-	self.rebuildTimeline()
+	self.rebuildHome()
 }
 
 func (self *user) unfollow(whom string) {
 	delete(self.following, whom)
-	self.rebuildTimeline()
+	self.rebuildHome()
 }
 
 func (self *user) addFollower(who string, u *user) {
@@ -74,18 +76,27 @@ func (self *user) post(who string, msg string, seq int) {
 	}
 
 	// add to my own tribs
-	self.tribs = append(self.tribs, seqt)
+	self.tribs = append(self.tribs, t)
+	self.seqTribs = append(self.seqTribs, seqt)
 
-	// and it into the timeline of my followers
+	// and it into the home timeline of my followers
 	for _, user := range self.followers {
-		user.timeline = append(user.timeline, t)
+		user.home = append(user.home, t)
 	}
 }
 
-func (self *user) list(from, to int) []*trib.Trib {
-	return self.timeline[from:to]
+func (self *user) listHome(from, to int) []*trib.Trib {
+	return self.home[from:to]
 }
 
-func (self *user) ntrib() int {
-	return len(self.timeline)
+func (self *user) countHome() int {
+	return len(self.home)
+}
+
+func (self *user) listTribs(from, to int) []*trib.Trib {
+	return self.tribs[from:to]
+}
+
+func (self *user) countTribs() int {
+	return len(self.tribs)
 }

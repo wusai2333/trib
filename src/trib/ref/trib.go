@@ -140,11 +140,11 @@ func (self *Server) PostTrib(user, post string) error {
 	return nil
 }
 
-func (self *Server) FollowedTribs(user string, off, count int) ([]*trib.Trib, error) {
+func (self *Server) Home(user string, off, n int) ([]*trib.Trib, error) {
 	if off < 0 {
 		return nil, fmt.Errorf("negative offset is invalid")
 	}
-	if count < 0 {
+	if n < 0 {
 		return nil, fmt.Errorf("negative count is invalid")
 	}
 
@@ -156,15 +156,53 @@ func (self *Server) FollowedTribs(user string, off, count int) ([]*trib.Trib, er
 		return nil, e
 	}
 
-	end := off + count
-	n := u.ntrib()
-	if end >= n {
+	end := off + n
+	total := u.countHome()
+	if end >= total {
 		end = n
 	}
-	if off >= n {
+	if off >= total {
 		off = n
 	}
-	return u.list(off, end), nil
+	return u.listHome(off, end), nil
+}
+
+func (self *Server) CountHome(user string) (int, error) {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	u, e := self.findUser(user)
+	if e != nil {
+		return 0, e
+	}
+	return u.countHome(), nil
+}
+
+func (self *Server) Tribs(user string, off, n int) ([]*trib.Trib, error) {
+	if off < 0 {
+		return nil, fmt.Errorf("negatvie offset is invalid")
+	}
+	if n < 0 {
+		return nil, fmt.Errorf("negative count is invalid")
+	}
+
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	u, e := self.findUser(user)
+	if e != nil {
+		return nil, e
+	}
+
+	end := off + n
+	total := u.countTribs()
+	if end >= total {
+		end = n
+	}
+	if off >= total {
+		off = n
+	}
+	return u.listTribs(off, end), nil
 }
 
 func (self *Server) CountTribs(user string) (int, error) {
@@ -175,5 +213,5 @@ func (self *Server) CountTribs(user string) (int, error) {
 	if e != nil {
 		return 0, e
 	}
-	return u.ntrib(), nil
+	return u.countTribs(), nil
 }

@@ -35,7 +35,16 @@ type Server interface {
 	PostTrib(user, post string) error
 
 	// List the trib of someone's following users
-	FollowedTribs(user string, offset, count int) ([]*Trib, error)
+	Home(user string, offset, count int) ([]*Trib, error)
+
+	// Count of tribs for home
+	CountHome(user string) (int, error)
+
+	// List the tribs that a particular user posted
+	Tribs(user string, offset, count int) ([]*Trib, error)
+
+	// Count of tribs a particular user posted
+	CountTribs(user string) (int, error)
 }
 
 type Storage interface {
