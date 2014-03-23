@@ -6,9 +6,9 @@
 - trib/cmd/back    // the simple storage backend program, binds uses trib/back or trib/dupback
 - trib/ref         // reference implementation, defines the service, working but not scalable in any sense
 - trib/store       // storage service lib, with rate limiter and error generator in it
-- trib/lab1        // lab1: the stateless frontend logic package
-- trib/lab2        // lab2: rpc bridge
-- trib/lab3        // lab3: duplicated backend storage
+- triblab/lab1     // lab1: the stateless frontend logic package
+- triblab/lab2     // lab2: rpc bridge
+- triblab/lab3     // lab3: duplicated backend storage
 
 type Tribble struct {
 	Id uint64

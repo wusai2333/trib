@@ -105,7 +105,7 @@ func (self *Server) PostTrib(user, post string) error {
 		return e
 	}
 
-	u.post(user, post)
+	u.post(user, post, self.seq)
 	self.seq++
 
 	return nil
