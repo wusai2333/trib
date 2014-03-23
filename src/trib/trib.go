@@ -19,6 +19,12 @@ type Server interface {
 	// Creates a user
 	SignUp(user string) error
 
+	// List all registered users
+	ListUsers() ([]string, error)
+
+	// Returns true if "who" is following "whom"
+	IsFollowing(who, whom string) (bool, error)
+
 	// Follow someone's timeline
 	Follow(who, whom string) error
 

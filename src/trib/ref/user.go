@@ -35,9 +35,9 @@ func (self *user) rebuildTimeline() {
 
 	sort.Sort(bySeq(timeline))
 
-	self.timeline = make([]*trib.Trib, len(timeline))
-	for i, t := range timeline {
-		self.timeline[i] = t.Trib
+	self.timeline = make([]*trib.Trib, 0, len(timeline))
+	for _, t := range timeline {
+		self.timeline = append(self.timeline, t.Trib)
 	}
 }
 

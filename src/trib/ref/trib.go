@@ -46,6 +46,35 @@ func (self *Server) SignUp(user string) error {
 	return nil
 }
 
+func (self *Server) ListUsers() ([]string, error) {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	ret := make([]string, 0, len(self.users))
+	for user := range self.users {
+		ret = append(ret, user)
+	}
+
+	return ret, nil
+}
+
+func (self *Server) IsFollowing(who, whom string) (bool, error) {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	uwho, e := self.findUser(who)
+	if e != nil {
+		return false, e
+	}
+
+	_, e = self.findUser(whom)
+	if e != nil {
+		return false, e
+	}
+
+	return uwho.isFollowing(whom), nil
+}
+
 func (self *Server) Follow(who, whom string) error {
 	self.lock.Lock()
 	defer self.lock.Unlock()
