@@ -109,7 +109,7 @@ func (self *Server) PostTrib(user, post string) error {
 	return nil
 }
 
-func (self *Server) ListTribs(user string, off, count int) ([]*trib.Trib, error) {
+func (self *Server) FollowedTribs(user string, off, count int) ([]*trib.Trib, error) {
 	if off < 0 {
 		return nil, fmt.Errorf("negative offset is invalid")
 	}
