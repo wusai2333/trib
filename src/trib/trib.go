@@ -22,6 +22,15 @@ type Server interface {
 	// List all registered users
 	ListUsers() ([]string, error)
 
+	// Post a trib
+	PostTrib(user, post string) error
+
+	// List the tribs that a particular user posted
+	Tribs(user string, offset, count int) ([]*Trib, error)
+
+	// Count of tribs a particular user posted
+	CountTribs(user string) (int, error)
+
 	// Returns true if "who" is following "whom"
 	IsFollowing(who, whom string) (bool, error)
 
@@ -31,20 +40,11 @@ type Server interface {
 	// Unfollow
 	Unfollow(who, whom string) error // unfollow someone
 
-	// Post a trib
-	PostTrib(user, post string) error
-
 	// List the trib of someone's following users
 	Home(user string, offset, count int) ([]*Trib, error)
 
 	// Count of tribs for home
 	CountHome(user string) (int, error)
-
-	// List the tribs that a particular user posted
-	Tribs(user string, offset, count int) ([]*Trib, error)
-
-	// Count of tribs a particular user posted
-	CountTribs(user string) (int, error)
 }
 
 type Storage interface {
