@@ -1,33 +1,31 @@
-.PHONY: all fmt test testv tags doc vet lc
+.PHONY: all fmt tags doc
 
-all: build
+all:
+	go install ./...
 
-build:
-	@ GOPATH=`pwd` go install -v ./src/...
+rall:
+	go build -a ./...
 
-fmt: 
-	@ GOPATH=`pwd` gofmt -s -l -w src
-
-vet: 
-	@ GOPATH=`pwd` go vet ./src/...
-
-testv:
-	@ GOPATH=`pwd` go test -v ./src/...
-
-test:
-	@ GOPATH=`pwd` go test ./src/...
-
-clean:
-	@ rm -rf pkg bin
-
-fix:
-	@ GOPATH=`pwd` go fix ./src/...
+fmt:
+	gofmt -s -w -l .
 
 tags:
-	@ gotags `find src -name *.go` > tags
+	gotags `find . -name "*.go"` > tags
 
-doc:
-	@ GOPATH=`pwd` godoc -http=:8000
+test:
+	go test ./...
+
+testv:
+	go test -v ./...
 
 lc:
-	@ wc -l `find src -name "*.go"`
+	wc -l `find . -name "*.go"`
+
+doc:
+	godoc -http=:8000
+
+asmt:
+	make -C asm/tests --no-print-directory
+
+stayall:
+	STAYPATH=`pwd`/stay-tests stayall
