@@ -2,23 +2,28 @@ package store
 
 import (
 	"bytes"
+	"sync"
 
 	"trib"
 )
 
 type Storage struct {
 	kvs map[string]*bytes.Buffer
+	lock sync.Mutex
 }
 
 var _ trib.Storage = new(Storage)
 
 func NewStorage() *Storage {
 	return &Storage{
-		make(map[string]*bytes.Buffer),
+		kvs: make(map[string]*bytes.Buffer),
 	}
 }
 
 func (self *Storage) Get(key string, value *string) error {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
 	buf := self.kvs[key]
 	if buf == nil {
 		*value = ""
@@ -30,6 +35,9 @@ func (self *Storage) Get(key string, value *string) error {
 }
 
 func (self *Storage) Set(kv *trib.KeyValue, succ *bool) error {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
 	buf := self.kvs[kv.Key]
 	if buf == nil {
 		if kv.Value != "" {
@@ -51,6 +59,9 @@ func (self *Storage) Set(kv *trib.KeyValue, succ *bool) error {
 }
 
 func (self *Storage) Append(kv *trib.KeyValue, succ *bool) error {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
 	if kv.Value != "" {
 		buf := self.kvs[kv.Key]
 		if buf == nil {
