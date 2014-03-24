@@ -3,6 +3,8 @@ package ref_test
 import (
 	"testing"
 	"time"
+
+	. "trib/ref"
 )
 
 func TestTrib(t *testing.T) {
