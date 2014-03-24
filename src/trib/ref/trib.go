@@ -3,6 +3,8 @@ package ref
 import (
 	"fmt"
 	"sync"
+	"time"
+
 	"trib"
 )
 
@@ -32,6 +34,10 @@ func (self *Server) findUser(user string) (*user, error) {
 func (self *Server) SignUp(user string) error {
 	if len(user) > trib.MaxUsernameLen {
 		return fmt.Errorf("username %q too long", user)
+	}
+
+	if !trib.IsValidUsername(user) {
+		return fmt.Errorf("invalid username %q", user)
 	}
 
 	self.lock.Lock()
@@ -121,7 +127,7 @@ func (self *Server) Unfollow(who, whom string) error {
 	return nil
 }
 
-func (self *Server) PostTrib(user, post string) error {
+func (self *Server) PostTrib(user, at, post string, t time.Time) error {
 	if len(post) > trib.MaxTribLen {
 		return fmt.Errorf("trib too long")
 	}
@@ -134,7 +140,7 @@ func (self *Server) PostTrib(user, post string) error {
 		return e
 	}
 
-	u.post(user, post, self.seq)
+	u.post(user, post, self.seq, t)
 	self.seq++
 
 	return nil

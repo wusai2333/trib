@@ -9,6 +9,9 @@
 - triblab/lab1     // lab1: the stateless frontend logic package
 - triblab/lab2     // lab2: rpc bridge
 - triblab/lab3     // lab3: duplicated backend storage
+- tribtest/lab1	   // black box test cases
+- tribtest/lab2
+- tribtest/lab3 
 
 type Tribble struct {
 	Id uint64
@@ -26,6 +29,7 @@ type Storage inteface {
 
 // message length: 140 runes
 // username length: 15 runes
+// timeline fetch max: 100 tribs
 
 type Server interface {
     Register(user string) error
@@ -39,13 +43,13 @@ ref.NewServer() Server
 
 // lab1: decouple the storage, using a key-value pair storage
 // attention: make the logic stateless, and robust to failure, have some retries
-lab1.NewServer(storage Storage) Server
+lab1.NewServer(backend string) Server
+lab1.Dial(addr string) (Storage, error) // RPC storage client
+lab1.Serve(addr string, store Storage) error // RPC storage server
 
 // lab2: rpc to the storage, stateless front-end
 // attention: handle errors
 lab2.NewServer(backends []string) (Server, error) // connects 
-lab2.Dial(addr string) (Storage, error)   // RPC storage client
-lab2.Serve(addr string, store Storage) error // RPC storage server
 
 // lab3:
 type Backend struct {
@@ -61,3 +65,5 @@ lab3.NewStorage(addr string, peers []string, id int, store Storage) (Storage, er
 // lab1: implement the service logic
 // lab2: make the backend interface rpc
 // lab3: make the backend a duplicated service
+
+For the vector clock 

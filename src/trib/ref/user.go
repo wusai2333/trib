@@ -61,12 +61,12 @@ func (self *user) removeFollower(who string) {
 	delete(self.followers, who)
 }
 
-func (self *user) post(who string, msg string, seq int) {
+func (self *user) post(who, msg string, seq int, ts time.Time) {
 	// make the new trib
 	t := &trib.Trib{
 		User:    who,
 		Message: msg,
-		Time:    time.Now(),
+		Time:    ts,
 	}
 
 	// append a sequencial number, used in rebuilding subscribtion

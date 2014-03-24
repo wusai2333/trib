@@ -1,0 +1,130 @@
+body {
+    margin: auto;
+    font-family: "Open Sans";
+    font-size: 13px;
+    background: #fff;
+}
+
+div#body {
+    margin-left: auto;
+    margin-right: auto;
+    width: 900px;
+}
+
+div#left {
+    float: left;
+    width: 290px;
+    margin: 5px;
+}
+
+div#right {
+    float: left;
+    width: 590px;
+    margin: 5px;
+}
+
+div#adduser {
+    margin-top: 20px;
+    /* text-align: right; */
+}
+
+div.sec {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    /* border: 1px solid #ccc; */
+    /* border-radius: 5px; */
+}
+
+span.button {
+    display: inline-block;
+    margin: 5px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 1px solid #ccc;
+    background: #eee;
+    border-radius: 5px;
+}
+
+span.input {
+
+}
+
+div#whom {
+    text-align: center
+}
+
+div#timeline {
+    min-height: 400px;
+}
+
+h3 {
+    margin: 0;
+    margin-left: -10px;
+    margin-bottom: 20px;
+    margin-top: 2px;
+    font-weight: normal;
+}
+
+span#post {
+    display: block;
+    border: 1px solid #ccc;
+    padding: 5px;
+    height: 100px;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+div.right {
+    text-align: right;
+}
+
+span#username {
+    display: inline-block;
+    width: 150px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+    text-align: left;
+}
+
+div#userlist ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+div#timeline ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    margin-top: 20px;
+}
+
+div#timeline li {
+    padding: 20px;
+    border-top: 1px solid #ccc;
+}
+
+div#timeline span.author {
+    color: #065;
+}
+
+div#timeline span.time {
+    color: #666;
+}
+
+div#timeline span.trib {
+    margin-top: 5px;
+    display: block;
+}
+
+span.nchar {
+    font-size: 16px;
+    color: #999;
+    padding-right: 10px;
+    padding-left: 10px;
+}

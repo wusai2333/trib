@@ -3,47 +3,71 @@
 <head>
 <meta charset="utf-8">
 <link href="./style.css" rel="stylesheet" type="text/css" media="all">
-<title>Reactor Simulator</title>
+<title>Tribbler</title>
 <head>
 
-<body>
+<body><div id="body">
+<div id="navi">
+
 <div id="left">
-    <div id="newuser">
-        <span class="input">(new user name)</span>
-        <span class="button">Add</span>
+    <div id="who" class="sec">
+        <h3>As h8liu. [home] </h3>
+        <span class="input" id="post">Compose new tribble here.</span>
+        <div class="right">
+            <span class="nchar">140</span>
+            <span class="button">Tribble</span>
+        </div>
     </div>
 
-    <div id="userlist">
+    <div id="userlist" class="sec">
+        <h3>Users</h3>
         <ul>
             <li>h8liu</li>
             <li>fenglu</li>
             <li>duoduo</li>
         </ul>
+
+        <div id="adduser">
+            <span class="input" id="username">(new user name)</span>
+            <span class="button" id="add">Add</span>
+        </div>
+
+    </div>
+    
+    <div id="errors" class="sec">
+        <h3>Errors</h3>
+        <div class="error">Error: user h8liu does not exists</div>
     </div>
 </div>
 
 <div id="right">
-    <div id="who">
-        Signed in as h8liu.
-        <span class="button">Home</span>
-    </div>
+    <div id="timeline" class="sec">
+        <div id="whom">
+            <h2>fenglu</h2>
+            <span class="button">Follow/Unfollow</span> 
+            <span class="button">Sign In As</span>
+        </div>
 
-    <div id="whom">
-        Viewing fenglu's timeline. / Home
-    </div>
-    
-    <div id="timeline">
         <ul>
-            <li>fenglu, someday, sometime
-                <span>Let's start from here.</span>
+            <li>
+                <span class="author">@fenglu</span>
+                <span class="time">2015-3-15, 8:50 am</span>
+                <span class="trib">Let's start from here.</span>
             </li>
-            <li>fenglu, someday, sometime
-                <span>Some more tribs</span>
+            <li>
+                <span class="author">@fenglu</span>
+                <span class="time">2015-3-15, 8:50 am</span>
+                <span class="trib">Let's start from here.</span>
+            </li>
+            <li>
+                <span class="author">@fenglu</span>
+                <span class="time">2015-3-15, 8:50 am</span>
+                <span class="trib">Let's start from here.</span>
             </li>
         </ul>
     </div>
 </div>
 
-</body>
+</div></body>
 
 <html>
