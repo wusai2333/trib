@@ -1,10 +1,10 @@
 # tribble
 
-- trib             // defines the interfaces
-- trib/cmd/client  // a sample client that performs http calls
-- trib/cmd/front   // the webserver, binds with a particular front end implementation, with rate limiter in it
-- trib/cmd/back    // the simple storage backend program, binds uses trib/back or trib/dupback
-- trib/ref         // reference implementation, defines the service, working but not scalable in any sense
+- trib                  // defines the interfaces
+- trib/cmd/client       // a sample client that performs http calls
+- trib/cmd/trib-front   // the webserver, binds with a particular front end implementation, with rate limiter in it
+- trib/cmd/trib-back    // the simple storage backend program, binds uses trib/back or trib/dupback
+- trib/ref              // reference implementation, defines the service, working but not scalable in any sense
 - trib/store       // storage service lib, with rate limiter and error generator in it
 - triblab/lab1     // lab1: the stateless frontend logic package
 - triblab/lab2     // lab2: rpc bridge

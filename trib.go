@@ -53,7 +53,6 @@ type Storage interface {
 	Get(key string, value *string) error
 	Set(kv *KeyValue, succ *bool) error
 	Append(kv *KeyValue, succ *bool) error
-	Delete(key string, succ *bool) error
 }
 
 func IsValidUsername(s string) bool {
