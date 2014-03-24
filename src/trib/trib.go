@@ -7,6 +7,7 @@ import (
 const (
 	MaxUsernameLen = 15
 	MaxTribLen     = 140
+	MaxTribFetch   = 100
 )
 
 type Trib struct {
@@ -23,13 +24,10 @@ type Server interface {
 	ListUsers() ([]string, error)
 
 	// Post a trib
-	PostTrib(who, atWhom, post string, when time.Time) error
+	Post(who, atWhom, post string, when time.Time) error
 
 	// List the tribs that a particular user posted
-	Tribs(user string, offset, count int) ([]*Trib, error)
-
-	// Count of tribs a particular user posted
-	CountTribs(user string) (int, error)
+	Tribs(user string) ([]*Trib, error)
 
 	// Follow someone's timeline
 	Follow(who, whom string) error
@@ -41,10 +39,7 @@ type Server interface {
 	IsFollowing(who, whom string) (bool, error)
 
 	// List the trib of someone's following users
-	Home(user string, offset, count int) ([]*Trib, error)
-
-	// Count of tribs for home
-	CountHome(user string) (int, error)
+	Home(user string) ([]*Trib, error)
 }
 
 type KeyValue struct {
@@ -62,6 +57,10 @@ type Storage interface {
 }
 
 func IsValidUsername(s string) bool {
+	if s == "" {
+		return false
+	}
+
 	if len(s) > MaxUsernameLen {
 		return false
 	}

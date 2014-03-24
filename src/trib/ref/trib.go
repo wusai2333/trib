@@ -127,7 +127,7 @@ func (self *Server) Unfollow(who, whom string) error {
 	return nil
 }
 
-func (self *Server) PostTrib(user, at, post string, t time.Time) error {
+func (self *Server) Post(user, at, post string, t time.Time) error {
 	if len(post) > trib.MaxTribLen {
 		return fmt.Errorf("trib too long")
 	}
@@ -140,20 +140,20 @@ func (self *Server) PostTrib(user, at, post string, t time.Time) error {
 		return e
 	}
 
+	if at != "" {
+		_, e = self.findUser(at)
+		if e != nil {
+			return e
+		}
+	}
+
 	u.post(user, post, self.seq, t)
 	self.seq++
 
 	return nil
 }
 
-func (self *Server) Home(user string, off, n int) ([]*trib.Trib, error) {
-	if off < 0 {
-		return nil, fmt.Errorf("negative offset is invalid")
-	}
-	if n < 0 {
-		return nil, fmt.Errorf("negative count is invalid")
-	}
-
+func (self *Server) Home(user string) ([]*trib.Trib, error) {
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
@@ -162,36 +162,10 @@ func (self *Server) Home(user string, off, n int) ([]*trib.Trib, error) {
 		return nil, e
 	}
 
-	end := off + n
-	total := u.countHome()
-	if end >= total {
-		end = n
-	}
-	if off >= total {
-		off = n
-	}
-	return u.listHome(off, end), nil
+	return u.listHome(), nil
 }
 
-func (self *Server) CountHome(user string) (int, error) {
-	self.lock.Lock()
-	defer self.lock.Unlock()
-
-	u, e := self.findUser(user)
-	if e != nil {
-		return 0, e
-	}
-	return u.countHome(), nil
-}
-
-func (self *Server) Tribs(user string, off, n int) ([]*trib.Trib, error) {
-	if off < 0 {
-		return nil, fmt.Errorf("negatvie offset is invalid")
-	}
-	if n < 0 {
-		return nil, fmt.Errorf("negative count is invalid")
-	}
-
+func (self *Server) Tribs(user string) ([]*trib.Trib, error) {
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
@@ -200,24 +174,5 @@ func (self *Server) Tribs(user string, off, n int) ([]*trib.Trib, error) {
 		return nil, e
 	}
 
-	end := off + n
-	total := u.countTribs()
-	if end >= total {
-		end = n
-	}
-	if off >= total {
-		off = n
-	}
-	return u.listTribs(off, end), nil
-}
-
-func (self *Server) CountTribs(user string) (int, error) {
-	self.lock.Lock()
-	defer self.lock.Unlock()
-
-	u, e := self.findUser(user)
-	if e != nil {
-		return 0, e
-	}
-	return u.countTribs(), nil
+	return u.listTribs(), nil
 }

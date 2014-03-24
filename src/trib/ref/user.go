@@ -85,18 +85,21 @@ func (self *user) post(who, msg string, seq int, ts time.Time) {
 	}
 }
 
-func (self *user) listHome(from, to int) []*trib.Trib {
-	return self.home[from:to]
+func (self *user) listHome() []*trib.Trib {
+	ntrib := len(self.home)
+	start := 0
+	if ntrib > trib.MaxTribFetch {
+		start = ntrib - trib.MaxTribFetch
+	}
+
+	return self.home[start:]
 }
 
-func (self *user) countHome() int {
-	return len(self.home)
-}
-
-func (self *user) listTribs(from, to int) []*trib.Trib {
-	return self.tribs[from:to]
-}
-
-func (self *user) countTribs() int {
-	return len(self.tribs)
+func (self *user) listTribs() []*trib.Trib {
+	ntrib := len(self.tribs)
+	start := 0
+	if ntrib > trib.MaxTribFetch {
+		start = ntrib - trib.MaxTribFetch
+	}
+	return self.tribs[start:]
 }
