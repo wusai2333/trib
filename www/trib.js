@@ -25,9 +25,13 @@
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       trib = _ref[_i];
       li = $("<li/>");
-      li.append('<span class="author">@' + trib.User + '</span> ');
+      li.append('<span class="author"><a class="author" href="#">@' + trib.User + '</a></span> ');
       li.append('<span class="time">' + trib.Time + '</span> ');
       li.append($('<span class="trib" />').text(trib.Message));
+      li.find("a.author").click(function(ev) {
+        ev.preventDefault();
+        return _showUser(trib.User);
+      });
       ul.append(li);
     }
     tribs.append(ul);

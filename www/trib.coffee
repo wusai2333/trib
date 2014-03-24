@@ -18,9 +18,14 @@ listTribs = (data) ->
     ret.Tribs.reverse()
     for trib in ret.Tribs
         li = $("<li/>")
-        li.append('<span class="author">@' + trib.User + '</span> ')
+        li.append('<span class="author"><a class="author" href="#">@' + 
+            trib.User + '</a></span> ')
         li.append('<span class="time">' + trib.Time + '</span> ')
         li.append($('<span class="trib" />').text(trib.Message))
+        li.find("a.author").click((ev)->
+            ev.preventDefault()
+            _showUser(trib.User)
+        )
         ul.append(li)
     tribs.append(ul)
 

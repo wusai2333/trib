@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
 body {
     margin: auto;
     font-family: "Open Sans";
@@ -132,7 +134,8 @@ div#timeline li {
     border-top: 1px solid #ccc;
 }
 
-div#timeline span.author {
+div#timeline span.author,
+div#timeline span.author a.author {
     color: #065;
 }
 
