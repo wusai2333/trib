@@ -1,5 +1,6 @@
 me = ""
 showing = ""
+retribAt = ""
 
 listTribs = (data) ->
     ret = JSON.parse(data)
@@ -24,8 +25,29 @@ listTribs = (data) ->
         li.append($('<span class="trib" />').text(trib.Message))
         li.find("a.author").click((ev)->
             ev.preventDefault()
-            _showUser(trib.User)
+            name = $(this).text()
+            if name.length > 0 && name.indexOf('@') == 0
+                name = name.substring(1)
+            _showUser(name)
         )
+        li.append('<a href="#" class="retrib button">Retribble</a>')
+        retrib = li.find("a.retrib")
+        retrib.hide()
+        li.hover(((ev)->
+            if me != ""
+                $(this).find("a.retrib").show()
+            return
+        ), ((ev)->
+            $(this).find("a.retrib").hide()
+            return
+        ))
+        retrib.click((->
+            msg = trib.Message
+            who = trib.User
+            return (ev) ->
+                ev.preventDefault()
+                _postRetrib('RT @' + who + ': ' + msg, who)
+        )())
         ul.append(li)
     tribs.append(ul)
 
@@ -262,8 +284,19 @@ countPostLength = ->
         $("span#nchar").removeClass("ncharover")
     return
 
+_postRetrib = (msg, at) ->
+    $("form#post textarea").val(msg)
+    countPostLength()
+    retribAt = at
+    _postTrib()
+    return
+
 postTrib = (ev) ->
     ev.preventDefault()
+    _postTrib()
+    return
+
+_postTrib = ->
     text = $("form#post textarea").val()
     len = text.length
     if len == 0
@@ -274,18 +307,20 @@ postTrib = (ev) ->
         return
 
     $("form#post textarea").val("")
+    countPostLength()
 
     $.ajax({
         url: "api/post"
         type: "POST"
         data: JSON.stringify({
             Who: me
-            At: ""
+            At: retribAt
             Message: text
         })
         success: postDone
         cache: false
     })
+    retribAt = ""
     return
 
 postDone = (data) ->
