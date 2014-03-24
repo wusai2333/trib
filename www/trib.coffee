@@ -246,6 +246,17 @@ updateFollow = ->
     })
     return
 
+countPostLength = ->
+    text = $("form#post textarea").val()
+    len = text.length
+    left = 140 - len
+    $("span#nchar").text(""+left)
+    if left < 0
+        $("span#nchar").addClass("ncharover")
+    else
+        $("span#nchar").removeClass("ncharover")
+    return
+
 main = ->
     $("form#adduser").submit(addUser)
     $("form#post").submit(postTrib)
@@ -256,6 +267,15 @@ main = ->
     $("a#signin").click(signIn)
     $("a#home").click(showHome)
     $("a#signout").click(signOut)
+
+    $("form#post textarea").keydown(->
+        setTimeout((-> countPostLength()), 1)
+    )
+    $("form#post textarea").keypress(->
+        setTimeout((-> countPostLength()), 1)
+    )
+    $("form#post textarea").keyup(countPostLength)
+    $("form#post textarea").change(countPostLength)
 
     listUsers()
     return

@@ -145,11 +145,15 @@ div#timeline span.trib {
     display: block;
 }
 
-span.nchar {
+span#nchar {
     font-size: 16px;
     color: #999;
     padding-right: 10px;
     padding-left: 10px;
+}
+
+span#nchar.ncharover {
+    color: #c33;
 }
 
 div#who {
