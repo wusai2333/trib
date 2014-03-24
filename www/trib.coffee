@@ -54,6 +54,10 @@ _showHome = ->
 showUser = (ev) ->
     ev.preventDefault()
     name = $(this).text()
+    _showUser(name)
+    return
+
+_showUser = (name) ->
     console.log("show user: " + name)
     $.ajax({
         url: "api/list-tribs"
@@ -125,10 +129,6 @@ appendError = (e) ->
     $("div#errors").show()
     $("div#errors").append('<div class="error">Error: ' +
         e + '</div>')
-
-postTrib = ->
-    #TODO
-    return false
 
 signIn = (ev) ->
     ev.preventDefault()
@@ -255,6 +255,46 @@ countPostLength = ->
         $("span#nchar").addClass("ncharover")
     else
         $("span#nchar").removeClass("ncharover")
+    return
+
+postTrib = (ev) ->
+    ev.preventDefault()
+    text = $("form#post textarea").val()
+    len = text.length
+    if len == 0
+        appendError("empty tweet")
+        return
+    if len > 140
+        appendError("tweet too long")
+        return
+
+    $("form#post textarea").val("")
+
+    $.ajax({
+        url: "api/post"
+        type: "POST"
+        data: JSON.stringify({
+            Who: me
+            At: ""
+            Message: text
+        })
+        success: postDone
+        cache: false
+    })
+    return
+
+postDone = (data) ->
+    ret = JSON.parse(data)
+    if ret.Err != ""
+        appendError(ret.Err)
+        return
+    
+    if showing == ""
+        return
+    else if showing == "!home"
+        _showHome()
+    else
+        _showUser(showing)
     return
 
 main = ->

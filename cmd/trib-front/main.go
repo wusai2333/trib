@@ -20,64 +20,13 @@ var (
 	server  trib.Server
 )
 
-type UserList struct {
-	Err   string
-	Users []string
-}
-
-type TribList struct {
-	Err   string
-	Tribs []*trib.Trib
-}
-
-type Bool struct {
-	Err string
-	V   bool
-}
-
-type WhoWhom struct {
-	Who  string
-	Whom string
-}
-
-func errString(e error) string {
-	if e == nil {
-		return ""
-	}
-	return e.Error()
-}
-
-func NewTribList(tribs []*trib.Trib, e error) *TribList {
-	return &TribList{errString(e), tribs}
-}
-
-func NewUserList(users []string, e error) *UserList {
-	return &UserList{errString(e), users}
-}
-
-func NewBool(b bool, e error) *Bool {
-	return &Bool{errString(e), b}
-}
-
-func noError(e error) {
-	if e != nil {
-		log.Fatal(e)
-	}
-}
-
-func logError(e error) {
-	if e != nil {
-		log.Print(e)
-	}
-}
-
 func handleApi(w http.ResponseWriter, r *http.Request) {
 	name := strings.TrimPrefix(r.URL.Path, "/api/")
 	if verbose {
 		fmt.Println(r.Method, name)
 	}
 
-	jsonReply := func(obj interface{}) {
+	reply := func(obj interface{}) {
 		bytes, e := json.Marshal(obj)
 		noError(e)
 
@@ -98,61 +47,63 @@ func handleApi(w http.ResponseWriter, r *http.Request) {
 	case "add-user":
 		e = server.SignUp(input)
 		if e != nil {
-			jsonReply(NewUserList(nil, e))
+			reply(NewUserList(nil, e))
 			break
 		}
 		ret, e := server.ListUsers()
-		jsonReply(NewUserList(ret, e))
+		reply(NewUserList(ret, e))
 
 	case "list-users":
 		ret, e := server.ListUsers()
-		jsonReply(NewUserList(ret, e))
+		reply(NewUserList(ret, e))
 
 	case "list-tribs":
 		tribs, e := server.Tribs(input)
-		jsonReply(NewTribList(tribs, e))
+		reply(NewTribList(tribs, e))
 
 	case "list-home":
 		tribs, e := server.Home(input)
-		jsonReply(NewTribList(tribs, e))
+		reply(NewTribList(tribs, e))
 
 	case "is-following":
 		ww := new(WhoWhom)
 		e := json.Unmarshal(bytes, ww)
 		if e != nil {
-			jsonReply(NewBool(false, e))
+			reply(NewBool(false, e))
 			break
 		}
 		ret, e := server.IsFollowing(ww.Who, ww.Whom)
-		jsonReply(NewBool(ret, e))
+		reply(NewBool(ret, e))
 
 	case "follow":
 		ww := new(WhoWhom)
 		e := json.Unmarshal(bytes, ww)
 		if e != nil {
-			jsonReply(NewBool(false, e))
+			reply(NewBool(false, e))
 			break
 		}
 		e = server.Follow(ww.Who, ww.Whom)
-		if e != nil {
-			jsonReply(NewBool(false, e))
-			break
-		}
-		jsonReply(NewBool(true, nil))
+		reply(NewBool(e == nil, e))
 
 	case "unfollow":
 		ww := new(WhoWhom)
 		e := json.Unmarshal(bytes, ww)
 		if e != nil {
-			jsonReply(NewBool(false, e))
+			reply(NewBool(false, e))
 			break
 		}
 		e = server.Unfollow(ww.Who, ww.Whom)
+		reply(NewBool(false, e))
+
+	case "post":
+		p := new(Post)
+		e := json.Unmarshal(bytes, p)
 		if e != nil {
-			jsonReply(NewBool(false, e))
+			reply(NewBool(false, e))
 			break
 		}
-		jsonReply(NewBool(false, nil))
+		e = server.Post(p.Who, p.At, p.Message, time.Now())
+		reply(NewBool(e == nil, e))
 
 	default:
 		w.WriteHeader(404)
