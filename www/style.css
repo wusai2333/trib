@@ -23,7 +23,7 @@ div#right {
     margin: 5px;
 }
 
-div#adduser {
+div.adduser {
     margin-top: 20px;
     /* text-align: right; */
 }
@@ -36,7 +36,11 @@ div.sec {
     /* border-radius: 5px; */
 }
 
-span.button {
+a.button,
+span.button,
+input.button {
+    font-family: "Open Sans";
+    font-size: 13px;
     display: inline-block;
     margin: 5px;
     padding: 5px;
@@ -45,12 +49,28 @@ span.button {
     border: 1px solid #ccc;
     background: #eee;
     border-radius: 5px;
+    text-decoration: none;
+}
+
+a:visited,
+a:hover, 
+a:link {
+    color: #000;
+}
+
+a.button:hover,
+span.button:hover,
+input.button:hover {
+    background: #cec;
+    cursor: pointer;
+    text-decoration: none;
 }
 
 span.input {
 
 }
 
+h2#title,
 div#whom {
     text-align: center
 }
@@ -67,11 +87,14 @@ h3 {
     font-weight: normal;
 }
 
-span#post {
+form#post textarea {
+    font-size: 15px;
+    font-family: "Open Sans";
     display: block;
     border: 1px solid #ccc;
     padding: 5px;
     height: 100px;
+    width: 240px;
     margin: 5px;
     border-radius: 5px;
 }
@@ -80,7 +103,7 @@ div.right {
     text-align: right;
 }
 
-span#username {
+input#username {
     display: inline-block;
     width: 150px;
     border: 1px solid #ccc;
@@ -127,4 +150,24 @@ span.nchar {
     color: #999;
     padding-right: 10px;
     padding-left: 10px;
+}
+
+div#who {
+    display: none;
+}
+
+div#compose {
+    display: none;
+}
+
+a {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+a#follow,
+a#signin {
+    width: 80px;
 }

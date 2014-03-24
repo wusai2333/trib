@@ -10,69 +10,74 @@
 <div id="navi">
 
 <div id="left">
-    <div id="navi" class="sec">
-        <span class="button">Home</span>
-        <span class="button">Sign Out</span>
+    <div id="who" class="sec">
+        <h3>Signed in as h8liu</h3>
+        <a class="button" id="home" href="#">Home</a>
+        <a class="button" id="signout" href="#">Sign Out</a>
     </div>
 
-    <div id="who" class="sec">
-        <h3>As h8liu.</h3>
-        <span class="input" id="post">Compose new tribble here.</span>
-        <div class="right">
-            <span class="nchar">140</span>
-            <span class="button">Tribble</span>
-        </div>
+    <div id="compose" class="sec">
+        <h3>Compose New Tribble</h3>
+        <form id="post" action="#" method="post">
+            <textarea class="input" name="post"></textarea>
+            <div class="right">
+                <span class="nchar">140</span>
+                <input class="button" type="submit" value="Tribble"/>
+            </div>
+        </form>
     </div>
 
     <div id="userlist" class="sec">
         <h3>Users</h3>
-        <ul>
-            <li>h8liu</li>
-            <li>fenglu</li>
-            <li>duoduo</li>
-        </ul>
-
-        <div id="adduser">
-            <span class="input" id="username">(new user name)</span>
-            <span class="button" id="add">Add</span>
+        <div id="users"></div>
+        <div class="adduser">
+            <form id="adduser" action="#" method="post">
+                <input id="username" type="input" class="input"/>
+                <input class="button" type="submit" value="Add User"/>
+            </form>
         </div>
 
     </div>
     
     <div id="errors" class="sec">
         <h3>Error Log</h3>
-        <div class="error">Error: user h8liu does not exists</div>
     </div>
 </div>
 
 <div id="right">
     <div id="timeline" class="sec">
+        <h2 id="title">fenglu</h2>
         <div id="whom">
-            <h2>fenglu</h2>
-            <span class="button">Follow/Unfollow</span> 
-            <span class="button">Sign In As</span>
+            <a class="button" id="follow" href="#">Follow/Unfollow</a>
+            <a class="button" id="signin" href="#">Sign In As</a>
         </div>
-
-        <ul>
-            <li>
-                <span class="author">@fenglu</span>
-                <span class="time">2015-3-15, 8:50 am</span>
-                <span class="trib">Let's start from here.</span>
-            </li>
-            <li>
-                <span class="author">@fenglu</span>
-                <span class="time">2015-3-15, 8:50 am</span>
-                <span class="trib">Let's start from here.</span>
-            </li>
-            <li>
-                <span class="author">@fenglu</span>
-                <span class="time">2015-3-15, 8:50 am</span>
-                <span class="trib">Let's start from here.</span>
-            </li>
-        </ul>
+        
+        <div id="tribs">
+            <ul>
+                <li>
+                    <span class="author">@fenglu</span>
+                    <span class="time">2015-3-15, 8:50 am</span>
+                    <span class="trib">Let's start from here.</span>
+                </li>
+                <li>
+                    <span class="author">@fenglu</span>
+                    <span class="time">2015-3-15, 8:50 am</span>
+                    <span class="trib">Let's start from here.</span>
+                </li>
+                <li>
+                    <span class="author">@fenglu</span>
+                    <span class="time">2015-3-15, 8:50 am</span>
+                    <span class="trib">Let's start from here.</span>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 
-</div></body>
+</div>
+
+<script language="javascript" type="text/javascript" src="jquery.js"></script>
+<script language="javascript" type="text/javascript" src="trib.js"></script>
+</body>
 
 <html>

@@ -2,6 +2,7 @@ package ref
 
 import (
 	"fmt"
+	"sort"
 	"sync"
 	"time"
 
@@ -60,6 +61,8 @@ func (self *Server) ListUsers() ([]string, error) {
 	for user := range self.users {
 		ret = append(ret, user)
 	}
+
+	sort.Strings(ret)
 
 	return ret, nil
 }

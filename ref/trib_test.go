@@ -42,8 +42,8 @@ func CheckServer(server *Server, t *testing.T) {
 	ne(e)
 
 	as(len(users) == 2)
-	as(users[0] == "h8liu")
-	as(users[1] == "fenglu")
+	as(users[1] == "h8liu")
+	as(users[0] == "fenglu")
 
 	ne(server.Follow("h8liu", "fenglu"))
 	b, e := server.IsFollowing("h8liu", "fenglu")
