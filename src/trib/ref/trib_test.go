@@ -1,4 +1,4 @@
-package ref
+package ref_test
 
 import (
 	"testing"
@@ -7,10 +7,10 @@ import (
 
 func TestTrib(t *testing.T) {
 	server := NewServer()
-	testServer(server, t)
+	CheckServer(server, t)
 }
 
-func testServer(server *Server, t *testing.T) {
+func CheckServer(server *Server, t *testing.T) {
 	ne := func(e error) {
 		if e != nil {
 			t.Fatal(e)
