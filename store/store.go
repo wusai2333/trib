@@ -8,7 +8,7 @@ import (
 )
 
 type Storage struct {
-	kvs map[string]*bytes.Buffer
+	kvs  map[string]*bytes.Buffer
 	lock sync.Mutex
 }
 
