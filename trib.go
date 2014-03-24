@@ -27,6 +27,7 @@ type Server interface {
 	Post(who, atWhom, post string, when time.Time) error
 
 	// List the tribs that a particular user posted
+	// The result should be sorted in alphabetical order
 	Tribs(user string) ([]*Trib, error)
 
 	// Follow someone's timeline
