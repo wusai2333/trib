@@ -298,6 +298,21 @@ updateFollow = ->
         $("a#follow").hide()
         return
 
+    if me == showing
+        but = $("a#follow")
+        but.html("Me")
+        but.unbind("mouseenter mouseleave")
+        but.unbind("click")
+        but.hover(((ev) ->
+            hoveringFollow = true
+            return
+        ), ((ev) ->
+            hoveringFollow = false
+            return
+        ))
+        but.click(((ev) -> ev.preventDefault()))
+        return
+
     $("a#follow").html("&nbsp;")
     $.ajax({
         url: "api/is-following"

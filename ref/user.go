@@ -31,6 +31,7 @@ func (self *user) isFollowing(whom string) bool {
 
 func (self *user) rebuildHome() {
 	home := make([]*seqTrib, 0, 4096)
+	home = append(home, self.seqTribs...)
 	for _, user := range self.following {
 		home = append(home, user.seqTribs...)
 	}
@@ -91,6 +92,7 @@ func (self *user) post(who, msg string, seq int, ts time.Time) {
 	for _, user := range self.followers {
 		user.home = append(user.home, t)
 	}
+	self.home = append(self.home, t)
 }
 
 func (self *user) listHome() []*trib.Trib {

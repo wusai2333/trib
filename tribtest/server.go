@@ -117,4 +117,23 @@ func CheckServer(t *testing.T, server trib.Server) {
 	as(tr.User == "h8liu")
 	as(tr.Message == "hello, world2")
 	as(tr.Time == tm2)
+
+	er(server.Follow("fenglu", "fenglu"))
+	er(server.Follow("fengl", "fenglu"))
+	er(server.Follow("fenglu", "fengl"))
+	er(server.Follow("fenglu", "h8liu"))
+
+	tribs, e = server.Home("h8liu")
+	ne(e)
+	as(len(tribs) == 2)
+	tr = tribs[0]
+	as(tr.User == "h8liu")
+	as(tr.Message == "hello, world")
+	as(tr.Time == tm)
+
+	tr = tribs[1]
+	as(tr.User == "h8liu")
+	as(tr.Message == "hello, world2")
+	as(tr.Time == tm2)
+
 }
