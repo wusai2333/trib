@@ -12,12 +12,17 @@ import (
 
 	"trib"
 	"trib/ref"
+	"triblab"
 )
 
 var (
 	verbose = false
+	lab     = flag.Bool("lab", false, "use lab implementation")
 	addr    = flag.String("addr", "localhost:8000", "serve address")
-	server  trib.Server
+	back    = flag.String("back", "localhost:9000", "backend address")
+	nopop   = flag.Bool("nopop", false, "do not populate with test data")
+
+	server trib.Server
 )
 
 func handleApi(w http.ResponseWriter, r *http.Request) {
@@ -110,16 +115,24 @@ func handleApi(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func ne(e error) {
+	if e != nil {
+		log.Fatal(e)
+	}
+}
+
 func makeServer() trib.Server {
-	return ref.NewServer()
+	if !*lab {
+		return ref.NewServer()
+	}
+
+	s, e := triblab.MakeFront(*back)
+	ne(e)
+
+	return s
 }
 
 func populate(server trib.Server) {
-	ne := func(e error) {
-		if e != nil {
-			log.Fatal(e)
-		}
-	}
 
 	ne(server.SignUp("h8liu"))
 	ne(server.SignUp("fenglu"))
@@ -139,7 +152,9 @@ func populate(server trib.Server) {
 func main() {
 	flag.Parse()
 	server = makeServer()
-	populate(server)
+	if !*nopop {
+		populate(server)
+	}
 
 	http.Handle("/", http.FileServer(http.Dir("www")))
 	http.HandleFunc("/api/", handleApi)
