@@ -2,12 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
-	"math/rand"
-	"strings"
-	"time"
 
+	"trib/randaddr"
 	"trib/store"
 	"triblab"
 )
@@ -19,12 +16,7 @@ var (
 func main() {
 	flag.Parse()
 
-	if strings.HasSuffix(*addr, ":rand") {
-		*addr = strings.TrimSuffix(*addr, ":rand")
-		rand.Seed(time.Now().UnixNano())
-		port := 10000 + int(rand.Uint32()%20000)
-		*addr = fmt.Sprintf("%s:%d", *addr, port)
-	}
+	*addr = randaddr.Resolve(*addr)
 
 	s := store.NewStorage()
 

@@ -17,7 +17,7 @@ import (
 var (
 	verbose = flag.Bool("v", false, "verbose logging")
 	lab     = flag.Bool("lab", false, "use lab implementation")
-	addr    = flag.String("addr", "localhost:8000", "serve address")
+	addr    = flag.String("addr", "localhost:rand", "serve address")
 	back    = flag.String("back", "localhost:9000", "backend address")
 	dbinit  = flag.Bool("init", false, "do not populate with test data")
 
