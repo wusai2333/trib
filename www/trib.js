@@ -294,8 +294,23 @@
   };
 
   updateFollow = function() {
+    var but;
     if (me === "" || showing === "!home") {
       $("a#follow").hide();
+      return;
+    }
+    if (me === showing) {
+      but = $("a#follow");
+      but.unbind("mouseenter mouseleave");
+      but.unbind("click");
+      but.hover((function(ev) {
+        hoveringFollow = true;
+      }), (function(ev) {
+        hoveringFollow = false;
+      }));
+      but.click((function(ev) {
+        return ev.preventDefault();
+      }));
       return;
     }
     $("a#follow").html("&nbsp;");

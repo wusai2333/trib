@@ -69,6 +69,10 @@ func (self *Server) ListUsers() ([]string, error) {
 }
 
 func (self *Server) IsFollowing(who, whom string) (bool, error) {
+	if who == whom {
+		return false, fmt.Errorf("checking the same user")
+	}
+
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
@@ -86,6 +90,10 @@ func (self *Server) IsFollowing(who, whom string) (bool, error) {
 }
 
 func (self *Server) Follow(who, whom string) error {
+	if who == whom {
+		return fmt.Errorf("cannot follow oneself")
+	}
+
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
@@ -109,6 +117,10 @@ func (self *Server) Follow(who, whom string) error {
 }
 
 func (self *Server) Unfollow(who, whom string) error {
+	if who == whom {
+		return fmt.Errorf("cannot unfollow oneself")
+	}
+
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
