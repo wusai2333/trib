@@ -34,16 +34,19 @@ func NewStorage() *Storage {
 	return NewStorageId(0)
 }
 
-func (self *Storage) Clock(_ int, ret *uint64) error {
+func (self *Storage) Clock(atLeast uint64, ret *uint64) error {
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
+	self.clock++
+	if self.clock < atLeast {
+		self.clock = atLeast
+	}
 	if self.clock == math.MaxUint64 {
 		return fmt.Errorf("clock overflow")
 	}
 
 	*ret = self.clock
-	self.clock++
 
 	return nil
 }
@@ -70,25 +73,51 @@ func (self *Storage) Set(kv *trib.KeyValue, succ *bool) error {
 	return nil
 }
 
+func matching(p *trib.Pattern, s string) bool {
+	if !strings.HasPrefix(s, p.Prefix) {
+		return false
+	}
+	if !strings.HasSuffix(s, p.Suffix) {
+		return false
+	}
+	return true
+}
+
 func (self *Storage) Keys(p *trib.Pattern, r *trib.List) error {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
 	ret := make([]string, 0, len(self.kvs))
 
 	for k := range self.kvs {
-		if !strings.HasPrefix(k, p.Prefix) {
-			continue
+		if matching(p, k) {
+			ret = append(ret, k)
 		}
-		if !strings.HasSuffix(k, p.Suffix) {
-			continue
-		}
-
-		ret = append(ret, k)
 	}
 
 	r.L = ret
 	return nil
 }
 
-func (self *Storage) List(key string, ret *trib.List) error {
+func (self *Storage) ListKeys(p *trib.Pattern, r *trib.List) error {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	ret := make([]string, 0, len(self.lists))
+	for k := range self.lists {
+		if matching(p, k) {
+			ret = append(ret, k)
+		}
+	}
+
+	r.L = ret
+	return nil
+}
+
+func (self *Storage) ListGet(key string, ret *trib.List) error {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
 	if lst, found := self.lists[key]; !found {
 		ret.L = []string{}
 	} else {
@@ -102,6 +131,9 @@ func (self *Storage) List(key string, ret *trib.List) error {
 }
 
 func (self *Storage) ListAppend(kv *trib.KeyValue, succ *bool) error {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
 	lst, found := self.lists[kv.Key]
 	if !found {
 		lst = list.New()
@@ -115,6 +147,9 @@ func (self *Storage) ListAppend(kv *trib.KeyValue, succ *bool) error {
 }
 
 func (self *Storage) ListRemove(kv *trib.KeyValue, n *int) error {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
 	*n = 0
 
 	lst, found := self.lists[kv.Key]
