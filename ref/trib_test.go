@@ -9,5 +9,5 @@ import (
 
 func TestTrib(t *testing.T) {
 	server := NewServer()
-	tribtest.CheckServer(server, t)
+	tribtest.CheckServer(t, server)
 }

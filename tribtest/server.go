@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func CheckServer(server trib.Server, t *testing.T) {
+func CheckServer(t *testing.T, server trib.Server) {
 	ne := func(e error) {
 		if e != nil {
 			debug.PrintStack()
