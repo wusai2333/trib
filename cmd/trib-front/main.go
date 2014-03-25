@@ -1,4 +1,4 @@
-// Tribbler front end launcher
+// Tribbler front end launcher program.
 package main
 
 import (

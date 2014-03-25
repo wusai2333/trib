@@ -12,7 +12,7 @@ var r = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 const (
 	PortStart = 10000
-	PortEnd = 30000
+	PortEnd   = 30000
 	PortRange = PortEnd - PortStart
 )
 

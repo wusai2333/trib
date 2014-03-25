@@ -1,4 +1,4 @@
-// Package ref defines a reference implementation of Tribbler service
+// Package ref defines a reference implementation of Tribbler service.
 package ref
 
 import (
