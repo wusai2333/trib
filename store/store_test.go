@@ -1,6 +1,7 @@
 package store_test
 
 import (
+	"sort"
 	"testing"
 
 	"trib"
@@ -24,9 +25,14 @@ func TestStorage(t *testing.T) {
 
 	var v string
 	var b bool
+	var l = new(trib.List)
 
 	kv := func(k, v string) *trib.KeyValue {
 		return &trib.KeyValue{k, v}
+	}
+
+	pat := func(pre, suf string) *trib.Pattern {
+		return &trib.Pattern{pre, suf}
 	}
 
 	v = "_"
@@ -49,21 +55,27 @@ func TestStorage(t *testing.T) {
 	ne(s.Get("h8liu", &v))
 	as(v == "Run")
 
-	ne(s.Append(kv("h8liu", "ner"), &b))
-	as(b)
-	v = ""
-	ne(s.Get("h8liu", &v))
-	as(v == "Runner")
-
 	ne(s.Set(kv("h8liu", ""), &b))
 	as(b)
 	v = "_"
 	ne(s.Get("h8liu", &v))
 	as(v == "")
 
-	ne(s.Append(kv("h8liu", "ner"), &b))
+	ne(s.Set(kv("h8liu", "k"), &b))
 	as(b)
-	v = ""
+	v = "_"
 	ne(s.Get("h8liu", &v))
-	as(v == "ner")
+	as(v == "k")
+
+	ne(s.Set(kv("h8he", "something"), &b))
+	as(b)
+	v = "_"
+	ne(s.Get("h8he", &v))
+	as(v == "something")
+
+	ne(s.Keys(pat("h8", ""), l))
+	sort.Strings(l.L)
+	as(len(l.L) == 2)
+	as(l.L[0] == "h8he")
+	as(l.L[1] == "h8liu")
 }

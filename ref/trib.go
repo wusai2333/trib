@@ -130,6 +130,19 @@ func (self *Server) Unfollow(who, whom string) error {
 	return nil
 }
 
+func (self *Server) Following(who string) ([]string, error) {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	uwho, e := self.findUser(who)
+	if e != nil {
+		return nil, e
+	}
+
+	ret := uwho.listFollowing(who)
+	return ret, nil
+}
+
 func (self *Server) Post(user, at, post string, t time.Time) error {
 	if len(post) > trib.MaxTribLen {
 		return fmt.Errorf("trib too long")

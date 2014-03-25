@@ -1,14 +1,20 @@
 package store
 
 import (
-	"bytes"
+	"container/list"
+	"strings"
 	"sync"
 
 	"trib"
 )
 
+type strList []string
+
 type Storage struct {
-	kvs  map[string]*bytes.Buffer
+	kvs map[string]string
+
+	lists map[string]*list.List
+
 	lock sync.Mutex
 }
 
@@ -16,7 +22,8 @@ var _ trib.Storage = new(Storage)
 
 func NewStorage() *Storage {
 	return &Storage{
-		kvs: make(map[string]*bytes.Buffer),
+		kvs:   make(map[string]string),
+		lists: make(map[string]*list.List),
 	}
 }
 
@@ -24,13 +31,7 @@ func (self *Storage) Get(key string, value *string) error {
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
-	buf := self.kvs[key]
-	if buf == nil {
-		*value = ""
-	} else {
-		*value = buf.String()
-	}
-
+	*value = self.kvs[key]
 	return nil
 }
 
@@ -38,41 +39,75 @@ func (self *Storage) Set(kv *trib.KeyValue, succ *bool) error {
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
-	buf := self.kvs[kv.Key]
-	if buf == nil {
-		if kv.Value != "" {
-			buf = new(bytes.Buffer)
-			buf.WriteString(kv.Value)
-			self.kvs[kv.Key] = buf
-		}
+	if kv.Value != "" {
+		self.kvs[kv.Key] = kv.Value
 	} else {
-		if kv.Value != "" {
-			buf.Reset()
-			buf.WriteString(kv.Value)
-		} else {
-			delete(self.kvs, kv.Key)
-		}
+		delete(self.kvs, kv.Key)
 	}
 
 	*succ = true
 	return nil
 }
 
-func (self *Storage) Append(kv *trib.KeyValue, succ *bool) error {
-	self.lock.Lock()
-	defer self.lock.Unlock()
+func (self *Storage) Keys(p *trib.Pattern, r *trib.List) error {
+	ret := make([]string, 0, len(self.kvs))
 
-	if kv.Value != "" {
-		buf := self.kvs[kv.Key]
-		if buf == nil {
-			buf = new(bytes.Buffer)
-			buf.WriteString(kv.Value)
-			self.kvs[kv.Key] = buf
-		} else {
-			buf.WriteString(kv.Value)
+	for k := range self.kvs {
+		if !strings.HasPrefix(k, p.Prefix) {
+			continue
+		}
+		if !strings.HasSuffix(k, p.Suffix) {
+			continue
+		}
+
+		ret = append(ret, k)
+	}
+
+	r.L = ret
+	return nil
+}
+
+func (self *Storage) List(key string, ret *trib.List) error {
+	if lst, found := self.lists[key]; !found {
+		ret.L = []string{}
+	} else {
+		ret.L = make([]string, 0, lst.Len())
+		for i := lst.Front(); i.Next() != nil; i = i.Next() {
+			ret.L = append(ret.L, i.Value.(string))
 		}
 	}
 
+	return nil
+}
+
+func (self *Storage) ListAppend(kv *trib.KeyValue, succ *bool) error {
+	lst, found := self.lists[kv.Key]
+	if !found {
+		lst = list.New()
+		self.lists[kv.Key] = lst
+	}
+
+	lst.PushBack(kv.Value)
+
 	*succ = true
+	return nil
+}
+
+func (self *Storage) ListRemove(kv *trib.KeyValue, succ *bool) error {
+	lst, found := self.lists[kv.Key]
+	if !found {
+		*succ = false
+		return nil
+	}
+
+	for i := lst.Front(); i.Next() != nil; i = i.Next() {
+		if i.Value.(string) == kv.Value {
+			lst.Remove(i)
+			*succ = true
+			return nil
+		}
+	}
+
+	*succ = false
 	return nil
 }

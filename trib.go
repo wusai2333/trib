@@ -36,8 +36,11 @@ type Server interface {
 	// Unfollow
 	Unfollow(who, whom string) error // unfollow someone
 
-	// Returns true if "who" is following "whom"
+	// Returns true when who following whom
 	IsFollowing(who, whom string) (bool, error)
+
+	// Returns the list of following users
+	Following(who string) ([]string, error)
 
 	// List the trib of someone's following users
 	Home(user string) ([]*Trib, error)
@@ -48,12 +51,27 @@ type KeyValue struct {
 	Value string
 }
 
+type Pattern struct {
+	Prefix string
+	Suffix string
+}
+
+type List struct {
+	L []string
+}
+
 func KV(k, v string) *KeyValue { return &KeyValue{k, v} }
 
 type Storage interface {
+	// key-value pair interfaces
 	Get(key string, value *string) error
 	Set(kv *KeyValue, succ *bool) error
-	Append(kv *KeyValue, succ *bool) error
+	Keys(p *Pattern, list *List) error
+
+	// key-list interfaces
+	List(key string, list *List) error
+	ListAppend(kv *KeyValue, succ *bool) error
+	ListRemove(kv *KeyValue, succ *bool) error
 }
 
 func IsValidUsername(s string) bool {

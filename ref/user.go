@@ -61,6 +61,14 @@ func (self *user) removeFollower(who string) {
 	delete(self.followers, who)
 }
 
+func (self *user) listFollowing(who string) []string {
+	ret := make([]string, 0, len(self.following))
+	for u := range self.following {
+		ret = append(ret, u)
+	}
+	return ret
+}
+
 func (self *user) post(who, msg string, seq int, ts time.Time) {
 	// make the new trib
 	t := &trib.Trib{
