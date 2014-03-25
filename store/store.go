@@ -12,19 +12,19 @@ import (
 type strList []string
 
 type Storage struct {
-	id int
+	id    int
 	clock uint
 
-	kvs map[string]string
+	kvs   map[string]string
 	lists map[string]*list.List
-	lock sync.Mutex
+	lock  sync.Mutex
 }
 
 var _ trib.Storage = new(Storage)
 
 func NewStorageId(id int) *Storage {
 	return &Storage{
-		id: id,
+		id:    id,
 		kvs:   make(map[string]string),
 		lists: make(map[string]*list.List),
 	}
