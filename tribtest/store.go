@@ -3,6 +3,7 @@ package tribtest
 import (
 	"sort"
 	"testing"
+	"runtime/debug"
 
 	"trib"
 )
@@ -11,16 +12,19 @@ func CheckStorage(t *testing.T, s trib.Storage) {
 	var v string
 	var b bool
 	var l = new(trib.List)
+	var n int
 
 	ne := func(e error) {
 		if e != nil {
+			debug.PrintStack()
 			t.Fatal(e)
 		}
 	}
 
 	as := func(cond bool) {
 		if !cond {
-			t.Fail()
+			debug.PrintStack()
+			t.Fatal("assertion failed")
 		}
 	}
 
@@ -75,4 +79,40 @@ func CheckStorage(t *testing.T, s trib.Storage) {
 	as(len(l.L) == 2)
 	as(l.L[0] == "h8he")
 	as(l.L[1] == "h8liu")
+
+	l.L = nil
+	ne(s.List("lst", l))
+	as(l.L == nil || len(l.L) == 0)
+
+	ne(s.ListAppend(kv("lst", "a"), &b))
+	as(b)
+
+	ne(s.List("lst", l))
+	as(len(l.L) == 1)
+	as(l.L[0] == "a")
+
+	ne(s.ListAppend(kv("lst", "a"), &b))
+	as(b)
+
+	ne(s.List("lst", l))
+	as(len(l.L) == 2)
+	as(l.L[0] == "a")
+	as(l.L[1] == "a")
+
+	ne(s.ListRemove(kv("lst", "a"), &n))
+	as(n == 2)
+
+	l.L = nil
+	ne(s.List("lst", l))
+	as(l.L == nil || len(l.L) == 0)
+
+	ne(s.ListAppend(kv("lst", "h8liu"), &b))
+	as(b)
+	ne(s.ListAppend(kv("lst", "h7liu"), &b))
+	as(b)
+
+	ne(s.List("lst", l))
+	as(len(l.L) == 2)
+	as(l.L[0] == "h8liu")
+	as(l.L[1] == "h7liu")
 }
