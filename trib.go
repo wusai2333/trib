@@ -65,6 +65,9 @@ type List struct {
 func KV(k, v string) *KeyValue { return &KeyValue{k, v} }
 
 type Storage interface {
+	Id(_ int, ret *int) error // server id
+	Clock(_ int, ret *uint) error // an auto-incrementing clock
+
 	// key-value pair interfaces
 	Get(key string, value *string) error
 	Set(kv *KeyValue, succ *bool) error

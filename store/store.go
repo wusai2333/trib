@@ -12,20 +12,41 @@ import (
 type strList []string
 
 type Storage struct {
+	id int
+	clock uint
+
 	kvs map[string]string
-
 	lists map[string]*list.List
-
 	lock sync.Mutex
 }
 
 var _ trib.Storage = new(Storage)
 
-func NewStorage() *Storage {
+func NewStorageId(id int) *Storage {
 	return &Storage{
+		id: id,
 		kvs:   make(map[string]string),
 		lists: make(map[string]*list.List),
 	}
+}
+
+func NewStorage() *Storage {
+	return NewStorageId(0)
+}
+
+func (self *Storage) Id(_ int, ret *int) error {
+	*ret = self.id
+	return nil
+}
+
+func (self *Storage) Clock(_ int, ret *uint) error {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	*ret = self.clock
+	self.clock++
+
+	return nil
 }
 
 func (self *Storage) Get(key string, value *string) error {
