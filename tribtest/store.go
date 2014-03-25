@@ -81,20 +81,20 @@ func CheckStorage(t *testing.T, s trib.Storage) {
 	as(l.L[1] == "h8liu")
 
 	l.L = nil
-	ne(s.List("lst", l))
+	ne(s.ListGet("lst", l))
 	as(l.L == nil || len(l.L) == 0)
 
 	ne(s.ListAppend(kv("lst", "a"), &b))
 	as(b)
 
-	ne(s.List("lst", l))
+	ne(s.ListGet("lst", l))
 	as(len(l.L) == 1)
 	as(l.L[0] == "a")
 
 	ne(s.ListAppend(kv("lst", "a"), &b))
 	as(b)
 
-	ne(s.List("lst", l))
+	ne(s.ListGet("lst", l))
 	as(len(l.L) == 2)
 	as(l.L[0] == "a")
 	as(l.L[1] == "a")
@@ -103,7 +103,7 @@ func CheckStorage(t *testing.T, s trib.Storage) {
 	as(n == 2)
 
 	l.L = nil
-	ne(s.List("lst", l))
+	ne(s.ListGet("lst", l))
 	as(l.L == nil || len(l.L) == 0)
 
 	ne(s.ListAppend(kv("lst", "h8liu"), &b))
@@ -111,7 +111,7 @@ func CheckStorage(t *testing.T, s trib.Storage) {
 	ne(s.ListAppend(kv("lst", "h7liu"), &b))
 	as(b)
 
-	ne(s.List("lst", l))
+	ne(s.ListGet("lst", l))
 	as(len(l.L) == 2)
 	as(l.L[0] == "h8liu")
 	as(l.L[1] == "h7liu")
