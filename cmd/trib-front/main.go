@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -16,20 +15,17 @@ import (
 )
 
 var (
-	verbose = false
+	verbose = flag.Bool("v", false, "verbose logging")
 	lab     = flag.Bool("lab", false, "use lab implementation")
 	addr    = flag.String("addr", "localhost:8000", "serve address")
 	back    = flag.String("back", "localhost:9000", "backend address")
-	nopop   = flag.Bool("nopop", false, "do not populate with test data")
+	dbinit  = flag.Bool("init", false, "do not populate with test data")
 
 	server trib.Server
 )
 
 func handleApi(w http.ResponseWriter, r *http.Request) {
 	name := strings.TrimPrefix(r.URL.Path, "/api/")
-	if verbose {
-		fmt.Println(r.Method, name)
-	}
 
 	reply := func(obj interface{}) {
 		bytes, e := json.Marshal(obj)
@@ -46,7 +42,9 @@ func handleApi(w http.ResponseWriter, r *http.Request) {
 	}
 	input := string(bytes)
 
-	log.Println(name, input)
+	if !*verbose {
+		log.Println(name, input)
+	}
 
 	switch name {
 	case "add-user":
@@ -126,6 +124,8 @@ func makeServer() trib.Server {
 		return ref.NewServer()
 	}
 
+	log.Println("using lab front")
+
 	s, e := triblab.MakeFront(*back)
 	ne(e)
 
@@ -133,7 +133,6 @@ func makeServer() trib.Server {
 }
 
 func populate(server trib.Server) {
-
 	ne(server.SignUp("h8liu"))
 	ne(server.SignUp("fenglu"))
 	ne(server.SignUp("rkapoor"))
@@ -152,7 +151,7 @@ func populate(server trib.Server) {
 func main() {
 	flag.Parse()
 	server = makeServer()
-	if !*nopop {
+	if *dbinit {
 		populate(server)
 	}
 
