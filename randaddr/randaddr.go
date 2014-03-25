@@ -20,3 +20,7 @@ func Resolve(s string) string {
 	}
 	return s
 }
+
+func Local() string {
+	return fmt.Sprintf("localhost:%d", RandPort())
+}
