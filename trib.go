@@ -71,7 +71,7 @@ type Storage interface {
 	// key-list interfaces
 	List(key string, list *List) error
 	ListAppend(kv *KeyValue, succ *bool) error
-	ListRemove(kv *KeyValue, succ *bool) error
+	ListRemove(kv *KeyValue, n *int) error
 }
 
 func IsValidUsername(s string) bool {

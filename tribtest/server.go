@@ -4,6 +4,7 @@ import (
 	"runtime/debug"
 	"time"
 	"trib"
+	"sort"
 
 	"testing"
 )
@@ -41,8 +42,9 @@ func CheckServer(server trib.Server, t *testing.T) {
 	ne(e)
 
 	as(len(users) == 2)
-	as(users[1] == "h8liu")
+	sort.Strings(users)
 	as(users[0] == "fenglu")
+	as(users[1] == "h8liu")
 
 	ne(server.Follow("h8liu", "fenglu"))
 	b, e := server.IsFollowing("h8liu", "fenglu")

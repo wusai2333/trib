@@ -93,21 +93,26 @@ func (self *Storage) ListAppend(kv *trib.KeyValue, succ *bool) error {
 	return nil
 }
 
-func (self *Storage) ListRemove(kv *trib.KeyValue, succ *bool) error {
+func (self *Storage) ListRemove(kv *trib.KeyValue, n *int) error {
+	*n = 0
+
 	lst, found := self.lists[kv.Key]
 	if !found {
-		*succ = false
 		return nil
 	}
 
-	for i := lst.Front(); i.Next() != nil; i = i.Next() {
+	i := lst.Front()
+	for i != nil {
 		if i.Value.(string) == kv.Value {
-			lst.Remove(i)
-			*succ = true
-			return nil
+			hold := i
+			i = i.Next()
+			lst.Remove(hold)
+			*n++
+			continue
 		}
+
+		i = i.Next()
 	}
 
-	*succ = false
 	return nil
 }
