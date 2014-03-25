@@ -11,7 +11,7 @@ listTribs = (data) ->
     tribs = $("div#tribs")
     tribs.empty()
 
-    if ret.Tribs.length == 0
+    if ret.Tribs == null || ret.Tribs.length == 0
         tribs.append("No Tribble.")
         return
 
@@ -113,7 +113,7 @@ updateUsers = (data) ->
 
     users = $("#users")
     users.empty()
-    if ret.Users.length == 0
+    if ret.Users == null || ret.Users.length == 0
         users.append("No user.")
         return
 
@@ -204,7 +204,6 @@ updateFollowing = ->
     return
 
 _updateFollowing = (data) ->
-
     ret = JSON.parse(data)
     if ret.Err != ""
         appendError(ret.Err)
@@ -212,7 +211,7 @@ _updateFollowing = (data) ->
 
     div = $("div#followings")
     div.empty()
-    if ret.Users.length == 0
+    if ret.Users == null || ret.Users.length == 0
         div.append("Not following anyone.")
         return
 

@@ -17,7 +17,7 @@
     }
     tribs = $("div#tribs");
     tribs.empty();
-    if (ret.Tribs.length === 0) {
+    if (ret.Tribs === null || ret.Tribs.length === 0) {
       tribs.append("No Tribble.");
       return;
     }
@@ -119,7 +119,7 @@
     }
     users = $("#users");
     users.empty();
-    if (ret.Users.length === 0) {
+    if (ret.Users === null || ret.Users.length === 0) {
       users.append("No user.");
       return;
     }
@@ -213,7 +213,7 @@
     }
     div = $("div#followings");
     div.empty();
-    if (ret.Users.length === 0) {
+    if (ret.Users === null || ret.Users.length === 0) {
       div.append("Not following anyone.");
       return;
     }
