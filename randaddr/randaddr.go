@@ -1,3 +1,4 @@
+// Package randaddr provides helpers to generate network address with random port number.
 package randaddr
 
 import (
@@ -9,10 +10,19 @@ import (
 
 var r = rand.New(rand.NewSource(time.Now().UnixNano()))
 
+const (
+	PortStart = 10000
+	PortEnd = 30000
+	PortRange = PortEnd - PortStart
+)
+
+// Returns a randome port number in range [PortStart, PortEnd)
 func RandPort() int {
-	return 10000 + int(r.Uint32()%20000)
+	return PortStart + int(r.Uint32()%PortRange)
 }
 
+// Resolves the port number of a network address string if it ends with ":rand".
+// If the string does not end with ":rand", the string is returned unchanged
 func Resolve(s string) string {
 	if strings.HasSuffix(s, ":rand") {
 		s = strings.TrimSuffix(s, ":rand")
@@ -21,6 +31,7 @@ func Resolve(s string) string {
 	return s
 }
 
+// A shortcut for Resolve("localhost:rand")
 func Local() string {
 	return fmt.Sprintf("localhost:%d", RandPort())
 }

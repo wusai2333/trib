@@ -1,3 +1,5 @@
+// Package trib defines basic interfaces and constants
+// for Tribbler service implementation
 package trib
 
 import (

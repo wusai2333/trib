@@ -1,3 +1,4 @@
+// Package store provides a simple in-memory key value store.
 package store
 
 import (
