@@ -3,6 +3,8 @@ package store
 
 import (
 	"container/list"
+	"fmt"
+	"math"
 	"strings"
 	"sync"
 
@@ -12,8 +14,7 @@ import (
 type strList []string
 
 type Storage struct {
-	id    int
-	clock uint
+	clock uint64
 
 	kvs   map[string]string
 	lists map[string]*list.List
@@ -24,7 +25,6 @@ var _ trib.Storage = new(Storage)
 
 func NewStorageId(id int) *Storage {
 	return &Storage{
-		id:    id,
 		kvs:   make(map[string]string),
 		lists: make(map[string]*list.List),
 	}
@@ -34,14 +34,13 @@ func NewStorage() *Storage {
 	return NewStorageId(0)
 }
 
-func (self *Storage) Id(_ int, ret *int) error {
-	*ret = self.id
-	return nil
-}
-
-func (self *Storage) Clock(_ int, ret *uint) error {
+func (self *Storage) Clock(_ int, ret *uint64) error {
 	self.lock.Lock()
 	defer self.lock.Unlock()
+
+	if self.clock == math.MaxUint64 {
+		return fmt.Errorf("clock overflow")
+	}
 
 	*ret = self.clock
 	self.clock++
