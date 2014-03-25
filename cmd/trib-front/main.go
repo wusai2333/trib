@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"trib"
+	"trib/randaddr"
 	"trib/ref"
 	"triblab"
 )
@@ -98,6 +99,10 @@ func handleApi(w http.ResponseWriter, r *http.Request) {
 		e = server.Unfollow(ww.Who, ww.Whom)
 		reply(NewBool(false, e))
 
+	case "following":
+		ret, e := server.Following(input)
+		reply(NewUserList(ret, e))
+
 	case "post":
 		p := new(Post)
 		e := json.Unmarshal(bytes, p)
@@ -154,6 +159,7 @@ func main() {
 	if *dbinit {
 		populate(server)
 	}
+	*addr = randaddr.Resolve(*addr)
 
 	http.Handle("/", http.FileServer(http.Dir("www")))
 	http.HandleFunc("/api/", handleApi)

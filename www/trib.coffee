@@ -168,9 +168,13 @@ signIn = (ev) ->
     $("div#who").show()
     $("div#who h3").html("Signed in as " + me)
     $("div#compose").show()
+    $("div#following").show()
 
     _showHome()
     updateFollow()
+
+    $("div#followings").empty()
+    updateFollowing()
 
     return
 
@@ -181,6 +185,7 @@ signOut = (ev) ->
     me = ""
     $("div#who").hide()
     $("div#compose").hide()
+    $("div#following").hide()
     $("a#follow").hide()
 
     if showing == "!home"
@@ -188,15 +193,47 @@ signOut = (ev) ->
 
     return
 
-hoveringFollow = false
+updateFollowing = ->
+    $.ajax({
+        url: "api/following"
+        type: "POST"
+        data: me
+        success: _updateFollowing
+        cache: false
+    })
+    return
 
-_updateFollow = (data) ->
-    but = $("a#follow")
+_updateFollowing = (data) ->
+
     ret = JSON.parse(data)
     if ret.Err != ""
         appendError(ret.Err)
         return
 
+    div = $("div#followings")
+    div.empty()
+    if ret.Users.length == 0
+        div.append("Not following anyone.")
+        return
+
+    ul = $("<ul/>")
+    for name in ret.Users
+        ul.append('<li><a href="#">' +
+            name + '</a></li>')
+    div.append(ul)
+    $("div#followings li").click(showUser)
+
+    return
+
+hoveringFollow = false
+
+_updateFollow = (data) ->
+    ret = JSON.parse(data)
+    if ret.Err != ""
+        appendError(ret.Err)
+        return
+
+    but = $("a#follow")
     but.unbind("mouseenter mouseleave")
     but.unbind("click")
     if ret.V
@@ -224,6 +261,8 @@ _updateFollow = (data) ->
             return
         ))
         but.click(follow)
+
+    updateFollowing()
 
     return
 

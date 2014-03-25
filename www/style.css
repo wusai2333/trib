@@ -115,6 +115,7 @@ input#username {
     text-align: left;
 }
 
+div#following ul,
 div#userlist ul {
     list-style-type: none;
     margin: 0;
@@ -161,13 +162,9 @@ span#nchar.ncharover {
     color: #c33;
 }
 
-div#who {
-    display: none;
-}
-
-div#compose {
-    display: none;
-}
+div#who { display: none; }
+div#compose { display: none; }
+div#following { display: none; }
 
 a {
     text-decoration: none;
