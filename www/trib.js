@@ -301,6 +301,7 @@
     }
     if (me === showing) {
       but = $("a#follow");
+      but.html("Me");
       but.unbind("mouseenter mouseleave");
       but.unbind("click");
       but.hover((function(ev) {
