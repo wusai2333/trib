@@ -72,7 +72,7 @@ func (self *Storage) List(key string, ret *trib.List) error {
 		ret.L = []string{}
 	} else {
 		ret.L = make([]string, 0, lst.Len())
-		for i := lst.Front(); i.Next() != nil; i = i.Next() {
+		for i := lst.Front(); i != nil; i = i.Next() {
 			ret.L = append(ret.L, i.Value.(string))
 		}
 	}

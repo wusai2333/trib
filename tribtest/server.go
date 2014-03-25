@@ -2,9 +2,9 @@ package tribtest
 
 import (
 	"runtime/debug"
+	"sort"
 	"time"
 	"trib"
-	"sort"
 
 	"testing"
 )
@@ -27,7 +27,7 @@ func CheckServer(server trib.Server, t *testing.T) {
 	as := func(cond bool) {
 		if !cond {
 			debug.PrintStack()
-			t.Fail()
+			t.Fatal()
 		}
 	}
 
