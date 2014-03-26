@@ -18,7 +18,7 @@ const (
 
 // Returns a randome port number in range [PortStart, PortEnd)
 func RandPort() int {
-	return PortStart + int(r.Uint32()%PortRange)
+	return PortStart + int(r.Intn(PortRange))
 }
 
 // Resolves the port number of a network address string if it ends with ":rand".

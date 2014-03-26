@@ -3,7 +3,6 @@ package store
 
 import (
 	"container/list"
-	"fmt"
 	"math"
 	"strings"
 	"sync"
@@ -38,15 +37,15 @@ func (self *Storage) Clock(atLeast uint64, ret *uint64) error {
 	self.lock.Lock()
 	defer self.lock.Unlock()
 
-	self.clock++
 	if self.clock < atLeast {
 		self.clock = atLeast
 	}
-	if self.clock == math.MaxUint64 {
-		return fmt.Errorf("clock overflow")
-	}
 
 	*ret = self.clock
+
+	if self.clock < math.MaxUint64 {
+		self.clock++
+	}
 
 	return nil
 }

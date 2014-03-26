@@ -132,9 +132,7 @@ func makeServer() trib.Server {
 
 	log.Println("using lab front")
 
-	s, e := triblab.MakeFront(*back)
-	ne(e)
-
+	s := triblab.MakeFront(*back)
 	return s
 }
 
@@ -161,6 +159,7 @@ func main() {
 		populate(server)
 	}
 	*addr = randaddr.Resolve(*addr)
+	log.Printf("serve on %s", *addr)
 
 	http.Handle("/", http.FileServer(http.Dir("www")))
 	http.HandleFunc("/api/", handleApi)

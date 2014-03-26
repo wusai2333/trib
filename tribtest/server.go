@@ -91,6 +91,7 @@ func CheckServer(t *testing.T, server trib.Server) {
 
 	tribs, e = server.Home("fenglu")
 	ne(e)
+	as(tribs != nil)
 	as(len(tribs) == 0)
 
 	ne(server.Follow("fenglu", "h8liu"))
@@ -136,4 +137,9 @@ func CheckServer(t *testing.T, server trib.Server) {
 	as(tr.Message == "hello, world2")
 	as(tr.Time == tm2)
 
+	ne(server.SignUp("rkapoor"))
+	fos, e := server.Following("rkapoor")
+	ne(e)
+	as(fos != nil)
+	as(len(fos) == 0)
 }

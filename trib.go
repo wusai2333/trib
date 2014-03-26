@@ -48,41 +48,6 @@ type Server interface {
 	Home(user string) ([]*Trib, error)
 }
 
-type KeyValue struct {
-	Key   string
-	Value string
-}
-
-type Pattern struct {
-	Prefix string
-	Suffix string
-}
-
-type List struct {
-	L []string
-}
-
-func KV(k, v string) *KeyValue { return &KeyValue{k, v} }
-
-type Storage interface {
-	// Return an auto-incrementing clock, the returned value
-	// is always strictly larger than last tiem it was called,
-	// and no smaller than atLeast, but never math.MaxUint64.
-	// Returns error when the clock overflows.
-	Clock(atLeast uint64, ret *uint64) error
-
-	// key-value pair interfaces
-	Get(key string, value *string) error
-	Set(kv *KeyValue, succ *bool) error
-	Keys(p *Pattern, list *List) error
-
-	// key-list interfaces
-	ListGet(key string, list *List) error
-	ListAppend(kv *KeyValue, succ *bool) error
-	ListRemove(kv *KeyValue, n *int) error
-	ListKeys(p *Pattern, list *List) error
-}
-
 func IsValidUsername(s string) bool {
 	if s == "" {
 		return false
