@@ -56,11 +56,7 @@ type KeyList interface {
 
 	// Removes all elements that equals to kv.Value in list kv.Key
 	// n is set to the number of elements removed.
-	ListRemoveAll(kv *KeyValue, n *int) error
-
-	// Removes the first element in the list.
-	// succ is set to true if the list not empty
-	ListRemoveFront(key string, succ *bool) error
+	ListRemove(kv *KeyValue, n *int) error
 
 	// List all the keys of non-empty lists, where the key matches
 	// the given pattern.

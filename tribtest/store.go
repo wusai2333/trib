@@ -99,7 +99,7 @@ func CheckStorage(t *testing.T, s trib.Storage) {
 	as(l.L[0] == "a")
 	as(l.L[1] == "a")
 
-	ne(s.ListRemoveAll(kv("lst", "a"), &n))
+	ne(s.ListRemove(kv("lst", "a"), &n))
 	as(n == 2)
 
 	l.L = nil

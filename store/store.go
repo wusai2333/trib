@@ -153,7 +153,7 @@ func (self *Storage) ListBack(key string, value *string) error {
 	return nil
 }
 
-func (self *Storage) ListRemoveAll(kv *trib.KeyValue, n *int) error {
+func (self *Storage) ListRemove(kv *trib.KeyValue, n *int) error {
 	self.listLock.Lock()
 	defer self.listLock.Unlock()
 
@@ -179,29 +179,6 @@ func (self *Storage) ListRemoveAll(kv *trib.KeyValue, n *int) error {
 
 	if lst.Len() == 0 {
 		delete(self.lists, kv.Key)
-	}
-
-	return nil
-}
-
-func (self *Storage) ListRemoveFront(key string, succ *bool) error {
-	self.listLock.Lock()
-	defer self.listLock.Unlock()
-
-	*succ = false
-	lst, found := self.lists[key]
-	if !found {
-		return nil
-	}
-
-	i := lst.Front()
-	if i != nil {
-		lst.Remove(i)
-		*succ = true
-	}
-
-	if lst.Len() == 0 {
-		delete(self.lists, key)
 	}
 
 	return nil
