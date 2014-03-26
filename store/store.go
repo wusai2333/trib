@@ -4,7 +4,6 @@ package store
 import (
 	"container/list"
 	"math"
-	"strings"
 	"sync"
 
 	"trib"
@@ -12,19 +11,23 @@ import (
 
 type strList []string
 
+// In-memory storage implementation. All calls always returns nil.
 type Storage struct {
 	clock uint64
 
-	kvs   map[string]string
+	strs  map[string]string
 	lists map[string]*list.List
-	lock  sync.Mutex
+
+	clockLock sync.Mutex
+	strLock   sync.Mutex
+	listLock  sync.Mutex
 }
 
 var _ trib.Storage = new(Storage)
 
 func NewStorageId(id int) *Storage {
 	return &Storage{
-		kvs:   make(map[string]string),
+		strs:  make(map[string]string),
 		lists: make(map[string]*list.List),
 	}
 }
@@ -34,8 +37,8 @@ func NewStorage() *Storage {
 }
 
 func (self *Storage) Clock(atLeast uint64, ret *uint64) error {
-	self.lock.Lock()
-	defer self.lock.Unlock()
+	self.clockLock.Lock()
+	defer self.clockLock.Unlock()
 
 	if self.clock < atLeast {
 		self.clock = atLeast
@@ -51,45 +54,35 @@ func (self *Storage) Clock(atLeast uint64, ret *uint64) error {
 }
 
 func (self *Storage) Get(key string, value *string) error {
-	self.lock.Lock()
-	defer self.lock.Unlock()
+	self.strLock.Lock()
+	defer self.strLock.Unlock()
 
-	*value = self.kvs[key]
+	*value = self.strs[key]
 	return nil
 }
 
 func (self *Storage) Set(kv *trib.KeyValue, succ *bool) error {
-	self.lock.Lock()
-	defer self.lock.Unlock()
+	self.strLock.Lock()
+	defer self.strLock.Unlock()
 
 	if kv.Value != "" {
-		self.kvs[kv.Key] = kv.Value
+		self.strs[kv.Key] = kv.Value
 	} else {
-		delete(self.kvs, kv.Key)
+		delete(self.strs, kv.Key)
 	}
 
 	*succ = true
 	return nil
 }
 
-func matching(p *trib.Pattern, s string) bool {
-	if !strings.HasPrefix(s, p.Prefix) {
-		return false
-	}
-	if !strings.HasSuffix(s, p.Suffix) {
-		return false
-	}
-	return true
-}
-
 func (self *Storage) Keys(p *trib.Pattern, r *trib.List) error {
-	self.lock.Lock()
-	defer self.lock.Unlock()
+	self.strLock.Lock()
+	defer self.strLock.Unlock()
 
-	ret := make([]string, 0, len(self.kvs))
+	ret := make([]string, 0, len(self.strs))
 
-	for k := range self.kvs {
-		if matching(p, k) {
+	for k := range self.strs {
+		if p.Match(k) {
 			ret = append(ret, k)
 		}
 	}
@@ -99,12 +92,12 @@ func (self *Storage) Keys(p *trib.Pattern, r *trib.List) error {
 }
 
 func (self *Storage) ListKeys(p *trib.Pattern, r *trib.List) error {
-	self.lock.Lock()
-	defer self.lock.Unlock()
+	self.listLock.Lock()
+	defer self.listLock.Unlock()
 
 	ret := make([]string, 0, len(self.lists))
 	for k := range self.lists {
-		if matching(p, k) {
+		if p.Match(k) {
 			ret = append(ret, k)
 		}
 	}
@@ -114,8 +107,8 @@ func (self *Storage) ListKeys(p *trib.Pattern, r *trib.List) error {
 }
 
 func (self *Storage) ListGet(key string, ret *trib.List) error {
-	self.lock.Lock()
-	defer self.lock.Unlock()
+	self.listLock.Lock()
+	defer self.listLock.Unlock()
 
 	if lst, found := self.lists[key]; !found {
 		ret.L = []string{}
@@ -130,8 +123,8 @@ func (self *Storage) ListGet(key string, ret *trib.List) error {
 }
 
 func (self *Storage) ListAppend(kv *trib.KeyValue, succ *bool) error {
-	self.lock.Lock()
-	defer self.lock.Unlock()
+	self.listLock.Lock()
+	defer self.listLock.Unlock()
 
 	lst, found := self.lists[kv.Key]
 	if !found {
@@ -145,9 +138,24 @@ func (self *Storage) ListAppend(kv *trib.KeyValue, succ *bool) error {
 	return nil
 }
 
-func (self *Storage) ListRemove(kv *trib.KeyValue, n *int) error {
-	self.lock.Lock()
-	defer self.lock.Unlock()
+func (self *Storage) ListBack(key string, value *string) error {
+	self.listLock.Lock()
+	defer self.listLock.Unlock()
+
+	lst, found := self.lists[key]
+
+	if !found || lst.Len() == 0 {
+		*value = ""
+	} else {
+		*value = lst.Back().Value.(string)
+	}
+
+	return nil
+}
+
+func (self *Storage) ListRemoveAll(kv *trib.KeyValue, n *int) error {
+	self.listLock.Lock()
+	defer self.listLock.Unlock()
 
 	*n = 0
 
@@ -167,6 +175,33 @@ func (self *Storage) ListRemove(kv *trib.KeyValue, n *int) error {
 		}
 
 		i = i.Next()
+	}
+
+	if lst.Len() == 0 {
+		delete(self.lists, kv.Key)
+	}
+
+	return nil
+}
+
+func (self *Storage) ListRemoveFront(key string, succ *bool) error {
+	self.listLock.Lock()
+	defer self.listLock.Unlock()
+
+	*succ = false
+	lst, found := self.lists[key]
+	if !found {
+		return nil
+	}
+
+	i := lst.Front()
+	if i != nil {
+		lst.Remove(i)
+		*succ = true
+	}
+
+	if lst.Len() == 0 {
+		delete(self.lists, key)
 	}
 
 	return nil
