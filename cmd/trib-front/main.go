@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"go/build"
+	"path/filepath"
 
 	"trib"
 	"trib/entries"
@@ -152,6 +154,14 @@ func populate(server trib.Server) {
 	ne(server.Follow("rkapoor", "h8liu"))
 }
 
+func wwwPath() string {
+	pkg, e := build.Import("trib", "./", build.FindOnly)
+	if e != nil {
+		log.Fatal(e)
+	}
+	return filepath.Join(pkg.Dir, "www")
+}
+
 func main() {
 	flag.Parse()
 	server = makeServer()
@@ -161,7 +171,7 @@ func main() {
 	*addr = randaddr.Resolve(*addr)
 	log.Printf("serve on %s", *addr)
 
-	http.Handle("/", http.FileServer(http.Dir("www")))
+	http.Handle("/", http.FileServer(http.Dir(wwwPath())))
 	http.HandleFunc("/api/", handleApi)
 
 	for {
