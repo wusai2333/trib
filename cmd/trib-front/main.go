@@ -12,8 +12,8 @@ import (
 
 	"trib"
 	"trib/randaddr"
+	"trib/entries"
 	"trib/ref"
-	"triblab"
 )
 
 var (
@@ -132,7 +132,7 @@ func makeServer() trib.Server {
 
 	log.Println("using lab front")
 
-	s := triblab.MakeFront(*back)
+	s := entries.MakeFrontSingle(*back)
 	return s
 }
 

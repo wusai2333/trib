@@ -7,7 +7,7 @@ import (
 
 	"trib/randaddr"
 	"trib/store"
-	"triblab"
+	"trib/entries"
 )
 
 var (
@@ -23,7 +23,7 @@ func main() {
 
 	log.Printf("tribble backend serve on %s", *addr)
 
-	e := triblab.ServeBack(*addr, s, nil)
+	e := entries.ServeBackSingle(*addr, s, nil)
 	if e != nil {
 		log.Fatal(e)
 	}
