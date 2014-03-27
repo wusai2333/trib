@@ -23,3 +23,6 @@ lc:
 
 doc:
 	godoc -http=:8000
+
+www:
+	trib-front -addr=localhost:8000 -init
