@@ -10,9 +10,9 @@ type Front struct {
 
 // Backend config
 type Back struct {
-	Addr  string       // listen address
-	Store Storage // the underlying storage it should use
-	Ready chan<- bool  // send a value when server is ready
+	Addr  string      // listen address
+	Store Storage     // the underlying storage it should use
+	Ready chan<- bool // send a value when server is ready
 
 	// The following are peering parameters, used in Lab3 only
 
@@ -25,4 +25,3 @@ type Back struct {
 	// Peer identifier, 0 if have no peers
 	Id int
 }
-

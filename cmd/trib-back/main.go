@@ -5,9 +5,9 @@ import (
 	"flag"
 	"log"
 
+	"trib/entries"
 	"trib/randaddr"
 	"trib/store"
-	"trib/entries"
 )
 
 var (

@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"trib"
-	"trib/randaddr"
 	"trib/entries"
+	"trib/randaddr"
 	"trib/ref"
 )
 

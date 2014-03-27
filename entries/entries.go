@@ -38,4 +38,3 @@ func ServeBackSingle(addr string, s Storage, ready chan<- bool) error {
 
 	return triblab.ServeBack(back)
 }
-
