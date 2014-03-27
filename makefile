@@ -1,4 +1,4 @@
-.PHONY: all fmt tags doc
+.PHONY: all fmt tags doc rall test testv lc www
 
 all:
 	go install ./...
