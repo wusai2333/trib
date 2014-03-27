@@ -12,7 +12,7 @@ func MakeFrontSingle(back string) Server {
 	front := &Front{[]BackGroup{
 		BackGroup([]string{back}),
 	}}
-	return triblab.MakeFront(front)
+	return triblab.NewFront(front)
 }
 
 // Makes a front end with multiple backends
@@ -24,7 +24,7 @@ func MakeFrontMulti(backs []string) Server {
 		front.Backs[i] = BackGroup([]string{b})
 	}
 
-	return triblab.MakeFront(front)
+	return triblab.NewFront(front)
 }
 
 // Serve as a single backend.
