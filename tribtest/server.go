@@ -3,10 +3,10 @@ package tribtest
 import (
 	"runtime/debug"
 	"sort"
-	"time"
-	"trib"
-
 	"testing"
+	"time"
+
+	"trib"
 )
 
 func CheckServer(t *testing.T, server trib.Server) {

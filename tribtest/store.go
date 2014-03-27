@@ -115,4 +115,18 @@ func CheckStorage(t *testing.T, s trib.Storage) {
 	as(len(l.L) == 2)
 	as(l.L[0] == "h8liu")
 	as(l.L[1] == "h7liu")
+
+	l.L = nil
+	ne(s.ListKeys(pat("ls", "st"), l))
+	as(len(l.L) == 1)
+	as(l.L[0] == "lst")
+
+	l.L = nil
+	ne(s.ListKeys(pat("z", ""), l))
+	as(len(l.L) == 0)
+
+	l.L = nil
+	ne(s.ListKeys(pat("", ""), l))
+	as(len(l.L) == 1)
+	as(l.L[0] == "lst")
 }

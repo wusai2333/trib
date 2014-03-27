@@ -4,13 +4,13 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"go/build"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"time"
-	"go/build"
-	"path/filepath"
 
 	"trib"
 	"trib/entries"
