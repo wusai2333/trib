@@ -1,6 +1,7 @@
 package tribtest
 
 import (
+	"runtime"
 	"runtime/debug"
 	"strconv"
 	"testing"
@@ -10,10 +11,19 @@ import (
 )
 
 func CheckServerConcur(t *testing.T, server trib.Server) {
+	runtime.GOMAXPROCS(2)
+
 	ne := func(e error) {
 		if e != nil {
 			debug.PrintStack()
 			t.Fatal(e)
+		}
+	}
+
+	er := func(e error) {
+		if e == nil {
+			debug.PrintStack()
+			t.Fatal()
 		}
 	}
 
@@ -46,4 +56,40 @@ func CheckServerConcur(t *testing.T, server trib.Server) {
 	ret, e := server.Tribs("user")
 	ne(e)
 	as(len(ret) == 50)
+
+	ne(server.SignUp("other"))
+	fo := func(done chan<- bool) {
+		server.Follow("user", "other")
+		done <- true
+	}
+
+	unfo := func(done chan<- bool) {
+		server.Unfollow("user", "other")
+		done <- true
+	}
+
+	for i := 0; i < 5; i++ {
+		go fo(done)
+	}
+	for i := 0; i < 5; i++ {
+		<-done
+	}
+
+	er(server.Follow("user", "other"))
+
+	fos, e := server.Following("user")
+	ne(e)
+	as(len(fos) == 1)
+	as(fos[0] == "other")
+
+	for i := 0; i < 5; i++ {
+		go unfo(done)
+	}
+	for i := 0; i < 5; i++ {
+		<-done
+	}
+
+	fos, e = server.Following("user")
+	ne(e)
+	as(len(fos) == 0)
 }
