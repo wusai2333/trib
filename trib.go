@@ -26,7 +26,7 @@ type Server interface {
 	ListUsers() ([]string, error)
 
 	// Post a trib
-	Post(who, atWhom, post string, when time.Time) error
+	Post(who, post string, when time.Time) error
 
 	// List the tribs that a particular user posted
 	// The result should be sorted in alphabetical order

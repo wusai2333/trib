@@ -156,7 +156,7 @@ func (self *Server) Following(who string) ([]string, error) {
 	return ret, nil
 }
 
-func (self *Server) Post(user, at, post string, t time.Time) error {
+func (self *Server) Post(user, post string, t time.Time) error {
 	if len(post) > trib.MaxTribLen {
 		return fmt.Errorf("trib too long")
 	}
@@ -167,13 +167,6 @@ func (self *Server) Post(user, at, post string, t time.Time) error {
 	u, e := self.findUser(user)
 	if e != nil {
 		return e
-	}
-
-	if at != "" {
-		_, e = self.findUser(at)
-		if e != nil {
-			return e
-		}
 	}
 
 	u.post(user, post, self.seq, t)
