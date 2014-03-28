@@ -1,6 +1,5 @@
 me = ""
 showing = ""
-retribAt = ""
 
 listTribs = (data) ->
     ret = JSON.parse(data)
@@ -340,7 +339,6 @@ countPostLength = ->
 _postRetrib = (msg, at) ->
     $("form#post textarea").val(msg)
     countPostLength()
-    retribAt = at
     _postTrib()
     return
 
@@ -367,13 +365,11 @@ _postTrib = ->
         type: "POST"
         data: JSON.stringify({
             Who: me
-            At: retribAt
             Message: text
         })
         success: postDone
         cache: false
     })
-    retribAt = ""
     return
 
 postDone = (data) ->

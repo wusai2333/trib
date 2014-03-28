@@ -38,6 +38,5 @@ type WhoWhom struct {
 
 type Post struct {
 	Who     string
-	At      string
 	Message string
 }
