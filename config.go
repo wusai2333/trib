@@ -22,6 +22,6 @@ type Back struct {
 	// The addresses of peers including you, nil if have no peers
 	Peers []string
 
-	// Peer identifier, 0 if have no peers
+	// Non zero incarnation identifier, 0 if have no peers
 	Id int
 }
