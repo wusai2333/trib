@@ -59,21 +59,25 @@ func CheckServerConcur(t *testing.T, server trib.Server) {
 
 	ne(server.SignUp("other"))
 	fo := func(done chan<- bool) {
-		server.Follow("user", "other")
-		done <- true
+		e := server.Follow("user", "other")
+		done <- (e == nil)
 	}
 
 	unfo := func(done chan<- bool) {
-		server.Unfollow("user", "other")
-		done <- true
+		e := server.Unfollow("user", "other")
+		done <- (e == nil)
 	}
 
 	for i := 0; i < 5; i++ {
 		go fo(done)
 	}
+	cnt := 0
 	for i := 0; i < 5; i++ {
-		<-done
+		if <-done {
+			cnt++
+		}
 	}
+	t.Logf("%d followed", cnt)
 
 	er(server.Follow("user", "other"))
 
@@ -85,9 +89,13 @@ func CheckServerConcur(t *testing.T, server trib.Server) {
 	for i := 0; i < 5; i++ {
 		go unfo(done)
 	}
+	cnt = 0
 	for i := 0; i < 5; i++ {
-		<-done
+		if <-done {
+			cnt++
+		}
 	}
+	t.Logf("%d unfollowed", cnt)
 
 	fos, e = server.Following("user")
 	ne(e)
