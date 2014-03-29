@@ -30,19 +30,16 @@ pair.
 server is ready to accept RPC calls from the network. The value that you
 send into the tunnel does not matter.
 
-The other fields won't be used until the next lab. For this lab, we
-will only call `ServeBack()` via `entries.ServeBackSingle()` funtion
-that is defined in the `trib/entries` package. So other fields will
-always be in its zero values.
-
 ```
 func NewClient(addr string) trib.Stroage
 ```
 
-This function is very straight-forward, the addr is a TCP address in
-the form of `<host>:<port>`. When the host part is empty, it listens on 
-all possible network interfaces. See Go language's 
-[`net` package](http://golang.org/pkg/net) for more reference.
+This function takes the addr as a TCP address in the form of `<host>:<port>`,
+and will use that as the server address. It returns an implementation of
+`trib.Storage`.
+
+```
+func NewFront(f *trib.Front) trib.Server
 
 
 ## RPC
