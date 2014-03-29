@@ -1,0 +1,215 @@
+<h2>
+<a name="machines" class="anchor" href="#machines"><span class="octicon octicon-link"></span></a>Machines</h2>
+
+<p>We have set up a cluster of 10 machines. You should use those for
+all of the lab assignements.</p>
+
+<ul>
+<li>c08-11.sysnet.ucsd.edu</li>
+<li>c08-12.sysnet.ucsd.edu</li>
+<li>c08-13.sysnet.ucsd.edu</li>
+<li>c08-14.sysnet.ucsd.edu</li>
+<li>c08-15.sysnet.ucsd.edu</li>
+<li>c08-16.sysnet.ucsd.edu</li>
+<li>c08-17.sysnet.ucsd.edu</li>
+<li>c08-18.sysnet.ucsd.edu</li>
+<li>c08-19.sysnet.ucsd.edu</li>
+<li>c08-20.sysnet.ucsd.edu</li>
+</ul><h2>
+<a name="programming-language" class="anchor" href="#programming-language"><span class="octicon octicon-link"></span></a>Programming Language</h2>
+
+<p>You will write the labs in Google's <a href="http://golang.org">golang</a>.
+It is a language at somewhere between C/C++ and Python. It comes
+with a very rich standard library, and also language-level support
+for light-weight concurrent <em>go routines</em> and <em>channels</em>.</p>
+
+<p>You should be able to find a lot of document about Go language
+on the web. If you know C++ already, here are a set of hints that
+might help you bootstrap.</p>
+
+<ul>
+<li>Code is organized in many <em>packages</em>.</li>
+<li>Different from C/C++, when defining a <em>variable</em> or <em>constant</em>,
+the <em>type</em> comes after the variable name.</li>
+<li>There are pointers in Go language, but there are no pointer
+arithmetics. For example, you cannot increase a pointer by 1,
+to point the next element in memory.</li>
+<li>Mapping to C/C++, in Go language, there are <em>arrays</em>, which
+are fixed length. However, arrays are not used very common.
+For most of the time, people use <em>slices</em>, which is a
+sliced view of an underlying (often implicitly declared) array.</li>
+<li>In go language, there are <em>maps</em>, which built-in support
+of a hash map.</li>
+<li>In go language, there could be multiple return values for a
+function.</li>
+<li>
+<em>For</em> is the only loop keyword.</li>
+<li>
+<em>Foreach</em> is implemented with <em>range</em> keyword.</li>
+<li>Semicolons at the end of statements are optional.</li>
+<li>On the other hand though, trailing comma in a list is a must.</li>
+<li>Go language has garbage collection. It is type safe and
+pointer safe. When you have a pointer, the content it points
+to is always valid.</li>
+<li>Mapping to C++ concepts, in Go language,
+identifier that starts with a capital letter is <em>public</em> and
+visible to other modules; others are <em>private</em> and only visible
+inside modules.</li>
+<li>Mapping to C++ concepts, in Go language,
+<em>inheritance</em> is done by composition of anonymous members.</li>
+<li>Mapping to C++ concepts, in Go lanugage,
+virtual functions and bind via <em>interfaces</em>. Unlike Java,
+<em>interface</em> does not require explicit binding
+(via <em>implements</em> keyword). Instead, <em>interfaces</em> and bind
+on runtime. As a result, it is okay to write the implementation
+first and declare the interface afterwards.</li>
+<li>In Go language, you cannot have circular dependency on package
+imports.</li>
+</ul><p>For more documentation on the language:</p>
+
+<ul>
+<li><a href="http://golang.org/doc/">Go Language Documentation Page</a></li>
+<li><a href="http://golang.org/doc/effective_go.html">Effective Go</a></li>
+<li><a href="http://golang.org/ref/spec">Go Language Spec</a></li>
+</ul><h2>
+<a name="the-tribbler-story" class="anchor" href="#the-tribbler-story"><span class="octicon octicon-link"></span></a>The Tribbler Story</h2>
+
+<p>The project's name is Tribbler. Here is the (fake) story: some cowboy
+programmer in the wild wrote a simple online microblogging service
+called Tribbler, and leveraging the world-wide-web,
+it becomes quite popular. However, the program is written as a single
+process program, and hence it does not scale,
+cannot support many concurrent connections, and is of course
+not fault-tolerant. Knowing that you are
+going to take a distributed computing system course at UCSD, he
+asks you to help him. Taking the challenge, your goal is to refactor
+the program into a distributed system, make it robust and scalable.</p>
+
+<h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<p>The Tribbler project is written in golang and stored in a git
+repository now. To get start, run these commands:</p>
+
+<pre><code>$ cd                       # go to your home directory
+$ mkdir -p gopath/src      # the path you use for storing golang src
+$ export GOPATH=~/gopath
+$ cd gopath/src
+$ git clone /classes/xxxxxx/lab/trib -b lab1 -depth=1
+$ git clone /classes/xxxxxx/lab/triblab -b lab1 -depth=1
+$ go install ./...
+</code></pre>
+
+<p>The basic Tribbler service should be already installed on
+the system in your home directory. Let's give it a try:</p>
+
+<pre><code>$ ~/gopath/bin/trib-front -init -addr=:rand
+</code></pre>
+
+<p>The program should show a log that it serves on a port.</p>
+
+<p>Now open your browser and type in the address. For example,
+if the machine you logged in is <code>c08-11.sysnet.ucsd.edu</code>,
+and the service is shown running on port 27944,
+then open <code>http://c08-11.sysnet.ucsd.edu:27944</code>.
+You should see a list.
+of usernames, where you can view their tribs and login as
+them (with no authentication). This is how the Tribbler
+service looks like to the users. It is a single Web page
+the performs AJAX calls
+(a type of RPC that is commonly used in Web 2.0) to the
+web server behind. The webserver then in turn calls the
+Tribbler logic functions implemented by the cowboy and
+returns the results back to the Web page in the browser.</p>
+
+<h2>
+<a name="source-code-organization" class="anchor" href="#source-code-organization"><span class="octicon octicon-link"></span></a>Source Code Organization</h2>
+
+<p>The source code in the <code>trib</code> package repository is organized as follow:</p>
+
+<ul>
+<li>
+<code>trib</code> defines the high-level Tribbler logic interfaces and
+and common data structures.</li>
+<li>
+<code>trib/tribtest</code> provides several basic test cases for the
+interfaces.</li>
+<li>
+<code>trib/cmd/trib-front</code> is the web-server launcher that you just run.</li>
+<li>
+<code>trib/cmd/trib-back</code> will be the back-end storage server
+launcher.</li>
+<li>
+<code>trib/entries</code> defines helper functions on constructing a
+Tribbler front-end or a back-end.</li>
+<li>
+<code>trib/ref</code> is a reference implementation of the interface
+<code>trib.Server</code>
+interface. This is what use actually just tried via the Web.</li>
+<li>
+<code>trib/randaddr</code> provides helpers that generates a random port
+number.</li>
+<li>
+<code>trib/store</code> contains an in-memory thread-safe
+implementation of the Store interface. We will use this
+as the very basic building block for our back-end storage system.</li>
+<li>
+<code>trib/www</code> contains the static files (html, css, js, etc.) for
+the web front-end.</li>
+</ul><p>Don't be scared by the number of packages. Most of the packages
+are very small. In fact, all Go language files under <code>trib</code>
+directory is less than 1500 lines in total (the beauty of Go!).</p>
+
+<p>Through the entire lab, you should not need to modify anything
+in this repository. If you feel that you have to change something,
+please discuss with the TA. You are always welcome to read the code
+in <code>trib</code> repository. If you find any bug and reported it,
+you will get some bonus credit.</p>
+
+<h2>
+<a name="your-job" class="anchor" href="#your-job"><span class="octicon octicon-link"></span></a>Your Job</h2>
+
+<p>Your job is to complete the implementation of the <code>triblab</code> package
+in the second repo that we checked out.</p>
+
+<p>You should always write your code for the labs in the <code>triblab</code> repo,
+and the is the only repo that you will submit for grading.
+In fact, for most of the time, you might be just working on the machines
+with <code>triblab</code> as your working directory.</p>
+
+<h2>
+<a name="lab-roadmap" class="anchor" href="#lab-roadmap"><span class="octicon octicon-link"></span></a>Lab Roadmap</h2>
+
+<ul>
+<li>
+<strong>Lab 1</strong>. Reimplement a Tribbler service, split the logic into a stateless
+front-end and a key-value pair back-end. The front-end will call the back-end
+via RPC. After this, we should have a scalable front-end design, where they
+can serve on multiple addresses concurrently. The back-end will still be
+single.</li>
+<li>
+<strong>Lab 2</strong>. We scale up the key-value pair back-ends using
+consistent hashing on the keys. The challenge for this part would be how to sort
+the Tribbles that are stored on different servers in a reasonable order without
+using a global clock.</li>
+<li>
+<strong>Lab 3</strong>. We make the back-end fault-tolerent, by using
+distributed hash table and replications. As a result, back-end servers
+can now join, leave, or be killed.</li>
+</ul><h2>
+<a name="misc" class="anchor" href="#misc"><span class="octicon octicon-link"></span></a>Misc</h2>
+
+<p>For convenience, you might set environment variables in your <code>.bashrc</code>:</p>
+
+<pre><code>export GOPATH=$HOME/gopath
+export PATH=$PATH:$GOPATH/bin
+</code></pre>
+
+<p>We should have Vim and Emaces installed on the machines. If you need
+install other utility packages, ask the TA.</p>
+
+<h2>
+<a name="ready" class="anchor" href="#ready"><span class="octicon octicon-link"></span></a>Ready?</h2>
+
+<p>If you still feel comfortable with the setup,
+go forward and read <a href="./lab1.html">Lab1</a>.</p>
