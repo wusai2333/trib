@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"trib"
 	"trib/entries"
@@ -113,12 +112,8 @@ func handleApi(w http.ResponseWriter, r *http.Request) {
 			reply(NewBool(false, e))
 			break
 		}
-		e = server.Post(p.Who, p.Message, time.Now(), p.Clock)
+		e = server.Post(p.Who, p.Message, p.Clock)
 		reply(NewBool(e == nil, e))
-
-	case "sync-clock":
-		c, e := server.SyncClock()
-		reply(NewClock(c, e))
 
 	default:
 		w.WriteHeader(404)
@@ -147,10 +142,10 @@ func populate(server trib.Server) {
 	ne(server.SignUp("fenglu"))
 	ne(server.SignUp("rkapoor"))
 
-	ne(server.Post("h8liu", "Hello, world.", time.Now(), 0))
-	ne(server.Post("h8liu", "Just tribble it.", time.Now(), 0))
-	ne(server.Post("fenglu", "Double tribble.", time.Now(), 0))
-	ne(server.Post("rkapoor", "Triple tribble.", time.Now(), 0))
+	ne(server.Post("h8liu", "Hello, world.", 0))
+	ne(server.Post("h8liu", "Just tribble it.", 0))
+	ne(server.Post("fenglu", "Double tribble.", 0))
+	ne(server.Post("rkapoor", "Triple tribble.", 0))
 
 	ne(server.Follow("fenglu", "h8liu"))
 	ne(server.Follow("fenglu", "rkapoor"))

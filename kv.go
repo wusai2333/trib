@@ -70,10 +70,6 @@ type Storage interface {
 	// unless it was math.MaxUint64.
 	Clock(atLeast uint64, ret *uint64) error
 
-	// Reads the auto-incrementing clock, the returned value
-	// will be no smaller than the value returned last time.
-	ClockRead(_ uint64, ret *uint64) error
-
 	KeyString
 	KeyList
 }

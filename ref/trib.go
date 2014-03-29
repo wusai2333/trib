@@ -157,7 +157,7 @@ func (self *Server) Following(who string) ([]string, error) {
 	return ret, nil
 }
 
-func (self *Server) Post(user, post string, t time.Time, c uint64) error {
+func (self *Server) Post(user, post string, c uint64) error {
 	if len(post) > trib.MaxTribLen {
 		return fmt.Errorf("trib too long")
 	}
@@ -178,6 +178,7 @@ func (self *Server) Post(user, post string, t time.Time, c uint64) error {
 		panic("run out of seq number")
 	}
 
+	t := time.Now()
 	u.post(user, post, self.seq, t)
 
 	return nil
@@ -205,11 +206,4 @@ func (self *Server) Tribs(user string) ([]*trib.Trib, error) {
 	}
 
 	return u.listTribs(), nil
-}
-
-func (self *Server) SyncClock() (uint64, error) {
-	self.lock.Lock()
-	defer self.lock.Unlock()
-
-	return self.seq, nil
 }

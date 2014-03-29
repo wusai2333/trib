@@ -8,25 +8,6 @@ seenClock = (c) ->
         console.log("lclock=" + lclock)
     return
 
-syncClock = ->
-    $.ajax({
-        url: "api/sync-clock"
-        type: "GET"
-        data: ""
-        success: _syncClock
-        cache: false
-    })
-    return
-
-_syncClock = (data) ->
-    ret = JSON.parse(data)
-    if ret.Err != ""
-        appendErr(ret.Err)
-        return
-    seenClock(ret.N)
-    return
-
-
 listTribs = (data) ->
     ret = JSON.parse(data)
     if ret.Err != ""
@@ -435,7 +416,6 @@ main = ->
     $("form#post textarea").change(countPostLength)
 
     listUsers()
-    syncClock()
     return
 
 $(document).ready(main)

@@ -5,7 +5,6 @@ import (
 	"runtime/debug"
 	"strconv"
 	"testing"
-	"time"
 
 	"trib"
 )
@@ -35,11 +34,10 @@ func CheckServerConcur(t *testing.T, server trib.Server) {
 	}
 
 	ne(server.SignUp("user"))
-	tm := time.Now()
 
 	p := func(th, n int, done chan<- bool) {
 		for i := 0; i < n; i++ {
-			ne(server.Post("user", strconv.Itoa(th*100+n), tm, 0))
+			ne(server.Post("user", strconv.Itoa(th*100+n), 0))
 		}
 		done <- true
 	}

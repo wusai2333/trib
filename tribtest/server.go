@@ -4,7 +4,6 @@ import (
 	"runtime/debug"
 	"sort"
 	"testing"
-	"time"
 
 	"trib"
 )
@@ -68,22 +67,19 @@ func CheckServer(t *testing.T, server trib.Server) {
 
 	ne(server.Follow("h8liu", "fenglu"))
 
-	tm := time.Now()
-	clk, e := server.SyncClock()
-	ne(e)
+	clk := uint64(0)
 
-	er(server.Post("", "", tm, clk))
+	er(server.Post("", "", clk))
 
 	longMsg := ""
 	for i := 0; i < 200; i++ {
 		longMsg += " "
 	}
 
-	er(server.Post("h8liu", longMsg, tm, clk))
-	ne(server.Post("h8liu", "hello, world", tm, clk))
+	er(server.Post("h8liu", longMsg, clk))
+	ne(server.Post("h8liu", "hello, world", clk))
 
-	clk, e = server.SyncClock()
-	ne(e)
+	clk = uint64(0)
 
 	tribs, e := server.Tribs("h8liu")
 	ne(e)
@@ -91,7 +87,9 @@ func CheckServer(t *testing.T, server trib.Server) {
 	tr := tribs[0]
 	as(tr.User == "h8liu")
 	as(tr.Message == "hello, world")
-	as(tr.Time == tm)
+	if tr.Clock > clk {
+		clk = tr.Clock
+	}
 
 	tribs, e = server.Home("fenglu")
 	ne(e)
@@ -105,23 +103,21 @@ func CheckServer(t *testing.T, server trib.Server) {
 	tr = tribs[0]
 	as(tr.User == "h8liu")
 	as(tr.Message == "hello, world")
-	as(tr.Time == tm)
+	if tr.Clock > clk {
+		clk = tr.Clock
+	}
 
-	tm2 := tm.Add(time.Second)
-
-	ne(server.Post("h8liu", "hello, world2", tm2, clk))
+	ne(server.Post("h8liu", "hello, world2", clk))
 	tribs, e = server.Home("fenglu")
 	ne(e)
 	as(len(tribs) == 2)
 	tr = tribs[0]
 	as(tr.User == "h8liu")
 	as(tr.Message == "hello, world")
-	as(tr.Time == tm)
 
 	tr = tribs[1]
 	as(tr.User == "h8liu")
 	as(tr.Message == "hello, world2")
-	as(tr.Time == tm2)
 
 	er(server.Follow("fenglu", "fenglu"))
 	er(server.Follow("fengl", "fenglu"))
@@ -134,12 +130,10 @@ func CheckServer(t *testing.T, server trib.Server) {
 	tr = tribs[0]
 	as(tr.User == "h8liu")
 	as(tr.Message == "hello, world")
-	as(tr.Time == tm)
 
 	tr = tribs[1]
 	as(tr.User == "h8liu")
 	as(tr.Message == "hello, world2")
-	as(tr.Time == tm2)
 
 	ne(server.SignUp("rkapoor"))
 	fos, e := server.Following("rkapoor")

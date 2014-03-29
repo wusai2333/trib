@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	MaxUsernameLen = 15
-	MaxTribLen     = 140
-	MaxTribFetch   = 100
-	MinListUser    = 20
+	MaxUsernameLen = 15  // Maximum length of a username
+	MaxTribLen     = 140 // Maximum length of a tribble
+	MaxTribFetch   = 100 // Maximum count of tribbles for Home() and Tribs()
+	MinListUser    = 20  // Minimum count of users required for ListUsers()
 )
 
 type Trib struct {
@@ -32,7 +32,7 @@ type Server interface {
 
 	// Post a tribble.  The clock is the maximum clock value this user has
 	// seen so far by reading tribbles or clock sync.
-	Post(who, post string, when time.Time, clock uint64) error
+	Post(who, post string, clock uint64) error
 
 	// List the tribs that a particular user posted
 	// The result should be sorted in alphabetical order
@@ -52,9 +52,6 @@ type Server interface {
 
 	// List the trib of someone's following users
 	Home(user string) ([]*Trib, error)
-
-	// Sync to "roughly" the latest clock in the world
-	SyncClock() (uint64, error)
 }
 
 // Checks if a username is a valid one. Returns true if it is.

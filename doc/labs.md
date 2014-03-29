@@ -164,6 +164,23 @@ and the is the only repo that you will submit for grading.
 In fact, for most of the time, you might be just working on the machines
 with `triblab` as your working directory.
 
+## Lab Roadmap
+
+- **Lab 1**. Reimplement a Tribbler service, split the logic into a stateless
+  front-end and a key-value pair back-end. The front-end will call the back-end
+  via RPC. After this, we should have a scalable front-end design, where they
+  can serve on multiple addresses concurrently. The back-end will still be
+  single.
+- **Lab 2**. We scale up the key-value pair back-ends using
+  consistent hashing on the keys. The challenge for this part would be how to sort
+  the Tribbles that are stored on different servers in a reasonable order without
+  using a global clock.
+- **Lab 3**. We make the back-end fault-tolerent, by using
+  distributed hash table and replications. As a result, back-end servers
+  can now join, leave, or be killed.
+
+## Misc
+
 For convenience, you might set environment variables in your `.bashrc`:
 
 ```
