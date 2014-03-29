@@ -33,14 +33,16 @@ the <em>type</em> of it is written after the variable name.</li>
 <li>There are pointers in Go language, but there are no pointer
 arithmetics. For example, you cannot increase a pointer by 1,
 to point the next element in memory.</li>
-<li>Mapping to C/C++, in Go language, there are <em>arrays</em>, which
-are fixed length. However, arrays are not used very common.
+<li>Mapping to C/C++, in Go language, there are fixed length
+<em>arrays</em>. However, arrays are not very commonly used.
 For most of the time, people use <em>slices</em>, which is a
-sliced view of an underlying (often implicitly declared) array.</li>
-<li>In go language, there are <em>maps</em>, which built-in support
-of a hash map.</li>
+sliced view of an underlying array (often declared implicited).</li>
+<li>In go language, there are <em>maps</em>, which are built-in support
+for hash maps.</li>
 <li>In go language, there could be multiple return values for a
 function.</li>
+<li>Exceptions are called <code>panic</code> and <code>recover</code>. However it is
+not encourage to use that for error handling.</li>
 <li>
 <em>For</em> is the only loop keyword.</li>
 <li>
