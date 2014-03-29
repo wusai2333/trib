@@ -116,6 +116,10 @@ func handleApi(w http.ResponseWriter, r *http.Request) {
 		e = server.Post(p.Who, p.Message, time.Now(), p.Clock)
 		reply(NewBool(e == nil, e))
 
+	case "sync-clock":
+		c, e := server.SyncClock()
+		reply(NewClock(c, e))
+		
 	default:
 		w.WriteHeader(404)
 	}

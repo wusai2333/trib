@@ -19,6 +19,11 @@ type Bool struct {
 	V   bool
 }
 
+type Clock struct {
+	Err string
+	N uint64
+}
+
 func NewTribList(tribs []*trib.Trib, e error) *TribList {
 	return &TribList{errString(e), tribs}
 }
@@ -31,6 +36,10 @@ func NewBool(b bool, e error) *Bool {
 	return &Bool{errString(e), b}
 }
 
+func NewClock(c uint64, e error ) *Clock {
+	return &Clock{errString(e), c}
+}
+
 type WhoWhom struct {
 	Who  string
 	Whom string
@@ -41,3 +50,4 @@ type Post struct {
 	Message string
 	Clock   uint64
 }
+
