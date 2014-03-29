@@ -5,38 +5,41 @@ scalable front-end and a key-value pair backend. In particular, you need
 to:
 
 1. Implement a key-value storage server type that fits `trib.Store` interface
-   and takes the Http RPC requests from the network.
+   and takes http RPC requests from the network.
 2. Implement a key-value storage client type that fits `trib.Store` interface
-   but calls a remote RPC server.
+   that calls a remote RPC key-value pair server.
 3. Implement a stateless Tribbler front-end type that fits `trib.Server` interface
-   but calls a remote RPC server.
+   that calls a remote RPC key-value pair back-end server.
 
-More specifically, you need to implement the 3 entry functions that are currently defined
-in `trib/entries.go` file: `ServeBack()`, `NewClient()` and `NewFront()`. They
-are now all filled with a one-line todo place holder.
+More specifically, you need to implement three entry functions that are
+defined in `triblab/entries.go` file: `ServeBack()`, `NewClient()` and
+`NewFront()`. They are now filled with `panic("todo")`.
 
 ## Tribble
 
-A Tribble is a type that has 4 fields:
+A Tribble is a structure that has 4 fields:
 
 ```
 type Trib struct {
-	User    string    // who posted this trib
-	Message string    // the content of the trib
-	Time    time.Time // the timestamp
-	Clock   uint64    // a logical clock, not used in lab1
+    User    string    // who posted this trib
+    Message string    // the content of the trib
+    Time    time.Time // the timestamp
+    Clock   uint64    // a logical clock, not used in lab1
 }
 ```
 
-Timestamp is what the front-end claims the
-time that this tribble is created. However, for sorting
+`Time` is what the front-end claims when
+this tribble is created. However, to sort
 tribbles in a globally consistent and reasonable order,
-Tribbler service maintains a logical clock in `uint64`.
+Tribbler service maintains a distributed logical `Clock` in `uint64`.
 
-When sorting tribble timelines, one should first
-order them by the `Clock` field, and then by the `Time` field,
-then by the `User` field, and finally by the `Message` fields.
-For most of the cases, `Clock` and `Time` would do the work.
+When sorting tribbles into a timeline, you should follow this field priroty:
+
+1. `Clock`
+2. `Time`
+3. `User`
+4. `Message`
+
 We call this *Tribble Order*.
 
 ## Tribbler Service Interface
@@ -44,29 +47,35 @@ We call this *Tribble Order*.
 The Tribbler service logic is all defined in `trib.Server` interface
 (in `trib/trib.go` file).
 
+*** 
+
 ```
 SignUp(user string) error
 ```
 
-Creates a new user. After a user is created, it is always there.
-A user name must be no longer than `trib.MaxUsernameLen` = 15
-characters but not empty, must start with a lower-case letter,
-and can only contain lower-case letters or numbers
+Creates a new user. After a user is created, it will always be there.
+A user name must be no longer than `trib.MaxUsernameLen = 15`
+characters but non-empty, must start with a lower-case letter,
+and can only contain lower-case letters or numbers.
 
 There is a helper function called `trib.IsValidUsername(string)`
 which you can use to check if a username is valid.
 
-When the user exists, it returns error.
+Returns error when the user already exists. Concurrent sign-ups might
+both succeed.
+
+***
 
 ```
 ListUsers() ([]string, error)
 ```
 
-List `trib.MinListUser` = 20 registered users.
-When there are less than 20 users that
-signed up, list all of them. This is for showing some users on
-the front page. This is not for listing all the users that signed
-up, because that would be too expensive.
+List `trib.MinListUser = 20` registered users.  When there are less than 20
+users that have ever signed up, list all of them. This is just for showing some
+users on the front page. This is not for listing all the users that signed up,
+because that would be too expensive.
+
+***
 
 ```
 Post(who, post string, clock uint64) error
@@ -76,16 +85,20 @@ Post a tribble. `clock` is the maximum clock value this user
 has ever seen so far by reading tribbles
 (via `Home()` and `Tribs()`).
 It returns error when the user does not exist or the post
-is too long (longer than `trib.MaxTribLen` = 140).
+is too long (longer than `trib.MaxTribLen = 140`).
+
+***
 
 ```
 Tribs(user string) ([]*Trib, error)
 ```
 
-List the recent `trib.MaxTribFetch` = 100 tribbles that a user
+List the recent `trib.MaxTribFetch = 100` tribbles that a user
 posted. Tribbles needs to be sorted in Tribble Order. Also,
 it should make sure that the order is the same order
 that the user posted the tribbles.
+
+***
 
 ```
 Follow(who, whom string) error
@@ -99,6 +112,8 @@ and listing all following users. A user can never
 follow or unfollow himself. When calling with `who` equals
 to `whom`, the functions return error. When the user
 does not exist, the functions return error.
+
+***
 
 ```
 Home(user string) ([]*Trib, error)
@@ -115,7 +130,7 @@ A always shows after B.
 
 It returns error when the user does not exist.
 
---
+***
 
 In addition to normal errors, it might also return IO errors
 if the implementation needs to communicate to a remote part.
@@ -240,12 +255,12 @@ that one front-end might be taking multiple
 ## RPC
 
 Go language comes with its own
-[`net/rpc` package](http://golang.org/pkg/net/rpc),
+[`net/rpc`](http://golang.org/pkg/net/rpc) package
 in its standard library, and we will just use that.
 Note that the `trib.Store` interface is already in its "RPC friendly" form.
 
 Your RPC needs to use the default encoding `encoding/gob`, listen on the given
-address, and serve as an Http RPC server.
+address, and serve as an http RPC server.
 
 ## Testing
 
@@ -326,8 +341,9 @@ but incorrect implementation might do:
   code internally as long as you can satisfy the ordering requirements
   speficied for `Home()` and `Tribs()` (you might find it very hard).
   Nonetheless, intuitively, the clock argument tells the *oldest* tribble a
-  user have seen (which might be always 0), hence the new posted tribble seems
-  to better have a clock value that is larger than the old one.
+  user have seen (which might be 0 if the user has not seen any tribble yet), 
+  hence the new posted tribble seems to better have a clock value that is
+  larger than the argument.
 - **Generate the clock from the timestamp**. While 64-bit can cover a very
   wide time range even in the unit of nanoseconds, you should keep in mind
   that the front-ends are running on different servers with arbitrary physical
@@ -337,10 +353,11 @@ but incorrect implementation might do:
   of a user matters. Not handling old tribbles might lead to worse and worse
   performance over time and eventually break the performance promise.
 
-## Turn In
+## Turning In
 
 First, make sure every piece of your code is commited into the repository in
 `triblab`. Then just type `make turnin` under the root of the repository.
 It will generate a turnin.zip that contains everything in you repo, and
 copy that out.
 
+## Happy Lab1!
