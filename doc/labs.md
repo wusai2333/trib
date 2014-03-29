@@ -13,7 +13,6 @@ all of the lab assignements.
 - c08-17.sysnet.ucsd.edu
 - c08-18.sysnet.ucsd.edu
 - c08-19.sysnet.ucsd.edu
-- c08-20.sysnet.ucsd.edu
 
 ## Programming Language
 

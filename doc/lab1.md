@@ -135,7 +135,7 @@ It returns error when the user does not exist.
 In addition to normal errors, it might also return IO errors
 if the implementation needs to communicate to a remote part.
 Returning a nil error means the the call is successfully
-executed; returning a error that is not nil means that
+executed; returning a non-nill error means that
 the call might be executed or not.
 
 ## Key-value Pair Service Interface
@@ -206,7 +206,9 @@ type Storage interface {
 Note that the function signature of these methods are all RPC friendly.  Also,
 under the defintion of the execution logic, all the methods will always return
 nil error. This means all errors you see from this interface will be
-communication errors. 
+communication errors. You can assume that each call is an atomic transaction.
+However, when an error occurs, the caller does not know if the error occurs
+before the transaction or after.
 
 ## Entry Functions
 
@@ -238,7 +240,7 @@ func NewClient(addr string) trib.Stroage
 
 This function takes the addr as a TCP address in the form of `<host>:<port>`,
 and will use that as the server address. It returns an implementation of
-`trib.Storage`. You can assume `addr` will always be an valid address.
+`trib.Storage`. You can assume `addr` will always be a valid one.
 
 ```
 func NewFront(backs []string) trib.Server
@@ -249,8 +251,10 @@ of `trib.Server`. The returned instance then will serve as an service front-end
 that takes Tribbler service function calls, and translates them into key-value
 pair RPC calls. This front-end should be stateless, thread safe, and ready
 to be killed at any time. This means that at any time during its execution,
-the back-end key-value pair storage always stays in an consistent. Also, note
-that one front-end might be taking multiple
+the back-end key-value pair storage always stays in a consistent state. Also,
+note that one front-end might be taking multiple concurrent requests from
+the Web, and there might be multiple front-ends talking to the same back-end,
+so make sure it handles all the concurrency issues correctly.
 
 ## RPC
 
