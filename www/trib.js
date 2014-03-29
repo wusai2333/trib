@@ -38,7 +38,6 @@
       li.append('<span class="author"><a class="author" href="#">@' + trib.User + '</a></span> ');
       li.append('<span class="time">' + trib.Time + '</span> ');
       li.append($('<span class="trib" />').text(trib.Message));
-      li.append('' + trib.Clock);
       li.find("a.author").click(function(ev) {
         var name;
         ev.preventDefault();
@@ -78,7 +77,6 @@
   };
 
   _showHome = function() {
-    console.log("show home: " + me);
     $.ajax({
       url: "api/list-home",
       type: "POST",
@@ -102,7 +100,6 @@
   };
 
   _showUser = function(name) {
-    console.log("show user: " + name);
     $.ajax({
       url: "api/list-tribs",
       type: "POST",

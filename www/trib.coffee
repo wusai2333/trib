@@ -66,7 +66,7 @@ showHome = (ev) ->
     return
 
 _showHome = ->
-    console.log("show home: " + me)
+    # console.log("show home: " + me)
     $.ajax({
         url: "api/list-home"
         type: "POST"
@@ -92,7 +92,7 @@ showUser = (ev) ->
     return
 
 _showUser = (name) ->
-    console.log("show user: " + name)
+    # console.log("show user: " + name)
     $.ajax({
         url: "api/list-tribs"
         type: "POST"
