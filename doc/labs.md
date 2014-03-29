@@ -31,14 +31,16 @@ might help you bootstrap.
 - There are pointers in Go language, but there are no pointer
   arithmetics. For example, you cannot increase a pointer by 1,
   to point the next element in memory.
-- Mapping to C/C++, in Go language, there are *arrays*, which
-  are fixed length. However, arrays are not used very common.
+- Mapping to C/C++, in Go language, there are fixed length
+  *arrays*. However, arrays are not very commonly used.
   For most of the time, people use *slices*, which is a
-  sliced view of an underlying (often implicitly declared) array.
-- In go language, there are *maps*, which built-in support
-  of a hash map.
+  sliced view of an underlying array (often declared implicited).
+- In go language, there are *maps*, which are built-in support
+  for hash maps.
 - In go language, there could be multiple return values for a
   function.
+- Exceptions are called `panic` and `recover`. However it is
+  not encourage to use that for error handling.
 - *For* is the only loop keyword.
 - *Foreach* is implemented with *range* keyword.
 - Semicolons at the end of statements are optional.
