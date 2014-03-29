@@ -27,7 +27,7 @@ might help you bootstrap.
 
 - Code is organized in many *packages*.
 - Different from C/C++, when defining a *variable* or *constant*,
-  the *type* comes after the variable name.
+  the *type* of it is written after the variable name.
 - There are pointers in Go language, but there are no pointer
   arithmetics. For example, you cannot increase a pointer by 1,
   to point the next element in memory.
