@@ -1,5 +1,12 @@
 me = ""
 showing = ""
+lclock = 0
+
+seenClock = (c) ->
+    if c > lclock
+        lclock = c
+        console.log("lclock=" + lclock)
+    return
 
 listTribs = (data) ->
     ret = JSON.parse(data)
@@ -17,6 +24,7 @@ listTribs = (data) ->
     ul = $("<ul/>")
     ret.Tribs.reverse()
     for trib in ret.Tribs
+        seenClock(trib.Clock)
         li = $("<li/>")
         li.append('<span class="author"><a class="author" href="#">@' + 
             trib.User + '</a></span> ')
@@ -319,6 +327,7 @@ updateFollow = ->
         data: JSON.stringify({
             Who: me
             Whom: showing
+            Clock: lclock
         })
         success: _updateFollow
         cache: false

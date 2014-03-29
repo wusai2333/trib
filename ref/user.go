@@ -76,6 +76,7 @@ func (self *user) post(who, msg string, seq uint64, ts time.Time) {
 		User:    who,
 		Message: msg,
 		Time:    ts,
+		Clock:   seq,
 	}
 
 	// append a sequencial number, used in rebuilding subscribtion
