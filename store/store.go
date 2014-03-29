@@ -53,6 +53,15 @@ func (self *Storage) Clock(atLeast uint64, ret *uint64) error {
 	return nil
 }
 
+func (self *Storage) ClockRead(_ uint64, ret *uint64) error {
+	self.clockLock.Lock()
+	defer self.clockLock.Unlock()
+
+	*ret = self.clock
+
+	return nil
+}
+
 func (self *Storage) Get(key string, value *string) error {
 	self.strLock.Lock()
 	defer self.strLock.Unlock()

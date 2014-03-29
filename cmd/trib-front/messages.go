@@ -21,7 +21,7 @@ type Bool struct {
 
 type Clock struct {
 	Err string
-	N uint64
+	N   uint64
 }
 
 func NewTribList(tribs []*trib.Trib, e error) *TribList {
@@ -36,7 +36,7 @@ func NewBool(b bool, e error) *Bool {
 	return &Bool{errString(e), b}
 }
 
-func NewClock(c uint64, e error ) *Clock {
+func NewClock(c uint64, e error) *Clock {
 	return &Clock{errString(e), c}
 }
 
@@ -50,4 +50,3 @@ type Post struct {
 	Message string
 	Clock   uint64
 }
-

@@ -1,11 +1,8 @@
 package trib
 
-// A group of backend instances that serves as one logic backend
-type BackGroup []string
-
 // Frontend config
 type Front struct {
-	Backs []BackGroup // List of backend groups
+	Backs []string // List of backend addresses
 }
 
 // Backend config

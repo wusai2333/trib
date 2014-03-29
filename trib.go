@@ -10,6 +10,7 @@ const (
 	MaxUsernameLen = 15
 	MaxTribLen     = 140
 	MaxTribFetch   = 100
+	MinListUser    = 20
 )
 
 type Trib struct {

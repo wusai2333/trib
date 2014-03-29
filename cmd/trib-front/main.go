@@ -119,7 +119,7 @@ func handleApi(w http.ResponseWriter, r *http.Request) {
 	case "sync-clock":
 		c, e := server.SyncClock()
 		reply(NewClock(c, e))
-		
+
 	default:
 		w.WriteHeader(404)
 	}
