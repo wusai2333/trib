@@ -11,7 +11,7 @@ type Back struct {
 	Store Storage     // the underlying storage it should use
 	Ready chan<- bool // send a value when server is ready
 
-	// The following are peering parameters, used in Lab3 only
+	// The following are peering parameters, used in Lab2/3 only
 
 	// The address of this backend, empty string if have no peers
 	You string

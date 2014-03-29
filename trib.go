@@ -53,7 +53,7 @@ type Server interface {
 	// List the trib of someone's following users
 	Home(user string) ([]*Trib, error)
 
-	// Sync to roughly the latest clock in the world
+	// Sync to "roughly" the latest clock in the world
 	SyncClock() (uint64, error)
 }
 
