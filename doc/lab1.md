@@ -39,7 +39,7 @@ then by the `User` field, and finally by the `Message` fields.
 For most of the cases, `Clock` and `Time` would do the work.
 We call this *Tribble Order*.
 
-## Tribbler Service
+## Tribbler Service Interface
 
 The Tribbler service logic is all defined in `trib.Server` interface
 (in `trib/trib.go` file).
@@ -123,11 +123,77 @@ Returning a nil error means the the call is successfully
 executed; returning a error that is not nil means that
 the call might be executed or not.
 
-## Key-value Pair Service
+## Key-value Pair Service Interface
 
+Data structure and interfaces for the key-value pair service is defined
+in `trib/kv.go` file. The main interface is `trib.Storage` interface,
+which consists of three parts.
 
+First is the key-value pair part.
 
-## Entries
+```
+// Key-value pair interfaces
+// Default value for all keys is empty string
+type KeyString interface {
+	// Gets a value. Empty string by default.
+	Get(key string, value *string) error
+
+	// Set kv.Key to kv.Value. Set succ to true when no error.
+	Set(kv *KeyValue, succ *bool) error
+
+	// List all the keys of non-empty pairs where the key matches
+	// the given pattern.
+	Keys(p *Pattern, list *List) error
+}
+```
+
+`Pattern` is a prefix-suffix tuple. It has a `Match(string)` function
+that returns true when the string matches the pattern.
+
+Second is the key-string pair part.
+
+```
+// Key-list interfaces.
+// Default value for all lists is an empty list.
+// After the call, list.L should never by nil.
+type KeyList interface {
+	// Get the list.
+	ListGet(key string, list *List) error
+
+	// Append a string to the list, succ will always set to true.
+	ListAppend(kv *KeyValue, succ *bool) error
+
+	// Removes all elements that equals to kv.Value in list kv.Key
+	// n is set to the number of elements removed.
+	ListRemove(kv *KeyValue, n *int) error
+
+	// List all the keys of non-empty lists, where the key matches
+	// the given pattern.
+	ListKeys(p *Pattern, list *List) error
+}
+```
+
+And finally we put it together with an auto-incrementing clock service:
+
+```
+type Storage interface {
+	// Returns an auto-incrementing clock, the returned value
+	// will be no smaller than atLeast, and it will be
+	// strictly larger than the value returned last time,
+	// unless it was math.MaxUint64.
+	Clock(atLeast uint64, ret *uint64) error
+
+	KeyString
+	KeyList
+}
+```
+
+Note that the function signature of these methods are all RPC friendly.  Also,
+under the defintion of the execution logic, all the methods will always return
+nil error. This means all errors you see from this interface will be
+communication errors. 
+
+## Entry Functions
 
 These are the 3 entry functions you need to implement.
 
@@ -180,3 +246,101 @@ Note that the `trib.Store` interface is already in its "RPC friendly" form.
 
 Your RPC needs to use the default encoding `encoding/gob`, listen on the given
 address, and serve as an Http RPC server.
+
+## Testing
+
+Both the `trib` and `triblab` repository comes with a makefile with some handy
+command lines, and also some basic testing code.
+
+Under `trib` directory, if you type `make test`, you should see 
+that the tests runs and all passed.
+
+Under `triblab` directory, if you type `make test` however, you would see
+the test fails with a todo panic.
+
+Your first attempt should be implement the logic and try to pass those test
+cases. If you pass those, you should be fairly confident that you can
+get at least 30% of the credits for Lab1 (unless you are cheating in some way).
+
+However, the test that comes with the repository is very basic and simple.
+Though you don't have to, you should really write more test cases to make sure
+your implementation matches the specification.
+
+## Playing with It
+
+To run your own implementation, you could use the `trib-front` and `trib-back`
+launcher.
+
+First make sure you code compiles.
+
+Then run the back-end server.
+
+```
+$ trib-back
+```
+
+And you should see an address printing out, say it is `localhost:37021`.
+Note that you can also specify your own address via command line.
+The default is `localhost:rand`.
+
+Next for the front-end part.
+
+```
+$ trib-front -init -lab -back=localhost:37021
+```
+
+For the `-back` flag, please use the backend address that you just got
+from running `trib-back`.
+
+`-init` will populate the service with some sample data.
+`-lab` tells the front-end to connect to a back-end rather than running
+with the default reference implementation.
+
+Now you can open your browser, connect to the front-end machine
+and play with your own implementation.
+
+Note that, when you completes Lab1, it should be perfectly fine to have
+multiple front-ends that connects to a single back-end.
+
+## Performance Requirement
+
+When running on the lab machines, the tribbler front-end service should return
+every function call within 1 second.
+
+## Common Mistakes
+
+Here are some common mistakes that a lazy and quick
+but incorrect implementation might do:
+
+- **Read-modify-write**. For example, a tribbler might read a counter
+  from the key-value store, increase it by one
+  and then write it back (at the same key). 
+  This will introduce racing condition among the front-ends.
+- **Not handling errors**. A tribbler service call might require several
+  RPC calls to the backend. It is important to properly handle *any* error
+  returned by these calls.
+- **Sorting by the timestamps first**. Again, Tribble Order means that
+  the logic clock is the first field to consider. 
+- **Use the clock argument from the front-end for the clock
+  field of a new Tribble**. Well, technically, you can do that in your
+  code internally as long as you can satisfy the ordering requirements
+  speficied for `Home()` and `Tribs()` (you might find it very hard).
+  Nonetheless, intuitively, the clock argument tells the *oldest* tribble a
+  user have seen (which might be always 0), hence the new posted tribble seems
+  to better have a clock value that is larger than the old one.
+- **Generate the clock from the timestamp**. While 64-bit can cover a very
+  wide time range even in the unit of nanoseconds, you should keep in mind
+  that the front-ends are running on different servers with arbitrary physical
+  time differences, so it is not wise to generate the logical *clock* from the
+  physical *time*.
+- **Not handling old tribbles**. Note that only the most recent 100 tribbles
+  of a user matters. Not handling old tribbles might lead to worse and worse
+  performance over time and eventually break the performance promise.
+
+## Turn In
+
+First, make sure every piece of your code is commited into the repository in
+`triblab`. Then just type `make turnin` under the root of the repository.
+It will generate a turnin.zip that contains everything in you repo, and
+copy that out.
+

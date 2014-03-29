@@ -53,15 +53,6 @@ func (self *Storage) Clock(atLeast uint64, ret *uint64) error {
 	return nil
 }
 
-func (self *Storage) ClockRead(_ uint64, ret *uint64) error {
-	self.clockLock.Lock()
-	defer self.clockLock.Unlock()
-
-	*ret = self.clock
-
-	return nil
-}
-
 func (self *Storage) Get(key string, value *string) error {
 	self.strLock.Lock()
 	defer self.strLock.Unlock()
@@ -144,21 +135,6 @@ func (self *Storage) ListAppend(kv *trib.KeyValue, succ *bool) error {
 	lst.PushBack(kv.Value)
 
 	*succ = true
-	return nil
-}
-
-func (self *Storage) ListBack(key string, value *string) error {
-	self.listLock.Lock()
-	defer self.listLock.Unlock()
-
-	lst, found := self.lists[key]
-
-	if !found || lst.Len() == 0 {
-		*value = ""
-	} else {
-		*value = lst.Back().Value.(string)
-	}
-
 	return nil
 }
 

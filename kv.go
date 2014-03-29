@@ -32,7 +32,7 @@ type KeyString interface {
 	// Gets a value. Empty string by default.
 	Get(key string, value *string) error
 
-	// Set kv.Key to kv.Value
+	// Set kv.Key to kv.Value. Set succ to true when no error.
 	Set(kv *KeyValue, succ *bool) error
 
 	// List all the keys of non-empty pairs where the key matches
@@ -49,10 +49,6 @@ type KeyList interface {
 
 	// Append a string to the list, succ will always set to true.
 	ListAppend(kv *KeyValue, succ *bool) error
-
-	// Fetch the last string appended. Returns empty string
-	// when the list is empty.
-	ListBack(key string, value *string) error
 
 	// Removes all elements that equals to kv.Value in list kv.Key
 	// n is set to the number of elements removed.
