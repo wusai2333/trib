@@ -39,7 +39,7 @@ func CheckServerConcur(t *testing.T, server trib.Server) {
 
 	p := func(th, n int, done chan<- bool) {
 		for i := 0; i < n; i++ {
-			ne(server.Post("user", strconv.Itoa(th*100+n), tm))
+			ne(server.Post("user", strconv.Itoa(th*100+n), tm, 0))
 		}
 		done <- true
 	}

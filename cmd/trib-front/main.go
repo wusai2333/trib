@@ -113,7 +113,7 @@ func handleApi(w http.ResponseWriter, r *http.Request) {
 			reply(NewBool(false, e))
 			break
 		}
-		e = server.Post(p.Who, p.Message, time.Now())
+		e = server.Post(p.Who, p.Message, time.Now(), p.Clock)
 		reply(NewBool(e == nil, e))
 
 	default:
@@ -143,10 +143,10 @@ func populate(server trib.Server) {
 	ne(server.SignUp("fenglu"))
 	ne(server.SignUp("rkapoor"))
 
-	ne(server.Post("h8liu", "Hello, world.", time.Now()))
-	ne(server.Post("h8liu", "Just tribble it.", time.Now()))
-	ne(server.Post("fenglu", "Double tribble.", time.Now()))
-	ne(server.Post("rkapoor", "Triple tribble.", time.Now()))
+	ne(server.Post("h8liu", "Hello, world.", time.Now(), 0))
+	ne(server.Post("h8liu", "Just tribble it.", time.Now(), 0))
+	ne(server.Post("fenglu", "Double tribble.", time.Now(), 0))
+	ne(server.Post("rkapoor", "Triple tribble.", time.Now(), 0))
 
 	ne(server.Follow("fenglu", "h8liu"))
 	ne(server.Follow("fenglu", "rkapoor"))

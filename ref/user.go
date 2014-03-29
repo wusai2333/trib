@@ -70,7 +70,7 @@ func (self *user) listFollowing(who string) []string {
 	return ret
 }
 
-func (self *user) post(who, msg string, seq int, ts time.Time) {
+func (self *user) post(who, msg string, seq uint64, ts time.Time) {
 	// make the new trib
 	t := &trib.Trib{
 		User:    who,

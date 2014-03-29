@@ -39,4 +39,5 @@ type WhoWhom struct {
 type Post struct {
 	Who     string
 	Message string
+	Clock   uint64
 }

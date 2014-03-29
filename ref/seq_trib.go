@@ -5,7 +5,7 @@ import (
 )
 
 type seqTrib struct {
-	seq int
+	seq uint64
 	*trib.Trib
 }
 

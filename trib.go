@@ -16,17 +16,22 @@ type Trib struct {
 	User    string    // who posted this trib
 	Message string    // the content of the trib
 	Time    time.Time // the timestamp
+	Clock   uint64    // a logical clock, not used in lab1
 }
 
 type Server interface {
 	// Creates a user
 	SignUp(user string) error
 
-	// List all registered users
+	// List 20 registered users.  When there are less than 20 users that
+	// signed up the service, all of them needs to be listed.  When there
+	// are more than 20 users that signed up the service, an arbitrary set
+	// of at lest 20 of them needs to be listed.
 	ListUsers() ([]string, error)
 
-	// Post a trib
-	Post(who, post string, when time.Time) error
+	// Post a tribble.  The clock is the maximum clock value this user has
+	// seen so far by reading tribbles or clock sync.
+	Post(who, post string, when time.Time, clock uint64) error
 
 	// List the tribs that a particular user posted
 	// The result should be sorted in alphabetical order
@@ -36,7 +41,7 @@ type Server interface {
 	Follow(who, whom string) error
 
 	// Unfollow
-	Unfollow(who, whom string) error // unfollow someone
+	Unfollow(who, whom string) error
 
 	// Returns true when who following whom
 	IsFollowing(who, whom string) (bool, error)
@@ -46,8 +51,12 @@ type Server interface {
 
 	// List the trib of someone's following users
 	Home(user string) ([]*Trib, error)
+
+	// Sync to roughly the latest clock in the world
+	SyncClock() (uint64, error)
 }
 
+// Checks if a username is a valid one. Returns true if it is.
 func IsValidUsername(s string) bool {
 	if s == "" {
 		return false

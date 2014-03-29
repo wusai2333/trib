@@ -3,6 +3,7 @@ package ref
 
 import (
 	"fmt"
+	"math"
 	"sort"
 	"sync"
 	"time"
@@ -13,7 +14,7 @@ import (
 type Server struct {
 	users map[string]*user
 	lock  sync.Mutex
-	seq   int
+	seq   uint64
 }
 
 var _ trib.Server = new(Server)
@@ -156,7 +157,7 @@ func (self *Server) Following(who string) ([]string, error) {
 	return ret, nil
 }
 
-func (self *Server) Post(user, post string, t time.Time) error {
+func (self *Server) Post(user, post string, t time.Time, c uint64) error {
 	if len(post) > trib.MaxTribLen {
 		return fmt.Errorf("trib too long")
 	}
@@ -169,8 +170,15 @@ func (self *Server) Post(user, post string, t time.Time) error {
 		return e
 	}
 
-	u.post(user, post, self.seq, t)
+	if self.seq < c {
+		self.seq = c
+	}
 	self.seq++
+	if self.seq == math.MaxUint64 {
+		panic("run out of seq number")
+	}
+
+	u.post(user, post, self.seq, t)
 
 	return nil
 }
@@ -197,4 +205,11 @@ func (self *Server) Tribs(user string) ([]*trib.Trib, error) {
 	}
 
 	return u.listTribs(), nil
+}
+
+func (self *Server) SyncClock() (uint64, error) {
+	self.lock.Lock()
+	defer self.lock.Unlock()
+
+	return self.seq, nil
 }

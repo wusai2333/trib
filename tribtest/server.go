@@ -69,16 +69,21 @@ func CheckServer(t *testing.T, server trib.Server) {
 	ne(server.Follow("h8liu", "fenglu"))
 
 	tm := time.Now()
+	clk, e := server.SyncClock()
+	ne(e)
 
-	er(server.Post("", "", tm))
+	er(server.Post("", "", tm, clk))
 
 	longMsg := ""
 	for i := 0; i < 200; i++ {
 		longMsg += " "
 	}
 
-	er(server.Post("h8liu", longMsg, tm))
-	ne(server.Post("h8liu", "hello, world", tm))
+	er(server.Post("h8liu", longMsg, tm, clk))
+	ne(server.Post("h8liu", "hello, world", tm, clk))
+
+	clk, e = server.SyncClock()
+	ne(e)
 
 	tribs, e := server.Tribs("h8liu")
 	ne(e)
@@ -104,7 +109,7 @@ func CheckServer(t *testing.T, server trib.Server) {
 
 	tm2 := tm.Add(time.Second)
 
-	ne(server.Post("h8liu", "hello, world2", tm2))
+	ne(server.Post("h8liu", "hello, world2", tm2, clk))
 	tribs, e = server.Home("fenglu")
 	ne(e)
 	as(len(tribs) == 2)
