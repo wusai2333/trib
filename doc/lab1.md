@@ -25,7 +25,7 @@ type Trib struct {
     User    string    // who posted this trib
     Message string    // the content of the trib
     Time    time.Time // the timestamp
-    Clock   uint64    // a logical clock, not used in lab1
+    Clock   uint64    // a logical clock
 }
 ```
 
@@ -271,6 +271,8 @@ that one front-end might be taking multiple concurrent requests from
 the Web, and there might be multiple front-ends talking to the same
 back-end, so make sure it handles all the concurrency issues
 correctly.
+
+In Lab1, `backs` will always contain only one address.
 
 ## RPC
 

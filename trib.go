@@ -17,8 +17,8 @@ const (
 type Trib struct {
 	User    string    // who posted this trib
 	Message string    // the content of the trib
-	Time    time.Time // the timestamp
-	Clock   uint64    // a logical clock, not used in lab1
+	Time    time.Time // the physical timestamp
+	Clock   uint64    // the logical timestamp
 }
 
 type Server interface {
