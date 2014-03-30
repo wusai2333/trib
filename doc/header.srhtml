@@ -1,6 +1,10 @@
 <%= pagetop("CSE 223B Labs") %>
 
 <style type="text/css">
+    div.labbody {
+        max-width: 900px;
+    }
+
     ul.labs {
         font-family: Arial, Helvetica, sans-serif;
         font-size: 120%;
@@ -63,3 +67,4 @@
     <!-- <a href="lab3.html">Lab 3</a> -->
 </ul>
 
+<div class="labbody">

@@ -25,8 +25,8 @@ and <code>NewFront()</code>. Now, they are all placeheld with <code>panic("todo"
 <pre><code>type Trib struct {
     User    string    // who posted this trib
     Message string    // the content of the trib
-    Time    time.Time // the timestamp
-    Clock   uint64    // a logical clock
+    Time    time.Time // the physical timestamp
+    Clock   uint64    // the logical clock
 }
 </code></pre>
 
@@ -278,11 +278,11 @@ the given address, and serve as an http RPC server.</p>
 <p>Both the <code>trib</code> and <code>triblab</code> repository comes with a makefile with
 some handy command lines, and also some basic testing code.</p>
 
-<p>Under <code>trib</code> directory, if you type <code>make test</code>, you should see that
-the tests runs and all passed.</p>
+<p>Under the <code>trib</code> directory, if you type <code>make test</code>, you should see
+that the tests runs and all passed.</p>
 
-<p>Under <code>triblab</code> directory, if you type <code>make test</code> however, you would
-see the test fails with a todo panic.</p>
+<p>Under the <code>triblab</code> directory, if you type <code>make test</code> however, you
+would see the test fails with a todo panic.</p>
 
 <p>Your first attempt should be implement the logic and try to pass those
 test cases. If you pass those, you should be fairly confident that you
@@ -292,6 +292,9 @@ in some way).</p>
 <p>However, the test that comes with the repository is very basic and
 simple.  Though you don't have to, you should really write more test
 cases to make sure your implementation matches the specification.</p>
+
+<p>For more information on writing test cases in Go language, see the
+<a href="http://golang.org/pkg/testing/">testing</a> package document page.</p>
 
 <h2>
 <a name="playing-with-it" class="anchor" href="#playing-with-it"><span class="octicon octicon-link"></span></a>Playing with It</h2>

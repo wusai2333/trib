@@ -1,6 +1,10 @@
 <%= pagetop("CSE 223B Labs") %>
 
 <style type="text/css">
+    div.labbody {
+        max-width: 900px;
+    }
+
     ul.labs {
         font-family: Arial, Helvetica, sans-serif;
         font-size: 120%;
@@ -63,6 +67,7 @@
     <!-- <a href="lab3.html">Lab 3</a> -->
 </ul>
 
+<div class="labbody">
 <h2>
 <a name="machines" class="anchor" href="#machines"><span class="octicon octicon-link"></span></a>Machines</h2>
 
@@ -281,4 +286,5 @@ to install other utility packages, ask the TA.</p>
 <a name="ready" class="anchor" href="#ready"><span class="octicon octicon-link"></span></a>Ready?</h2>
 
 <p>If you still feel comfortable with the setup,
-go forward and read <a href="./lab1.html">Lab1</a>.</p><%= pagebottom() %>
+go forward and read <a href="./lab1.html">Lab1</a>.</p></div>
+<%= pagebottom() %>

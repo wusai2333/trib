@@ -24,8 +24,8 @@ A Tribble is a structure type that has 4 fields:
 type Trib struct {
     User    string    // who posted this trib
     Message string    // the content of the trib
-    Time    time.Time // the timestamp
-    Clock   uint64    // a logical clock
+    Time    time.Time // the physical timestamp
+    Clock   uint64    // the logical clock
 }
 ```
 
@@ -289,11 +289,11 @@ the given address, and serve as an http RPC server.
 Both the `trib` and `triblab` repository comes with a makefile with
 some handy command lines, and also some basic testing code.
 
-Under `trib` directory, if you type `make test`, you should see that
-the tests runs and all passed.
+Under the `trib` directory, if you type `make test`, you should see
+that the tests runs and all passed.
 
-Under `triblab` directory, if you type `make test` however, you would
-see the test fails with a todo panic.
+Under the `triblab` directory, if you type `make test` however, you
+would see the test fails with a todo panic.
 
 Your first attempt should be implement the logic and try to pass those
 test cases. If you pass those, you should be fairly confident that you
@@ -303,6 +303,9 @@ in some way).
 However, the test that comes with the repository is very basic and
 simple.  Though you don't have to, you should really write more test
 cases to make sure your implementation matches the specification.
+
+For more information on writing test cases in Go language, see the
+[testing](http://golang.org/pkg/testing/) package document page.
 
 ## Playing with It
 
