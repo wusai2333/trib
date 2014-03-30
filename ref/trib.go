@@ -108,8 +108,16 @@ func (self *Server) Follow(who, whom string) error {
 		return e
 	}
 
-	if uwho.isFollowing(whom) {
-		return fmt.Errorf("user %q is already following %q", who, whom)
+	following := uwho.listFollowing()
+	for _, u := range following {
+		if u != whom {
+			continue
+		}
+		return fmt.Errorf("user %q already following %q", who, whom)
+	}
+
+	if len(following) >= trib.MaxFollowing {
+		return fmt.Errorf("user %q is following too many users")
 	}
 
 	uwho.follow(whom, uwhom)
@@ -153,7 +161,7 @@ func (self *Server) Following(who string) ([]string, error) {
 		return nil, e
 	}
 
-	ret := uwho.listFollowing(who)
+	ret := uwho.listFollowing()
 	return ret, nil
 }
 

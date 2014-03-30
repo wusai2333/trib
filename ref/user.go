@@ -62,7 +62,7 @@ func (self *user) removeFollower(who string) {
 	delete(self.followers, who)
 }
 
-func (self *user) listFollowing(who string) []string {
+func (self *user) listFollowing() []string {
 	ret := make([]string, 0, len(self.following))
 	for u := range self.following {
 		ret = append(ret, u)
