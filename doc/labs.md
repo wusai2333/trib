@@ -89,10 +89,15 @@ $ git clone /classes/cse223b/sp14/labs/trib -b lab1 --depth=1
 $ git clone /classes/cse223b/sp14/labs/triblab -b lab1 --depth=1
 $ export GOPATH=~/gopath
 $ go install ./...
+```
+
+Do some basic testing see if the framework is in good shape:
+
+```
 $ go test ./trib/...
 ```
 
-The basic Tribbler service should be already installed on
+Now The basic Tribbler service should be already installed on
 the system in your home directory. Let's give it a try:
 
 ```
