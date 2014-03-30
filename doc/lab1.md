@@ -371,7 +371,7 @@ but incorrect implementation might do:
   with arbitrary physical time differences, so it is not wise to
   generate the logical *clock* from the physical *time*.
 - **Not handling old tribbles**. Note that only the most recent 100
-  tribbles of a user matters. Not handling old tribbles might lead to
+  tribbles of a user matter. Not handling old tribbles might lead to
   worse and worse performance over time and eventually break the
   performance promise.
 
