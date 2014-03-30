@@ -16,9 +16,10 @@ all of the lab assignements.
 ## Programming Language
 
 You will write the labs in Google's [golang](http://golang.org).  It
-is a young language at somewhere between C/C++ and Python. It comes
-with a very rich standard library, and also language-level support for
-light-weight concurrent semantics like *go routines* and *channels*.
+is a young language with a language syntax at somewhere between C/C++
+and Python. It comes with a very rich standard library, and also
+language-level support for light-weight concurrent semantics like *go
+routines* and *channels*.
 
 Here is some key documentation on the language:
 
@@ -43,7 +44,7 @@ already, here are some hints that might help you bootstrap.
 - In go language, *maps* are built-in hash-based dictionaries.
 - In go language, a function can have multiple return values.
 - Exceptions are called `panic` and `recover`. However it is not
-  encourage to use that for error handling.
+  encouraged to use that for error handling.
 - `for` is the only loop keyword.
 - *Foreach* is implemented with `range` keyword.
 - Semicolons at the end of statements are optional.
@@ -66,20 +67,19 @@ already, here are some hints that might help you bootstrap.
 
 ## The Tribbler Story
 
-Believe it or not, here is the story: some cowboy programmer in the
-wild wrote a simple online microblogging service called Tribbler, and
-leveraging the power of the Web, it becomes quite popular. However,
-the program is written as a single process program, hence it does
-not scale, cannot support many concurrent connections, and is not
-fault-tolerant. Knowing that you are taking the distributed computing
-system course at UCSD, he asks you to help him. You answered his call:
-your goal is to refactor the program into a distributed system, make
-it robust and scalable.
+Believe it or not, here is the story: some cowboy programmer wrote a
+simple online microblogging service called Tribbler, and leveraging
+the Web, it becomes quite popular. However, the program runs as a
+single process, hence it does not scale, cannot support many
+concurrent connections, and is not fault-tolerant.  Knowing that you
+are taking the distributed computing system course at UCSD, he asks
+you to help him. You answered his call: your goal is to refactor 
+Tribbler into a distributed system, make it robust and scalable.
 
 ## Getting Started
 
 The Tribbler project is written in golang and stored in a git
-repository now. To get start, run these commands in command line:
+repository now. To get started, run these commands in command line:
 
 ```
 $ cd                       # go to your home directory
@@ -118,7 +118,7 @@ webserver then in turn calls the Tribbler logic functions implemented
 by the cowboy and returns the results back to the Web page in the
 browser.
 
-You might find difficulty accessing the lab machines outside UCSD
+You might find it difficult to access the lab machines outside UCSD
 campus. For that, you need to setup a UCSD VPN or ssh tunnel.
 
 ## Source Code Organization
@@ -159,9 +159,9 @@ reported it, you might get some bonus credit.
 Your job is to complete the implementation of the `triblab` package in
 the second repo that we checked out.
 
-You should always write commit your code into the `triblab` repo, and
-that will be the repo and the only repo that you will submit for
-grading.  
+It would be a good practice for you to periodically commit your code
+into your `triblab` git repo. Only files in that repo will be
+submitted for grading.  
 
 ## Lab Roadmap
 

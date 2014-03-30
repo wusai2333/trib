@@ -88,9 +88,10 @@ all of the lab assignements.</p>
 <a name="programming-language" class="anchor" href="#programming-language"><span class="octicon octicon-link"></span></a>Programming Language</h2>
 
 <p>You will write the labs in Google's <a href="http://golang.org">golang</a>.  It
-is a young language at somewhere between C/C++ and Python. It comes
-with a very rich standard library, and also language-level support for
-light-weight concurrent semantics like <em>go routines</em> and <em>channels</em>.</p>
+is a young language with a language syntax at somewhere between C/C++
+and Python. It comes with a very rich standard library, and also
+language-level support for light-weight concurrent semantics like <em>go
+routines</em> and <em>channels</em>.</p>
 
 <p>Here is some key documentation on the language:</p>
 
@@ -116,7 +117,7 @@ people use <em>slices</em>, which is a sliced view of an underlying array
 <li>In go language, <em>maps</em> are built-in hash-based dictionaries.</li>
 <li>In go language, a function can have multiple return values.</li>
 <li>Exceptions are called <code>panic</code> and <code>recover</code>. However it is not
-encourage to use that for error handling.</li>
+encouraged to use that for error handling.</li>
 <li>
 <code>for</code> is the only loop keyword.</li>
 <li>
@@ -141,21 +142,20 @@ imports.</li>
 </ul><h2>
 <a name="the-tribbler-story" class="anchor" href="#the-tribbler-story"><span class="octicon octicon-link"></span></a>The Tribbler Story</h2>
 
-<p>Believe it or not, here is the story: some cowboy programmer in the
-wild wrote a simple online microblogging service called Tribbler, and
-leveraging the power of the Web, it becomes quite popular. However,
-the program is written as a single process program, hence it does
-not scale, cannot support many concurrent connections, and is not
-fault-tolerant. Knowing that you are taking the distributed computing
-system course at UCSD, he asks you to help him. You answered his call:
-your goal is to refactor the program into a distributed system, make
-it robust and scalable.</p>
+<p>Believe it or not, here is the story: some cowboy programmer wrote a
+simple online microblogging service called Tribbler, and leveraging
+the Web, it becomes quite popular. However, the program runs as a
+single process, hence it does not scale, cannot support many
+concurrent connections, and is not fault-tolerant.  Knowing that you
+are taking the distributed computing system course at UCSD, he asks
+you to help him. You answered his call: your goal is to refactor 
+Tribbler into a distributed system, make it robust and scalable.</p>
 
 <h2>
 <a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
 
 <p>The Tribbler project is written in golang and stored in a git
-repository now. To get start, run these commands in command line:</p>
+repository now. To get started, run these commands in command line:</p>
 
 <pre><code>$ cd                       # go to your home directory
 $ mkdir -p gopath/src      # the path you use for storing golang src
@@ -191,7 +191,7 @@ webserver then in turn calls the Tribbler logic functions implemented
 by the cowboy and returns the results back to the Web page in the
 browser.</p>
 
-<p>You might find difficulty accessing the lab machines outside UCSD
+<p>You might find it difficult to access the lab machines outside UCSD
 campus. For that, you need to setup a UCSD VPN or ssh tunnel.</p>
 
 <h2>
@@ -243,9 +243,9 @@ reported it, you might get some bonus credit.</p>
 <p>Your job is to complete the implementation of the <code>triblab</code> package in
 the second repo that we checked out.</p>
 
-<p>You should always write commit your code into the <code>triblab</code> repo, and
-that will be the repo and the only repo that you will submit for
-grading.  </p>
+<p>It would be a good practice for you to periodically commit your code
+into your <code>triblab</code> git repo. Only files in that repo will be
+submitted for grading.  </p>
 
 <h2>
 <a name="lab-roadmap" class="anchor" href="#lab-roadmap"><span class="octicon octicon-link"></span></a>Lab Roadmap</h2>
