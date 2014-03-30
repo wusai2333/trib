@@ -106,6 +106,9 @@ himself. When calling with <code>who</code> equals to <code>whom</code>, the fun
 return error. When the user does not exist, the functions return
 error.</p>
 
+<p>A user can follow at most <code>trib.MaxFollowing=2000</code> users. Returns
+error when trying to follow more than that.</p>
+
 <hr><pre><code>Home(user string) ([]*Trib, error)
 </code></pre>
 
