@@ -475,8 +475,8 @@ performance promise.</li>
 <p>First, make sure every piece of your code is commited into the
 repository in <code>triblab</code>. Then just type <code>make turnin</code> under the root
 of the repository.  It will generate a <code>turnin.zip</code> that contains
-everything in you git repository, and copy that to a place where
-only the lab instructors can read.</p>
+everything in your git repository, and then copy the zip file to a
+place where only the lab instructors can read.</p>
 
 <h2>
 <a name="happy-lab1" class="anchor" href="#happy-lab1"><span class="octicon octicon-link"></span></a>Happy Lab1!</h2>
