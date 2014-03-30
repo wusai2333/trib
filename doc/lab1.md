@@ -1,20 +1,20 @@
 ## Lab1
 
-Welcome to Lab1. The goal of this lab is to split the logic into a
-stateless scalable front-end and a key-value pair backend. In
+Welcome to Lab1. The goal of this lab is to split the logic into
+stateless scalable front-ends and a key-value pair backend. In
 particular, you need to:
 
 1. Implement a key-value storage server type that fits `trib.Store`
 interface and takes http RPC requests from the network.
 2. Implement a key-value storage client type that fits `trib.Store`
-interface that calls a remote RPC key-value pair server.
+interface and RPCs a remote key-value pair server.
 3. Implement a stateless Tribbler front-end type that fits
 `trib.Server` interface that calls a remote RPC key-value pair
 back-end server.
 
 More specifically, you need to implement three entry functions that
 are defined in `triblab/entries.go` file: `ServeBack()`, `NewClient()`
-and `NewFront()`. Now, they are all placeheld with `panic("todo")`.
+and `NewFront()`. Now, they are all placeheld by `panic("todo")`.
 
 ## Tribble
 
@@ -30,9 +30,12 @@ type Trib struct {
 ```
 
 `Time` is what the front-end claims when this tribble is created,
-by reading its own physical time clock on that machine.  However, to
-sort tribbles in a globally consistent and reasonable order, Tribbler
-service maintains a distributed logical `Clock` in `uint64`.
+by reading the front-end's own physical time clock on the machine when
+`Post()` is called. However, to sort tribbles in a globally 
+consistent and reasonable order, this timestamp cannot be used
+because different front-ends have different physical time readings.
+Tribbler service maintains a distributed logical `Clock` in `uint64`
+for sorting.
 
 When sorting many tribbles into a single timeline, you should sort by
 the fields following this priroty:
@@ -72,11 +75,14 @@ Concurrent sign-ups might both succeed.
 ListUsers() ([]string, error)
 ```
 
-List `trib.MinListUser = 20` registered users.  When there are less
-than 20 users that have ever signed up, list all of them. This is just
-for showing some users on the front page. This is not for listing all
-the users that signed up, because that would be too expensive. It
-should not show any user twice though.
+Lists `trib.MinListUser = 20` different registered users.  
+When there are less
+than 20 users that have ever signed up, list all of them. 
+
+This is for showing some users on the front page. 
+This is not for listing all
+the users that have ever signed up, 
+because that would be too expensive. 
 
 ***
 
@@ -84,7 +90,7 @@ should not show any user twice though.
 Post(who, post string, clock uint64) error
 ```
 
-Post a tribble. `clock` is the maximum clock value this user client
+Posts a tribble. `clock` is the maximum clock value this user client
 has ever seen so far by reading tribbles (via `Home()` and `Tribs()`).
 It returns error when the user does not exist or the post is too long
 (longer than `trib.MaxTribLen=140`).
@@ -95,7 +101,7 @@ It returns error when the user does not exist or the post is too long
 Tribs(user string) ([]*Trib, error)
 ```
 
-List the recent `trib.MaxTribFetch=100` tribbles that a user posted.
+Lists the recent `trib.MaxTribFetch=100` tribbles that a user posted.
 Tribbles needs to be sorted in Tribble Order. Also, it should make
 sure that the order is the same order that the user posted the
 tribbles.
@@ -214,12 +220,19 @@ type Storage interface {
 ```
 
 Note that the function signature of these methods are all RPC
-friendly.  Also, under the defintion of the execution logic, all the
-methods will always return nil error. This means all errors you see
+friendly. You should directly implement the 
+RPC inteface with Go language's RPC package.
+By doign this, another person's client that talks the same interface 
+will be able to talk to your server as well.
+
+Under the defintion of the execution logic, all the
+methods will always return nil error. Hence all errors you see
 from this interface will be communication errors. You can assume that
-each call is an atomic transaction.  However, when an error occurs,
-the caller does not know if the error occurs before the transaction or
-after.
+each call (on the same key) is an atomic transaction; two
+concurrent writes won't give the key a weird value out of nowhere. 
+However, when an error occurs, the caller won't know
+if the transaction is commited or not, because the error might occur 
+before or after the transaction.
 
 ## Entry Functions
 
@@ -346,10 +359,16 @@ play with your own implementation.
 Note that, when you completes Lab1, it should be perfectly fine to
 have multiple front-ends that connects to a single back-end.
 
-## Performance Requirement
+## Requirements
 
-When running on the lab machines, the tribbler front-end service
-should return every function call within 1 second.
+- When the network and the storage is errorless, RPC to your back-end
+  should not return any error, and valid function calls to the Tribbler
+  front-end service should not any error.
+- When the network or storage has error on the back-end (which you 
+  might not tell the difference), the front-end should handle them 
+  correctly. The system should always be kept in a consistent state.
+- When running on the lab machines, every function call 
+  to the Tribbler front-end service should return within 1 second.
 
 ## Common Mistakes
 
@@ -364,7 +383,7 @@ but incorrect implementation might do:
   several RPC calls to the backend. It is important to properly handle
   *any* error returned by these calls.
 - **Sorting by the timestamps first**. Again, Tribble Order means that
-  the logic clock is the first field to consider. 
+  the logic clock is the first field to consider on sorting. 
 - **Use the clock argument from the front-end for the clock field of a
   new Tribble**. Well, technically, you can do that in your code
   internally as long as you can satisfy the ordering requirements
@@ -389,6 +408,6 @@ First, make sure every piece of your code is commited into the
 repository in `triblab`. Then just type `make turnin` under the root
 of the repository.  It will generate a `turnin.zip` that contains
 everything in you git repository, and copy that to a place where
-only the TA can read.
+only the lab instructors can read.
 
 ## Happy Lab1!

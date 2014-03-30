@@ -1,21 +1,21 @@
 <h2>
 <a name="lab1" class="anchor" href="#lab1"><span class="octicon octicon-link"></span></a>Lab1</h2>
 
-<p>Welcome to Lab1. The goal of this lab is to split the logic into a
-stateless scalable front-end and a key-value pair backend. In
+<p>Welcome to Lab1. The goal of this lab is to split the logic into
+stateless scalable front-ends and a key-value pair backend. In
 particular, you need to:</p>
 
 <ol>
 <li>Implement a key-value storage server type that fits <code>trib.Store</code>
 interface and takes http RPC requests from the network.</li>
 <li>Implement a key-value storage client type that fits <code>trib.Store</code>
-interface that calls a remote RPC key-value pair server.</li>
+interface and RPCs a remote key-value pair server.</li>
 <li>Implement a stateless Tribbler front-end type that fits
 <code>trib.Server</code> interface that calls a remote RPC key-value pair
 back-end server.</li>
 </ol><p>More specifically, you need to implement three entry functions that
 are defined in <code>triblab/entries.go</code> file: <code>ServeBack()</code>, <code>NewClient()</code>
-and <code>NewFront()</code>. Now, they are all placeheld with <code>panic("todo")</code>.</p>
+and <code>NewFront()</code>. Now, they are all placeheld by <code>panic("todo")</code>.</p>
 
 <h2>
 <a name="tribble" class="anchor" href="#tribble"><span class="octicon octicon-link"></span></a>Tribble</h2>
@@ -31,9 +31,12 @@ and <code>NewFront()</code>. Now, they are all placeheld with <code>panic("todo"
 </code></pre>
 
 <p><code>Time</code> is what the front-end claims when this tribble is created,
-by reading its own physical time clock on that machine.  However, to
-sort tribbles in a globally consistent and reasonable order, Tribbler
-service maintains a distributed logical <code>Clock</code> in <code>uint64</code>.</p>
+by reading the front-end's own physical time clock on the machine when
+<code>Post()</code> is called. However, to sort tribbles in a globally 
+consistent and reasonable order, this timestamp cannot be used
+because different front-ends have different physical time readings.
+Tribbler service maintains a distributed logical <code>Clock</code> in <code>uint64</code>
+for sorting.</p>
 
 <p>When sorting many tribbles into a single timeline, you should sort by
 the fields following this priroty:</p>
@@ -72,16 +75,19 @@ Concurrent sign-ups might both succeed.</p>
 <hr><pre><code>ListUsers() ([]string, error)
 </code></pre>
 
-<p>List <code>trib.MinListUser = 20</code> registered users.  When there are less
-than 20 users that have ever signed up, list all of them. This is just
-for showing some users on the front page. This is not for listing all
-the users that signed up, because that would be too expensive. It
-should not show any user twice though.</p>
+<p>Lists <code>trib.MinListUser = 20</code> different registered users.<br>
+When there are less
+than 20 users that have ever signed up, list all of them. </p>
+
+<p>This is for showing some users on the front page. 
+This is not for listing all
+the users that have ever signed up, 
+because that would be too expensive. </p>
 
 <hr><pre><code>Post(who, post string, clock uint64) error
 </code></pre>
 
-<p>Post a tribble. <code>clock</code> is the maximum clock value this user client
+<p>Posts a tribble. <code>clock</code> is the maximum clock value this user client
 has ever seen so far by reading tribbles (via <code>Home()</code> and <code>Tribs()</code>).
 It returns error when the user does not exist or the post is too long
 (longer than <code>trib.MaxTribLen=140</code>).</p>
@@ -89,7 +95,7 @@ It returns error when the user does not exist or the post is too long
 <hr><pre><code>Tribs(user string) ([]*Trib, error)
 </code></pre>
 
-<p>List the recent <code>trib.MaxTribFetch=100</code> tribbles that a user posted.
+<p>Lists the recent <code>trib.MaxTribFetch=100</code> tribbles that a user posted.
 Tribbles needs to be sorted in Tribble Order. Also, it should make
 sure that the order is the same order that the user posted the
 tribbles.</p>
@@ -199,12 +205,19 @@ type KeyList interface {
 </code></pre>
 
 <p>Note that the function signature of these methods are all RPC
-friendly.  Also, under the defintion of the execution logic, all the
-methods will always return nil error. This means all errors you see
+friendly. You should directly implement the 
+RPC inteface with Go language's RPC package.
+By doign this, another person's client that talks the same interface 
+will be able to talk to your server as well.</p>
+
+<p>Under the defintion of the execution logic, all the
+methods will always return nil error. Hence all errors you see
 from this interface will be communication errors. You can assume that
-each call is an atomic transaction.  However, when an error occurs,
-the caller does not know if the error occurs before the transaction or
-after.</p>
+each call (on the same key) is an atomic transaction; two
+concurrent writes won't give the key a weird value out of nowhere. 
+However, when an error occurs, the caller won't know
+if the transaction is commited or not, because the error might occur 
+before or after the transaction.</p>
 
 <h2>
 <a name="entry-functions" class="anchor" href="#entry-functions"><span class="octicon octicon-link"></span></a>Entry Functions</h2>
@@ -335,12 +348,18 @@ play with your own implementation.</p>
 have multiple front-ends that connects to a single back-end.</p>
 
 <h2>
-<a name="performance-requirement" class="anchor" href="#performance-requirement"><span class="octicon octicon-link"></span></a>Performance Requirement</h2>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
 
-<p>When running on the lab machines, the tribbler front-end service
-should return every function call within 1 second.</p>
-
-<h2>
+<ul>
+<li>When the network and the storage is errorless, RPC to your back-end
+should not return any error, and valid function calls to the Tribbler
+front-end service should not any error.</li>
+<li>When the network or storage has error on the back-end (which you 
+might not tell the difference), the front-end should handle them 
+correctly. The system should always be kept in a consistent state.</li>
+<li>When running on the lab machines, every function call 
+to the Tribbler front-end service should return within 1 second.</li>
+</ul><h2>
 <a name="common-mistakes" class="anchor" href="#common-mistakes"><span class="octicon octicon-link"></span></a>Common Mistakes</h2>
 
 <p>Here are some common mistakes that a lazy and quick
@@ -358,7 +377,7 @@ several RPC calls to the backend. It is important to properly handle
 <em>any</em> error returned by these calls.</li>
 <li>
 <strong>Sorting by the timestamps first</strong>. Again, Tribble Order means that
-the logic clock is the first field to consider. </li>
+the logic clock is the first field to consider on sorting. </li>
 <li>
 <strong>Use the clock argument from the front-end for the clock field of a
 new Tribble</strong>. Well, technically, you can do that in your code
@@ -386,7 +405,7 @@ performance promise.</li>
 repository in <code>triblab</code>. Then just type <code>make turnin</code> under the root
 of the repository.  It will generate a <code>turnin.zip</code> that contains
 everything in you git repository, and copy that to a place where
-only the TA can read.</p>
+only the lab instructors can read.</p>
 
 <h2>
 <a name="happy-lab1" class="anchor" href="#happy-lab1"><span class="octicon octicon-link"></span></a>Happy Lab1!</h2>
