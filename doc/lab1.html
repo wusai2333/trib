@@ -1,25 +1,26 @@
 <h2>
 <a name="lab1" class="anchor" href="#lab1"><span class="octicon octicon-link"></span></a>Lab1</h2>
 
-<p>Welcome to Lab1. The goal of this lab is to split the logic into a stateless
-scalable front-end and a key-value pair backend. In particular, you need
-to:</p>
+<p>Welcome to Lab1. The goal of this lab is to split the logic into a
+stateless scalable front-end and a key-value pair backend. In
+particular, you need to:</p>
 
 <ol>
-<li>Implement a key-value storage server type that fits <code>trib.Store</code> interface
-and takes http RPC requests from the network.</li>
-<li>Implement a key-value storage client type that fits <code>trib.Store</code> interface
-that calls a remote RPC key-value pair server.</li>
-<li>Implement a stateless Tribbler front-end type that fits <code>trib.Server</code> interface
-that calls a remote RPC key-value pair back-end server.</li>
-</ol><p>More specifically, you need to implement three entry functions that are
-defined in <code>triblab/entries.go</code> file: <code>ServeBack()</code>, <code>NewClient()</code> and
-<code>NewFront()</code>. They are now filled with <code>panic("todo")</code>.</p>
+<li>Implement a key-value storage server type that fits <code>trib.Store</code>
+interface and takes http RPC requests from the network.</li>
+<li>Implement a key-value storage client type that fits <code>trib.Store</code>
+interface that calls a remote RPC key-value pair server.</li>
+<li>Implement a stateless Tribbler front-end type that fits
+<code>trib.Server</code> interface that calls a remote RPC key-value pair
+back-end server.</li>
+</ol><p>More specifically, you need to implement three entry functions that
+are defined in <code>triblab/entries.go</code> file: <code>ServeBack()</code>, <code>NewClient()</code>
+and <code>NewFront()</code>. Now, they are all placeheld with <code>panic("todo")</code>.</p>
 
 <h2>
 <a name="tribble" class="anchor" href="#tribble"><span class="octicon octicon-link"></span></a>Tribble</h2>
 
-<p>A Tribble is a structure that has 4 fields:</p>
+<p>A Tribble is a structure type that has 4 fields:</p>
 
 <pre><code>type Trib struct {
     User    string    // who posted this trib
@@ -29,19 +30,24 @@ defined in <code>triblab/entries.go</code> file: <code>ServeBack()</code>, <code
 }
 </code></pre>
 
-<p><code>Time</code> is what the front-end claims when
-this tribble is created. However, to sort
-tribbles in a globally consistent and reasonable order,
-Tribbler service maintains a distributed logical <code>Clock</code> in <code>uint64</code>.</p>
+<p><code>Time</code> is what the front-end claims when this tribble is created,
+by reading its own physical time clock on that machine.  However, to
+sort tribbles in a globally consistent and reasonable order, Tribbler
+service maintains a distributed logical <code>Clock</code> in <code>uint64</code>.</p>
 
-<p>When sorting tribbles into a timeline, you should follow this field priroty:</p>
+<p>When sorting many tribbles into a single timeline, you should sort by
+the fields following this priroty:</p>
 
 <ol>
-<li><code>Clock</code></li>
-<li><code>Time</code></li>
-<li><code>User</code></li>
-<li><code>Message</code></li>
-</ol><p>We call this <em>Tribble Order</em>.</p>
+<li>
+<code>Clock</code> The logical timestamp.</li>
+<li>
+<code>Time</code> The physical timestamp.</li>
+<li>
+<code>User</code> The user id</li>
+<li>
+<code>Message</code> The message content.</li>
+</ol><p>We call this the <em>Tribble Order</em>.</p>
 
 <h2>
 <a name="tribbler-service-interface" class="anchor" href="#tribbler-service-interface"><span class="octicon octicon-link"></span></a>Tribbler Service Interface</h2>
@@ -52,41 +58,41 @@ Tribbler service maintains a distributed logical <code>Clock</code> in <code>uin
 <hr><pre><code>SignUp(user string) error
 </code></pre>
 
-<p>Creates a new user. After a user is created, it will always be there.
-A user name must be no longer than <code>trib.MaxUsernameLen = 15</code>
-characters but non-empty, must start with a lower-case letter,
-and can only contain lower-case letters or numbers.</p>
+<p>Creates a new user. After a user is created, it will always exist.  A
+user name must be no longer than <code>trib.MaxUsernameLen=15</code> characters
+but not empty, must start with a lower-case letter, and can only
+contain lower-case letters or numbers.</p>
 
-<p>There is a helper function called <code>trib.IsValidUsername(string)</code>
-which you can use to check if a username is valid.</p>
+<p>There is a helper function called <code>trib.IsValidUsername(string)</code> which
+you can use to check if a username is valid.</p>
 
-<p>Returns error when the user already exists. Concurrent sign-ups might
-both succeed.</p>
+<p>Returns error when the username is invalid or the user already exists.
+Concurrent sign-ups might both succeed.</p>
 
 <hr><pre><code>ListUsers() ([]string, error)
 </code></pre>
 
-<p>List <code>trib.MinListUser = 20</code> registered users.  When there are less than 20
-users that have ever signed up, list all of them. This is just for showing some
-users on the front page. This is not for listing all the users that signed up,
-because that would be too expensive.</p>
+<p>List <code>trib.MinListUser = 20</code> registered users.  When there are less
+than 20 users that have ever signed up, list all of them. This is just
+for showing some users on the front page. This is not for listing all
+the users that signed up, because that would be too expensive. It
+should not show any user twice though.</p>
 
 <hr><pre><code>Post(who, post string, clock uint64) error
 </code></pre>
 
-<p>Post a tribble. <code>clock</code> is the maximum clock value this user
-has ever seen so far by reading tribbles
-(via <code>Home()</code> and <code>Tribs()</code>).
-It returns error when the user does not exist or the post
-is too long (longer than <code>trib.MaxTribLen = 140</code>).</p>
+<p>Post a tribble. <code>clock</code> is the maximum clock value this user client
+has ever seen so far by reading tribbles (via <code>Home()</code> and <code>Tribs()</code>).
+It returns error when the user does not exist or the post is too long
+(longer than <code>trib.MaxTribLen=140</code>).</p>
 
 <hr><pre><code>Tribs(user string) ([]*Trib, error)
 </code></pre>
 
-<p>List the recent <code>trib.MaxTribFetch = 100</code> tribbles that a user
-posted. Tribbles needs to be sorted in Tribble Order. Also,
-it should make sure that the order is the same order
-that the user posted the tribbles.</p>
+<p>List the recent <code>trib.MaxTribFetch=100</code> tribbles that a user posted.
+Tribbles needs to be sorted in Tribble Order. Also, it should make
+sure that the order is the same order that the user posted the
+tribbles.</p>
 
 <hr><pre><code>Follow(who, whom string) error
 Unfollow(who, whom string) error
@@ -94,38 +100,44 @@ IsFollowing(who, whom string) (bool, error)
 Following(who string) ([]string, error)
 </code></pre>
 
-<p>Functions for actions like follow/unfollow, check following
-and listing all following users. A user can never
-follow or unfollow himself. When calling with <code>who</code> equals
-to <code>whom</code>, the functions return error. When the user
-does not exist, the functions return error.</p>
+<p>These are functions to follow/unfollow, check following and listing
+all following users of a user. A user can never follow or unfollow
+himself. When calling with <code>who</code> equals to <code>whom</code>, the functions
+return error. When the user does not exist, the functions return
+error.</p>
 
 <hr><pre><code>Home(user string) ([]*Trib, error)
 </code></pre>
 
-<p>List the recent <code>trib.MaxTribFetch</code> = 100 tribbles that are
-posted on the user's following timeline in Tribble Order.
-In addition, the order should always satisfy:</p>
+<p>List the recent <code>trib.MaxTribFetch=100</code> tribbles that are posted on
+the user's following timeline in Tribble Order.  In addition, the
+order should always satisfy:</p>
 
 <ol>
-<li>If a tribble A is posted 3 seconds after a tribble B is
-posted, A always shows after B.</li>
-<li>If a tribble A is posted after a user sees tribble B,
-A always shows after B.</li>
-</ol><p>It returns error when the user does not exist.</p>
+<li>If a tribble A is posted after a tribble B is posted, and they are
+posted by the same user, A always shows after B.</li>
+<li>If a tribble A is posted 5 seconds after a tribble B is posted,
+even if they are posted by two different users, A always shows after
+B.<br>
+</li>
+<li>If a tribble A is posted after a user client sees tribble B, A
+always shows after B.</li>
+</ol><p>A is <em>posted after</em> B means B calls <code>Post()</code> after A's <code>Post()</code>
+returned.</p>
 
-<hr><p>In addition to normal errors, it might also return IO errors
-if the implementation needs to communicate to a remote part.
-Returning a nil error means the the call is successfully
-executed; returning a non-nill error means that
-the call might be executed or not.</p>
+<p>It returns error when the user does not exist.</p>
+
+<hr><p>In addition to normal errors, it might also return IO errors if the
+implementation needs to communicate to a remote part.  Returning a nil
+error means the the call is successfully executed; returning a
+non-nill error means that the call might be executed or not.</p>
 
 <h2>
 <a name="key-value-pair-service-interface" class="anchor" href="#key-value-pair-service-interface"><span class="octicon octicon-link"></span></a>Key-value Pair Service Interface</h2>
 
-<p>Data structure and interfaces for the key-value pair service is defined
-in <code>trib/kv.go</code> file. The main interface is <code>trib.Storage</code> interface,
-which consists of three parts.</p>
+<p>Data structure and interfaces for the key-value pair service is
+defined in <code>trib/kv.go</code> file. The main interface is <code>trib.Storage</code>
+interface, which consists of three parts.</p>
 
 <p>First is the key-value pair part.</p>
 
@@ -183,98 +195,104 @@ type KeyList interface {
 }
 </code></pre>
 
-<p>Note that the function signature of these methods are all RPC friendly.  Also,
-under the defintion of the execution logic, all the methods will always return
-nil error. This means all errors you see from this interface will be
-communication errors. You can assume that each call is an atomic transaction.
-However, when an error occurs, the caller does not know if the error occurs
-before the transaction or after.</p>
+<p>Note that the function signature of these methods are all RPC
+friendly.  Also, under the defintion of the execution logic, all the
+methods will always return nil error. This means all errors you see
+from this interface will be communication errors. You can assume that
+each call is an atomic transaction.  However, when an error occurs,
+the caller does not know if the error occurs before the transaction or
+after.</p>
 
 <h2>
 <a name="entry-functions" class="anchor" href="#entry-functions"><span class="octicon octicon-link"></span></a>Entry Functions</h2>
 
-<p>These are the 3 entry functions you need to implement.</p>
+<p>These are the 3 entry functions you need to implement. This is how
+other people's code will use your code.</p>
 
 <pre><code>func ServeBack(b *trib.Back) error
 </code></pre>
 
-<p>This function creates an instance of a back-end server based on configuration
-<code>b *trib.Back</code>. Structure <code>trib.Back</code> is defined in <code>trib/config.go</code> file.
-In the struct type, it has several fields:</p>
+<p>This function creates an instance of a back-end server based on
+configuration <code>b *trib.Back</code>. Structure <code>trib.Back</code> is defined in
+<code>trib/config.go</code> file.  In the struct type, it has several fields:</p>
 
 <ul>
 <li>
-<code>Addr</code> is the address the server should listen on, in
-the form of <code>&lt;host&gt;:&lt;port&gt;</code>. Go language uses this address in its <a href="http://golang.org/pkg/net">standard
-<code>net</code> package</a>, so you should be able to use it
-directly.<br>
+<code>Addr</code> is the address the server should listen on, in the form of
+<code>&lt;host&gt;:&lt;port&gt;</code>. Go language uses this address in its <a href="http://golang.org/pkg/net">standard
+<code>net</code> package</a>, so you should be able to
+use it directly.<br>
 </li>
 <li>
-<code>Store</code> is the storage device you will use for storing stuff. In fact,
-You should not store persistent data anywhere else.</li>
+<code>Store</code> is the storage device you will use for storing stuff. In
+fact, You should not store persistent data anywhere else.</li>
 <li>
-<code>Ready</code> is a channel for notifying the other parts in the program that the
-server is ready to accept RPC calls from the network. The value that you
-send into the tunnel does not matter.</li>
-</ul><p>This function should be a blocking call. It does not return until an error
-(like the network is shutdown) occurred.</p>
+<code>Ready</code> is a channel for notifying the other parts in the program
+that the server is ready to accept RPC calls from the network. The
+value that you send into the tunnel does not matter.</li>
+</ul><p>This function should be a blocking call. It does not return until an
+error (like the network is shutdown) occurred.</p>
 
 <pre><code>func NewClient(addr string) trib.Stroage
 </code></pre>
 
-<p>This function takes the addr as a TCP address in the form of <code>&lt;host&gt;:&lt;port&gt;</code>,
-and will use that as the server address. It returns an implementation of
-<code>trib.Storage</code>. You can assume <code>addr</code> will always be a valid one.</p>
+<p>This function takes the addr as a TCP address in the form of
+<code>&lt;host&gt;:&lt;port&gt;</code>, and will use that as the server address. It returns
+an implementation of <code>trib.Storage</code>. You can assume <code>addr</code> will always
+be a valid one.</p>
 
 <pre><code>func NewFront(backs []string) trib.Server
 </code></pre>
 
-<p>This function takes the addresses of the backends, and returns an implementation
-of <code>trib.Server</code>. The returned instance then will serve as an service front-end
-that takes Tribbler service function calls, and translates them into key-value
-pair RPC calls. This front-end should be stateless, thread safe, and ready
-to be killed at any time. This means that at any time during its execution,
-the back-end key-value pair storage always stays in a consistent state. Also,
-note that one front-end might be taking multiple concurrent requests from
-the Web, and there might be multiple front-ends talking to the same back-end,
-so make sure it handles all the concurrency issues correctly.</p>
+<p>This function takes the addresses of the backends, and returns an
+implementation of <code>trib.Server</code>. The returned instance then will serve
+as an service front-end that takes Tribbler service function calls,
+and translates them into key-value pair RPC calls. This front-end
+should be stateless, thread safe, and ready to be killed at any time.
+This means that at any time during its execution, the back-end
+key-value pair storage always stays in a consistent state. Also, note
+that one front-end might be taking multiple concurrent requests from
+the Web, and there might be multiple front-ends talking to the same
+back-end, so make sure it handles all the concurrency issues
+correctly.</p>
 
 <h2>
 <a name="rpc" class="anchor" href="#rpc"><span class="octicon octicon-link"></span></a>RPC</h2>
 
 <p>Go language comes with its own
-<a href="http://golang.org/pkg/net/rpc"><code>net/rpc</code></a> package
-in its standard library, and we will just use that.
-Note that the <code>trib.Store</code> interface is already in its "RPC friendly" form.</p>
+<a href="http://golang.org/pkg/net/rpc"><code>net/rpc</code></a> package in its standard
+library, and we will just use that.  Note that the <code>trib.Store</code>
+interface is already in its "RPC friendly" form.</p>
 
-<p>Your RPC needs to use the default encoding <code>encoding/gob</code>, listen on the given
-address, and serve as an http RPC server.</p>
+<p>Your RPC needs to use the default encoding <code>encoding/gob</code>, listen on
+the given address, and serve as an http RPC server.</p>
 
 <h2>
 <a name="testing" class="anchor" href="#testing"><span class="octicon octicon-link"></span></a>Testing</h2>
 
-<p>Both the <code>trib</code> and <code>triblab</code> repository comes with a makefile with some handy
-command lines, and also some basic testing code.</p>
+<p>Both the <code>trib</code> and <code>triblab</code> repository comes with a makefile with
+some handy command lines, and also some basic testing code.</p>
 
-<p>Under <code>trib</code> directory, if you type <code>make test</code>, you should see 
-that the tests runs and all passed.</p>
+<p>Under <code>trib</code> directory, if you type <code>make test</code>, you should see that
+the tests runs and all passed.</p>
 
-<p>Under <code>triblab</code> directory, if you type <code>make test</code> however, you would see
-the test fails with a todo panic.</p>
+<p>Under <code>triblab</code> directory, if you type <code>make test</code> however, you would
+see the test fails with a todo panic.</p>
 
-<p>Your first attempt should be implement the logic and try to pass those test
-cases. If you pass those, you should be fairly confident that you can
-get at least 30% of the credits for Lab1 (unless you are cheating in some way).</p>
+<p>Your first attempt should be implement the logic and try to pass those
+test cases. If you pass those, you should be fairly confident that you
+can get at least 30% of the credits for Lab1 (unless you are cheating
+in some way).</p>
 
-<p>However, the test that comes with the repository is very basic and simple.
-Though you don't have to, you should really write more test cases to make sure
-your implementation matches the specification.</p>
+<p>However, the test that comes with the repository is very basic and
+simple.  Though you don't have to, you should really write more test
+cases to make sure your implementation matches the specification.</p>
 
 <h2>
 <a name="playing-with-it" class="anchor" href="#playing-with-it"><span class="octicon octicon-link"></span></a>Playing with It</h2>
 
-<p>To run your own implementation, you could use the <code>trib-front</code> and <code>trib-back</code>
-launcher.</p>
+<p>To run your own implementation, you could use the <code>trib-front</code> and
+<code>trib-back</code> launcher.</p>
 
 <p>First make sure you code compiles.</p>
 
@@ -283,11 +301,14 @@ launcher.</p>
 <pre><code>$ trib-back
 </code></pre>
 
-<p>And you should see an address printing out, say it is <code>localhost:37021</code>.
-Note that you can also specify your own address via command line.
-The default is <code>localhost:rand</code>.</p>
+<p><em>(You might need to add <code>$PATH</code> before you do so.)</em></p>
 
-<p>Next for the front-end part.</p>
+<p>And you should see an address printing out, say it is
+<code>localhost:37021</code>.  Note that you can also specify your own address
+via command line. The default is <code>localhost:rand</code>.</p>
+
+<p>Next for the front-end part. Run on the same machine (since it is
+listening on <code>localhost</code>).</p>
 
 <pre><code>$ trib-front -init -lab -back=localhost:37021
 </code></pre>
@@ -295,21 +316,21 @@ The default is <code>localhost:rand</code>.</p>
 <p>For the <code>-back</code> flag, please use the backend address that you just got
 from running <code>trib-back</code>.</p>
 
-<p><code>-init</code> will populate the service with some sample data.
-<code>-lab</code> tells the front-end to connect to a back-end rather than running
-with the default reference implementation.</p>
+<p><code>-init</code> will populate the service with some sample data.  <code>-lab</code> tells
+the front-end to connect to a back-end rather than running with the
+default reference implementation.</p>
 
-<p>Now you can open your browser, connect to the front-end machine
-and play with your own implementation.</p>
+<p>Now you can open your browser, connect to the front-end machine and
+play with your own implementation.</p>
 
-<p>Note that, when you completes Lab1, it should be perfectly fine to have
-multiple front-ends that connects to a single back-end.</p>
+<p>Note that, when you completes Lab1, it should be perfectly fine to
+have multiple front-ends that connects to a single back-end.</p>
 
 <h2>
 <a name="performance-requirement" class="anchor" href="#performance-requirement"><span class="octicon octicon-link"></span></a>Performance Requirement</h2>
 
-<p>When running on the lab machines, the tribbler front-end service should return
-every function call within 1 second.</p>
+<p>When running on the lab machines, the tribbler front-end service
+should return every function call within 1 second.</p>
 
 <h2>
 <a name="common-mistakes" class="anchor" href="#common-mistakes"><span class="octicon octicon-link"></span></a>Common Mistakes</h2>
@@ -320,42 +341,44 @@ but incorrect implementation might do:</p>
 <ul>
 <li>
 <strong>Read-modify-write</strong>. For example, a tribbler might read a counter
-from the key-value store, increase it by one
-and then write it back (at the same key). 
-This will introduce racing condition among the front-ends.</li>
+from the key-value store, increase it by one and then write it back
+(at the same key).  This will introduce racing condition among the
+front-ends.</li>
 <li>
-<strong>Not handling errors</strong>. A tribbler service call might require several
-RPC calls to the backend. It is important to properly handle <em>any</em> error
-returned by these calls.</li>
+<strong>Not handling errors</strong>. A tribbler service call might require
+several RPC calls to the backend. It is important to properly handle
+<em>any</em> error returned by these calls.</li>
 <li>
 <strong>Sorting by the timestamps first</strong>. Again, Tribble Order means that
 the logic clock is the first field to consider. </li>
 <li>
-<strong>Use the clock argument from the front-end for the clock
-field of a new Tribble</strong>. Well, technically, you can do that in your
-code internally as long as you can satisfy the ordering requirements
+<strong>Use the clock argument from the front-end for the clock field of a
+new Tribble</strong>. Well, technically, you can do that in your code
+internally as long as you can satisfy the ordering requirements
 speficied for <code>Home()</code> and <code>Tribs()</code> (you might find it very hard).
-Nonetheless, intuitively, the clock argument tells the <em>oldest</em> tribble a
-user have seen (which might be 0 if the user has not seen any tribble yet), 
-hence the new posted tribble seems to better have a clock value that is
-larger than the argument.</li>
+Nonetheless, intuitively, the clock argument tells the <em>oldest</em>
+tribble a user have seen (which might be 0 if the user has not seen
+any tribble yet), hence the new posted tribble seems to better have
+a clock value that is larger than the argument.</li>
 <li>
-<strong>Generate the clock from the timestamp</strong>. While 64-bit can cover a very
-wide time range even in the unit of nanoseconds, you should keep in mind
-that the front-ends are running on different servers with arbitrary physical
-time differences, so it is not wise to generate the logical <em>clock</em> from the
-physical <em>time</em>.</li>
+<strong>Generate the clock from the timestamp</strong>. While 64-bit can cover a
+very wide time range even in the unit of nanoseconds, you should
+keep in mind that the front-ends are running on different servers
+with arbitrary physical time differences, so it is not wise to
+generate the logical <em>clock</em> from the physical <em>time</em>.</li>
 <li>
-<strong>Not handling old tribbles</strong>. Note that only the most recent 100 tribbles
-of a user matters. Not handling old tribbles might lead to worse and worse
-performance over time and eventually break the performance promise.</li>
+<strong>Not handling old tribbles</strong>. Note that only the most recent 100
+tribbles of a user matters. Not handling old tribbles might lead to
+worse and worse performance over time and eventually break the
+performance promise.</li>
 </ul><h2>
 <a name="turning-in" class="anchor" href="#turning-in"><span class="octicon octicon-link"></span></a>Turning In</h2>
 
-<p>First, make sure every piece of your code is commited into the repository in
-<code>triblab</code>. Then just type <code>make turnin</code> under the root of the repository.
-It will generate a turnin.zip that contains everything in you repo, and
-copy that out.</p>
+<p>First, make sure every piece of your code is commited into the
+repository in <code>triblab</code>. Then just type <code>make turnin</code> under the root
+of the repository.  It will generate a <code>turnin.zip</code> that contains
+everything in you git repository, and copy that to a place where
+only the TA can read.</p>
 
 <h2>
 <a name="happy-lab1" class="anchor" href="#happy-lab1"><span class="octicon octicon-link"></span></a>Happy Lab1!</h2>
