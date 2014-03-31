@@ -65,6 +65,9 @@ func (self *Server) ListUsers() ([]string, error) {
 	}
 
 	sort.Strings(ret)
+	if len(ret) > trib.MinListUser {
+		ret = ret[:trib.MinListUser]
+	}
 
 	return ret, nil
 }

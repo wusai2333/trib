@@ -75,14 +75,13 @@ Concurrent sign-ups might both succeed.
 ListUsers() ([]string, error)
 ```
 
-Lists `trib.MinListUser = 20` different registered users.  
-When there are less
-than 20 users that have ever signed up, list all of them. 
+Lists at least `trib.MinListUser = 20` different registered users.
+When there are less than 20 users that have ever signed up, list all
+of them. The returned usernames should be sorted in alphabetical.
 
-This is for showing some users on the front page. 
-This is not for listing all
-the users that have ever signed up, 
-because that would be too expensive. 
+This is for showing some users on the front page.  This is not for
+listing all the users that have ever signed up, because that would be
+too expensive in a scalable system.
 
 ***
 
@@ -220,19 +219,17 @@ type Storage interface {
 ```
 
 Note that the function signature of these methods are all RPC
-friendly. You should directly implement the 
-RPC inteface with Go language's RPC package.
-By doign this, another person's client that talks the same interface 
-will be able to talk to your server as well.
+friendly. You should directly implement the RPC inteface with Go
+language's RPC package.  By doign this, another person's client that
+talks the same interface will be able to talk to your server as well.
 
-Under the defintion of the execution logic, all the
-methods will always return nil error. Hence all errors you see
-from this interface will be communication errors. You can assume that
-each call (on the same key) is an atomic transaction; two
-concurrent writes won't give the key a weird value out of nowhere. 
-However, when an error occurs, the caller won't know
-if the transaction is commited or not, because the error might occur 
-before or after the transaction.
+Under the defintion of the execution logic, all the methods will
+always return nil error. Hence all errors you see from this interface
+will be communication errors. You can assume that each call (on the
+same key) is an atomic transaction; two concurrent writes won't give
+the key a weird value out of nowhere.  However, when an error occurs,
+the caller won't know if the transaction is commited or not, because
+the error might occur before or after the transaction.
 
 ## Entry Functions
 
