@@ -220,8 +220,8 @@ type Storage interface {
 
 Note that the function signature of these methods are all RPC
 friendly. You should directly implement the RPC inteface with Go
-language's RPC package.  By doign this, another person's client that
-talks the same interface will be able to talk to your server as well.
+language's RPC package.  By doing this, another person's client that
+speaks the same protocol will be able to talk to your server as well.
 
 Under the defintion of the execution logic, all the methods will
 always return nil error. Hence all errors you see from this interface
