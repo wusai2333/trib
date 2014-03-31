@@ -309,12 +309,14 @@ use it directly.<br>
 </li>
 <li>
 <code>Store</code> is the storage device you will use for storing stuff. In
-fact, You should not store persistent data anywhere else.</li>
+fact, You should not store persistent data anywhere else.
+<code>Store</code> will never be nil.</li>
 <li>
 <code>Ready</code> is a channel for notifying the other parts in the program
 that the server is ready to accept RPC calls from the network 
 (by sending value <code>true</code>) of failed to setup the connection
-(by sending value <code>false</code>)</li>
+(by sending value <code>false</code>). <code>Ready</code> might be nil (means the caller
+does not care about when it is ready).</li>
 </ul><p>This function should be a blocking call. It does not return until an
 error (like the network is shutdown) occurred.</p>
 

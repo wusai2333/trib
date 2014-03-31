@@ -250,10 +250,12 @@ configuration `b *trib.Back`. Structure `trib.Back` is defined in
   use it directly.  
 - `Store` is the storage device you will use for storing stuff. In
   fact, You should not store persistent data anywhere else.
+  `Store` will never be nil.
 - `Ready` is a channel for notifying the other parts in the program
   that the server is ready to accept RPC calls from the network 
   (by sending value `true`) of failed to setup the connection
-  (by sending value `false`)
+  (by sending value `false`). `Ready` might be nil (means the caller
+  does not care about when it is ready).
 
 This function should be a blocking call. It does not return until an
 error (like the network is shutdown) occurred.
