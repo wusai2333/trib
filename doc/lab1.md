@@ -150,7 +150,7 @@ It returns error when the user does not exist.
 
 In addition to normal errors, it might also return IO errors if the
 implementation needs to communicate to a remote part.  Returning a nil
-error means the the call is successfully executed; returning a
+error means that the call is successfully executed; returning a
 non-nill error means that the call might be executed or not.
 
 ## Key-value Pair Service Interface
