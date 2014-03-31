@@ -169,15 +169,13 @@ will be submitted for grading.
 
 ## Lab Roadmap
 
-- **Lab 1**. Reimplement the Tribbler service, split the logic into a
-  stateless front-end and a key-value pair back-end. The front-end
-  will call the back-end via RPC. When this lab is done, we should have a
-  scalable front-end design, where they can serve on multiple
-  hosts concurrently; the back-end will still be a single one.
-- **Lab 2**. We scale up the key-value pair back-ends by
-  hashing the keys. The challenge for this part would be how to merge
-  and sort the Tribbles from multiple back-ends without maintaining
-  a global clock.
+- **Lab 1**. Wrap the key-value pair service interface with RPC, so
+  that a remote client can call the service via network connections.
+- **Lab 2**. Reimplement the Tribbler service, split the current
+  Tribbler logic into a stateless scalable front-end and a key-value
+  pair scalable back-end. The front-ends will call the back-ends via
+  RPC that is implemented in Lab 1. When this lab is done, we should
+  have a both the front-end and the back-end scalable.
 - **Lab 3**. We make the back-end fault-tolerent, by using distributed
   hash table and replications. As a result, at the end of this lab,
   back-end servers can join, leave, or be killed, without breaking
