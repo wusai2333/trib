@@ -38,7 +38,7 @@ Tribbler service maintains a distributed logical `Clock` in `uint64`
 for sorting.
 
 When sorting many tribbles into a single timeline, you should sort by
-the fields following this priroty:
+the fields following this priority:
 
 1. `Clock` The logical timestamp.
 2. `Time` The physical timestamp.
@@ -150,7 +150,7 @@ It returns error when the user does not exist.
 
 In addition to normal errors, it might also return IO errors if the
 implementation needs to communicate to a remote part.  Returning a nil
-error means the the call is successfully executed; returning a
+error means that the call is successfully executed; returning a
 non-nill error means that the call might be executed or not.
 
 ## Key-value Pair Service Interface
@@ -220,8 +220,8 @@ type Storage interface {
 
 Note that the function signature of these methods are all RPC
 friendly. You should directly implement the RPC inteface with Go
-language's RPC package.  By doign this, another person's client that
-talks the same interface will be able to talk to your server as well.
+language's RPC package.  By doing this, another person's client that
+speaks the same protocol will be able to talk to your server as well.
 
 Under the defintion of the execution logic, all the methods will
 always return nil error. Hence all errors you see from this interface
@@ -250,9 +250,12 @@ configuration `b *trib.Back`. Structure `trib.Back` is defined in
   use it directly.  
 - `Store` is the storage device you will use for storing stuff. In
   fact, You should not store persistent data anywhere else.
+  `Store` will never be nil.
 - `Ready` is a channel for notifying the other parts in the program
-  that the server is ready to accept RPC calls from the network. The
-  value that you send into the tunnel does not matter.
+  that the server is ready to accept RPC calls from the network 
+  (by sending value `true`) of failed to setup the connection
+  (by sending value `false`). `Ready` might be nil (means the caller
+  does not care about when it is ready).
 
 This function should be a blocking call. It does not return until an
 error (like the network is shutdown) occurred.

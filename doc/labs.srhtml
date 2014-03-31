@@ -295,6 +295,5 @@ page for more information.</p>
 <a name="ready" class="anchor" href="#ready"><span class="octicon octicon-link"></span></a>Ready?</h2>
 
 <p>If you feel comfortable with the lab setup now, 
-go forward and read <a href="./lab1.html">Lab1</a>.</p>
-</div>
+go forward and read <a href="./lab1.html">Lab1</a>.</p></div>
 <%= pagebottom() %>
