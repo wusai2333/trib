@@ -241,8 +241,9 @@ use it directly.<br>
 fact, You should not store persistent data anywhere else.</li>
 <li>
 <code>Ready</code> is a channel for notifying the other parts in the program
-that the server is ready to accept RPC calls from the network. The
-value that you send into the tunnel does not matter.</li>
+that the server is ready to accept RPC calls from the network 
+(by sending value <code>true</code>) of failed to setup the connection
+(by sending value <code>false</code>)</li>
 </ul><p>This function should be a blocking call. It does not return until an
 error (like the network is shutdown) occurred.</p>
 

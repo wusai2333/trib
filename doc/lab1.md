@@ -251,8 +251,9 @@ configuration `b *trib.Back`. Structure `trib.Back` is defined in
 - `Store` is the storage device you will use for storing stuff. In
   fact, You should not store persistent data anywhere else.
 - `Ready` is a channel for notifying the other parts in the program
-  that the server is ready to accept RPC calls from the network. The
-  value that you send into the tunnel does not matter.
+  that the server is ready to accept RPC calls from the network 
+  (by sending value `true`) of failed to setup the connection
+  (by sending value `false`)
 
 This function should be a blocking call. It does not return until an
 error (like the network is shutdown) occurred.
