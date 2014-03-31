@@ -110,7 +110,7 @@ Tribbler service maintains a distributed logical <code>Clock</code> in <code>uin
 for sorting.</p>
 
 <p>When sorting many tribbles into a single timeline, you should sort by
-the fields following this priroty:</p>
+the fields following this priority:</p>
 
 <ol>
 <li>

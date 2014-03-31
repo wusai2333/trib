@@ -38,7 +38,7 @@ Tribbler service maintains a distributed logical `Clock` in `uint64`
 for sorting.
 
 When sorting many tribbles into a single timeline, you should sort by
-the fields following this priroty:
+the fields following this priority:
 
 1. `Clock` The logical timestamp.
 2. `Time` The physical timestamp.
