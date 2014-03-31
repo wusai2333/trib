@@ -404,7 +404,7 @@ but incorrect implementation might do:
 First, make sure every piece of your code is commited into the
 repository in `triblab`. Then just type `make turnin` under the root
 of the repository.  It will generate a `turnin.zip` that contains
-everything in you git repository, and copy that to a place where
-only the lab instructors can read.
+everything in your git repository, and then copy the zip file to a
+place where only the lab instructors can read.
 
 ## Happy Lab1!
