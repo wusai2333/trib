@@ -330,8 +330,35 @@ $ kv-server
 *(You might need to add `$GOPATH/bin` into your `$PATH` to run this.)*
 
 And you should see an address printing out, say it is
-`localhost:37021`.  Note that you can also specify your own address
-via command line. The default is `localhost:rand`.
+`localhost:12086`. (Note that you can also specify your own address
+via command line. The default is `localhost:rand`.)
+
+Now you can play with your server via the `kv-client` program.
+
+```
+$ kv-client localhost:12086 get hello
+
+$ kv-client localhost:12086 set h8liu run
+true
+$ kv-client localhost:12086 get h8liu
+run
+$ kv-client localhost:12086 keys h8
+h8liu
+$ kv-client localhost:12086 list-get hello 
+$ kv-client localhost:12086 list-get h8liu
+$ kv-client localhost:12086 list-append h8liu something
+true
+$ kv-client localhost:12086 list-get h8liu
+something
+$ kv-client localhost:12086 clock
+0
+$ kv-client localhost:12086 clock
+1
+$ kv-client localhost:12086 clock
+2
+$ kv-client localhost:12086 clock 200
+200
+```
 
 ## Requirements
 

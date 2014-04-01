@@ -45,9 +45,27 @@ func printList(lst trib.List) {
 	}
 }
 
+const help = `Usage:
+   kv-client <server address> cmd <args...>
+
+Command list:
+   get <key>
+   set <key> <value>
+   keys [<prefix> [<suffix>]]
+   list-get <key>
+   list-append <key> <value>
+   list-remove <key> <value>
+   list-keys [<prefix> [<suffix]]
+   clock [<atleast=0>]
+`
+
 func main() {
 	flag.Parse()
 	args := flag.Args()
+	if len(args) < 2 {
+		fmt.Fprintln(os.Stderr, help)
+		os.Exit(1)
+	}
 
 	s := triblab.NewClient(args[0])
 
