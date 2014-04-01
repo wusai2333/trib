@@ -1,0 +1,217 @@
+<h1>
+<a name="lab2" class="anchor" href="#lab2"><span class="octicon octicon-link"></span></a>Lab2</h1>
+
+<p>Welcome to Lab2. The goal of this labe is to ...
+The goal of this lab is to split the logic into
+stateless scalable front-ends and a key-value pair backend. In
+particular, you need to:</p>
+
+<ol>
+<li>Implement a stateless Tribbler front-end type that fits
+<code>trib.Server</code> interface that calls a remote RPC key-value pair
+back-end server.</li>
+</ol><h2>
+<a name="tribble" class="anchor" href="#tribble"><span class="octicon octicon-link"></span></a>Tribble</h2>
+
+<p>A Tribble is a structure type that has 4 fields:</p>
+
+<pre><code>type Trib struct {
+    User    string    // who posted this trib
+    Message string    // the content of the trib
+    Time    time.Time // the physical timestamp
+    Clock   uint64    // the logical clock
+}
+</code></pre>
+
+<p><code>Time</code> is what the front-end claims when this tribble is created,
+by reading the front-end's own physical time clock on the machine when
+<code>Post()</code> is called. However, to sort tribbles in a globally 
+consistent and reasonable order, this timestamp cannot be used
+because different front-ends have different physical time readings.
+Tribbler service maintains a distributed logical <code>Clock</code> in <code>uint64</code>
+for sorting.</p>
+
+<p>When sorting many tribbles into a single timeline, you should sort by
+the fields following this priority:</p>
+
+<ol>
+<li>
+<code>Clock</code> The logical timestamp.</li>
+<li>
+<code>Time</code> The physical timestamp.</li>
+<li>
+<code>User</code> The user id</li>
+<li>
+<code>Message</code> The message content.</li>
+</ol><p>We call this the <em>Tribble Order</em>.</p>
+
+<h2>
+<a name="tribbler-service-interface" class="anchor" href="#tribbler-service-interface"><span class="octicon octicon-link"></span></a>Tribbler Service Interface</h2>
+
+<p>The Tribbler service logic is all defined in <code>trib.Server</code> interface
+(in <code>trib/trib.go</code> file).</p>
+
+<hr><pre><code>SignUp(user string) error
+</code></pre>
+
+<p>Creates a new user. After a user is created, it will always exist.  A
+user name must be no longer than <code>trib.MaxUsernameLen=15</code> characters
+but not empty, must start with a lower-case letter, and can only
+contain lower-case letters or numbers.</p>
+
+<p>There is a helper function called <code>trib.IsValidUsername(string)</code> which
+you can use to check if a username is valid.</p>
+
+<p>Returns error when the username is invalid or the user already exists.
+Concurrent sign-ups might both succeed.</p>
+
+<hr><pre><code>ListUsers() ([]string, error)
+</code></pre>
+
+<p>Lists at least <code>trib.MinListUser = 20</code> different registered users.
+When there are less than 20 users that have ever signed up, list all
+of them. The returned usernames should be sorted in alphabetical.</p>
+
+<p>This is for showing some users on the front page.  This is not for
+listing all the users that have ever signed up, because that would be
+too expensive in a scalable system.</p>
+
+<hr><pre><code>Post(who, post string, clock uint64) error
+</code></pre>
+
+<p>Posts a tribble. <code>clock</code> is the maximum clock value this user client
+has ever seen so far by reading tribbles (via <code>Home()</code> and <code>Tribs()</code>).
+It returns error when the user does not exist or the post is too long
+(longer than <code>trib.MaxTribLen=140</code>).</p>
+
+<hr><pre><code>Tribs(user string) ([]*Trib, error)
+</code></pre>
+
+<p>Lists the recent <code>trib.MaxTribFetch=100</code> tribbles that a user posted.
+Tribbles needs to be sorted in Tribble Order. Also, it should make
+sure that the order is the same order that the user posted the
+tribbles.</p>
+
+<hr><pre><code>Follow(who, whom string) error
+Unfollow(who, whom string) error
+IsFollowing(who, whom string) (bool, error)
+Following(who string) ([]string, error)
+</code></pre>
+
+<p>These are functions to follow/unfollow, check following and listing
+all following users of a user. A user can never follow or unfollow
+himself. When calling with <code>who</code> equals to <code>whom</code>, the functions
+return error. When the user does not exist, the functions return
+error.</p>
+
+<p>A user can follow at most <code>trib.MaxFollowing=2000</code> users. Returns
+error when trying to follow more than that.</p>
+
+<hr><pre><code>Home(user string) ([]*Trib, error)
+</code></pre>
+
+<p>List the recent <code>trib.MaxTribFetch=100</code> tribbles that are posted on
+the user's following timeline in Tribble Order.  In addition, the
+order should always satisfy:</p>
+
+<ol>
+<li>If a tribble A is posted after a tribble B is posted, and they are
+posted by the same user, A always shows after B.</li>
+<li>If a tribble A is posted 5 seconds after a tribble B is posted,
+even if they are posted by two different users, A always shows after
+B.<br>
+</li>
+<li>If a tribble A is posted after a user client sees tribble B, A
+always shows after B.</li>
+</ol><p>A is <em>posted after</em> B means B calls <code>Post()</code> after A's <code>Post()</code>
+returned.</p>
+
+<p>It returns error when the user does not exist.</p>
+
+<hr><p>In addition to normal errors, it might also return IO errors if the
+implementation needs to communicate to a remote part.  Returning a nil
+error means that the call is successfully executed; returning a
+non-nill error means that the call might be executed or not.</p>
+
+<h2>
+<a name="entry-functions" class="anchor" href="#entry-functions"><span class="octicon octicon-link"></span></a>Entry Functions</h2>
+
+<pre><code>func NewFront(backs []string) trib.Server
+</code></pre>
+
+<p>This function takes the addresses of the backends, and returns an
+implementation of <code>trib.Server</code>. The returned instance then will serve
+as an service front-end that takes Tribbler service function calls,
+and translates them into key-value pair RPC calls. This front-end
+should be stateless, thread safe, and ready to be killed at any time.
+This means that at any time during its execution, the back-end
+key-value pair storage always stays in a consistent state. Also, note
+that one front-end might be taking multiple concurrent requests from
+the Web, and there might be multiple front-ends talking to the same
+back-end, so make sure it handles all the concurrency issues
+correctly.</p>
+
+<p>In Lab1, <code>backs</code> will always contain only one address.</p>
+
+<h2>
+<a name="playing-with-it" class="anchor" href="#playing-with-it"><span class="octicon octicon-link"></span></a>Playing with It</h2>
+
+<p>Next for the front-end part. Run on the same machine (since it is
+listening on <code>localhost</code>).</p>
+
+<pre><code>$ trib-front -init -lab -back=localhost:37021
+</code></pre>
+
+<p>For the <code>-back</code> flag, please use the backend address that you just got
+from running <code>trib-back</code>.</p>
+
+<p><code>-init</code> will populate the service with some sample data.  <code>-lab</code> tells
+the front-end to connect to a back-end rather than running with the
+default reference implementation.</p>
+
+<p>Now you can open your browser, connect to the front-end machine and
+play with your own implementation.</p>
+
+<p>Note that, when you completes Lab1, it should be perfectly fine to
+have multiple front-ends that connects to a single back-end.</p>
+
+<h2>
+<a name="common-mistakes" class="anchor" href="#common-mistakes"><span class="octicon octicon-link"></span></a>Common Mistakes</h2>
+
+<p>Here are some common mistakes that a lazy and quick
+but incorrect implementation might do:</p>
+
+<ul>
+<li>
+<strong>Read-modify-write</strong>. For example, a tribbler might read a counter
+from the key-value store, increase it by one and then write it back
+(at the same key).  This will introduce racing condition among the
+front-ends.</li>
+<li>
+<strong>Not handling errors</strong>. A tribbler service call might require
+several RPC calls to the backend. It is important to properly handle
+<em>any</em> error returned by these calls.</li>
+<li>
+<strong>Sorting by the timestamps first</strong>. Again, Tribble Order means that
+the logic clock is the first field to consider on sorting. </li>
+<li>
+<strong>Use the clock argument from the front-end for the clock field of a
+new Tribble</strong>. Well, technically, you can do that in your code
+internally as long as you can satisfy the ordering requirements
+speficied for <code>Home()</code> and <code>Tribs()</code> (you might find it very hard).
+Nonetheless, intuitively, the clock argument tells the <em>oldest</em>
+tribble a user have seen (which might be 0 if the user has not seen
+any tribble yet), hence the new posted tribble seems to better have
+a clock value that is larger than the argument.</li>
+<li>
+<strong>Generate the clock from the timestamp</strong>. While 64-bit can cover a
+very wide time range even in the unit of nanoseconds, you should
+keep in mind that the front-ends are running on different servers
+with arbitrary physical time differences, so it is not wise to
+generate the logical <em>clock</em> from the physical <em>time</em>.</li>
+<li>
+<strong>Not handling old tribbles</strong>. Note that only the most recent 100
+tribbles of a user matter. Not handling old tribbles might lead to
+worse and worse performance over time and eventually break the
+performance promise.</li>
+</ul>

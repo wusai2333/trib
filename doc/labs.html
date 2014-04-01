@@ -183,7 +183,26 @@ It is in the second repo that we checked out.</p>
 into your own <code>triblab</code> git repo. Only files commited in that repo 
 will be submitted for grading.  </p>
 
+<h2>
+<a name="lab-roadmap" class="anchor" href="#lab-roadmap"><span class="octicon octicon-link"></span></a>Lab Roadmap</h2>
 
+<ul>
+<li>
+<strong>Lab 1</strong>. Wrap the key-value pair service interface with RPC, so
+that a remote client can call the service via network connections.</li>
+<li>
+<strong>Lab 2</strong>. Reimplement the Tribbler service, split the current
+Tribbler logic into a stateless scalable front-end and a key-value
+pair scalable back-end. The front-ends will call the back-ends via
+RPC that is implemented in Lab 1. When this lab is done, we should
+have both the front-end and the back-end scalable.</li>
+<li>
+<strong>Lab 3</strong>. We make the back-end fault-tolerent, by using distributed
+hash table and replications. As a result, at the end of this lab,
+back-end servers can join, leave, or be killed, without breaking
+down the entire service.</li>
+</ul><p>By the end of the labs, you will have a new Tribller service 
+implementation that is scalable and fault-tolerant.</p>
 
 <h2>
 <a name="misc" class="anchor" href="#misc"><span class="octicon octicon-link"></span></a>Misc</h2>
@@ -202,4 +221,8 @@ See Go language's <a href="http://golang.org/doc/install">install</a> page for
 more information. However, you should test your code on the lab
 machines.</p>
 
+<h2>
+<a name="ready" class="anchor" href="#ready"><span class="octicon octicon-link"></span></a>Ready?</h2>
 
+<p>If you feel comfortable with the lab setup now, 
+go forward and read <a href="./lab1.html">Lab1</a>.</p>

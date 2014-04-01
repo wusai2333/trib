@@ -167,7 +167,6 @@ It would be a good practice for you to periodically commit your code
 into your own `triblab` git repo. Only files commited in that repo 
 will be submitted for grading.  
 
-<!--
 ## Lab Roadmap
 
 - **Lab 1**. Wrap the key-value pair service interface with RPC, so
@@ -184,7 +183,6 @@ will be submitted for grading.
 
 By the end of the labs, you will have a new Tribller service 
 implementation that is scalable and fault-tolerant.
--->
 
 ## Misc
 
@@ -203,8 +201,7 @@ See Go language's [install](http://golang.org/doc/install) page for
 more information. However, you should test your code on the lab
 machines.
 
-<!--
 ## Ready?
 
 If you feel comfortable with the lab setup now, 
-go forward and read [Lab1](./lab1.html). -->
+go forward and read [Lab1](./lab1.html).
