@@ -196,9 +196,10 @@ export PATH=$PATH:$GOPATH/bin
 We should have Vim and Emaces installed on the machines. If you need
 to install other utility packages, ask the TA.
 
-You could also develop your code on your own machine if you want to.
-See Go language's [install](http://golang.org/doc/install)
-page for more information.
+You could also write your code on your own machine if you want to.
+See Go language's [install](http://golang.org/doc/install) page for
+more information. However, you should test your code on the lab
+machines.
 
 <!--
 ## Ready?
