@@ -175,7 +175,7 @@ will be submitted for grading.
   Tribbler logic into a stateless scalable front-end and a key-value
   pair scalable back-end. The front-ends will call the back-ends via
   RPC that is implemented in Lab 1. When this lab is done, we should
-  have a both the front-end and the back-end scalable.
+  have both the front-end and the back-end scalable.
 - **Lab 3**. We make the back-end fault-tolerent, by using distributed
   hash table and replications. As a result, at the end of this lab,
   back-end servers can join, leave, or be killed, without breaking
@@ -200,7 +200,8 @@ You could also develop your code on your own machine if you want to.
 See Go language's [install](http://golang.org/doc/install)
 page for more information.
 
+<!--
 ## Ready?
 
 If you feel comfortable with the lab setup now, 
-go forward and read [Lab1](./lab1.html).
+go forward and read [Lab1](./lab1.html). -->

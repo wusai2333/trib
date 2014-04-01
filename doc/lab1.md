@@ -295,7 +295,9 @@ library, and we will just use that.  Note that the `trib.Store`
 interface is already in its "RPC friendly" form.
 
 Your RPC needs to use the default encoding `encoding/gob`, listen on
-the given address, and serve as an http RPC server.
+the given address, and serve as an http RPC server. The server 
+needs to register the back-end key-value pair object under the
+name `Storage`.
 
 ## Testing
 
@@ -319,6 +321,126 @@ cases to make sure your implementation matches the specification.
 
 For more information on writing test cases in Go language, see the
 [testing](http://golang.org/pkg/testing/) package document page.
+
+## Starting Hints
+
+While you are free to do the project in your own way as long as
+it fits the specification, matches the interfaces and passes the 
+tests, here are some suggested steps for you to start.
+
+First, create a `client.go` file under `triblab` repo, and declare a
+new struct type called `client`:
+
+```
+package triblab
+
+type client struct {
+    // your private fields will go here
+}
+```
+
+Then add method functions to this new `client` type so that 
+it matches `trib.Storage` interface. For example, for the `Get()`
+function:
+
+```
+func (self *client) Get(key string, value *string) error {
+    panic("todo")
+}
+```
+
+After you added all the functions, you can write a line for compile
+time checking if all the functions are implemented:
+
+```
+var _ trib.Storage = new(client)
+```
+
+This creates a zero-filled `client` and assigns it to an anonymous
+object of `trig.Storage` interface. It only compiles when `client`
+satisfies the interface.
+
+Now add a field into `client` called `addr`, which will save the
+server address. Now `client` looks like this:
+
+```
+type client struct {
+    addr string
+}
+```
+
+Now that we have a client type that satisfies `trib.Stroage`, we 
+can return this type in our entry function `NewClient()`. So remove
+the `panic("todo")` line in `NewClient()`, and replace it by
+returning a new `client` object. Now the `NewClient()` function
+should look something like this:
+
+```
+func NewClient(addr string) trib.Storage {
+    return &client{addr: addr}
+}
+```
+
+Now we have the code skeleton for the RPC client, and we will fill
+in the actual logic of performing RPC calls.
+
+To do an RPC call, we need to use the `rpc` package, so at the 
+start of `client.go` file, lets import that after the package
+name statement.
+
+```
+import (
+    "net/rpc"
+)
+```
+
+And following the examples given in the `rpc` package, we can 
+write the RPC client logic. For example, the `Get()` method
+should look something like this:
+
+```
+func (self *client) Get(key string, value *string) error {
+    // connect to the server
+    conn, e := rpc.DialHTTP("tcp", self.addr)
+    if e != nil {
+        return e
+    }
+
+    // perform the call
+    e = conn.Call("Storage.Get", key, value)
+    if e != nil {
+        conn.Close()
+        return e
+    }
+
+    // close the connection
+    return conn.Close()
+}
+```
+
+However, note that if you do it this way, you will open a new HTTP
+connection for every RPC call. It is okay, but it is not the most
+efficient way to do it.  I will leave it for yourself to figure out
+how to maintain a persistent RPC connection.
+
+That was the client side. You also need to wrap the server side 
+in the `ServeBack` function using the `rpc` library. This should be
+pretty straight-forward by creating an RPC server, registering the
+`Store` fields in `b *trib.Config` parameter under the name of
+`Storage`, and serving it as an HTTP server. The code should be
+similar to one of the examples given in the
+[`rpc`](http://golang.org/pkg/net/rpc) package documentation. Just
+remember that you need to register as `Storage` and also need to send
+a `true` over the `Ready` channel (if the `Ready` is not `nil`) when
+the service is ready, but send a `false` when you encounter any error
+on starting your service.
+
+When all of those are done, you should pass the test cases written in
+`back_test.go` file. It calls the `CheckStorage()` function defined
+in `trib/tribtest` package, and performs some basic checks on if an
+RPC client and a server (that runs on the same host) will satisfy the
+specification of a key-value pair service (as a local
+`trib/store.Storage` will but without RPC).
 
 ## Playing with It
 
@@ -362,13 +484,13 @@ have multiple front-ends that connects to a single back-end.
 ## Requirements
 
 - When the network and the storage is errorless, RPC to your back-end
-  should not return any error, and valid function calls to the Tribbler
-  front-end service should not any error.
-- When the network or storage has error on the back-end (which you 
-  might not tell the difference), the front-end should handle them 
+  should not return any error, and valid function calls to the
+  Tribbler front-end service should not any error.
+- When the network or storage has error on the back-end (which you
+  might not tell the difference), the front-end should handle them
   correctly. The system should always be kept in a consistent state.
-- When running on the lab machines, every function call 
-  to the Tribbler front-end service should return within 1 second.
+- When running on the lab machines, every function call to the
+  Tribbler front-end service should return within 1 second.
 
 ## Common Mistakes
 

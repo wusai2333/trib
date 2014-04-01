@@ -283,7 +283,9 @@ library, and we will just use that.  Note that the <code>trib.Store</code>
 interface is already in its "RPC friendly" form.</p>
 
 <p>Your RPC needs to use the default encoding <code>encoding/gob</code>, listen on
-the given address, and serve as an http RPC server.</p>
+the given address, and serve as an http RPC server. The server 
+needs to register the back-end key-value pair object under the
+name <code>Storage</code>.</p>
 
 <h2>
 <a name="testing" class="anchor" href="#testing"><span class="octicon octicon-link"></span></a>Testing</h2>
@@ -308,6 +310,120 @@ cases to make sure your implementation matches the specification.</p>
 
 <p>For more information on writing test cases in Go language, see the
 <a href="http://golang.org/pkg/testing/">testing</a> package document page.</p>
+
+<h2>
+<a name="starting-hints" class="anchor" href="#starting-hints"><span class="octicon octicon-link"></span></a>Starting Hints</h2>
+
+<p>While you are free to do the project in your own way as long as
+it fits the specification, matches the interfaces and passes the 
+tests, here are some suggested steps for you to start.</p>
+
+<p>First, create a <code>client.go</code> file under <code>triblab</code> repo, and declare a
+new struct type called <code>client</code>:</p>
+
+<pre><code>package triblab
+
+type client struct {
+    // your private fields will go here
+}
+</code></pre>
+
+<p>Then add method functions to this new <code>client</code> type so that 
+it matches <code>trib.Storage</code> interface. For example, for the <code>Get()</code>
+function:</p>
+
+<pre><code>func (self *client) Get(key string, value *string) error {
+    panic("todo")
+}
+</code></pre>
+
+<p>After you added all the functions, you can write a line for compile
+time checking if all the functions are implemented:</p>
+
+<pre><code>var _ trib.Storage = new(client)
+</code></pre>
+
+<p>This creates a zero-filled <code>client</code> and assigns it to an anonymous
+object of <code>trig.Storage</code> interface. It only compiles when <code>client</code>
+satisfies the interface.</p>
+
+<p>Now add a field into <code>client</code> called <code>addr</code>, which will save the
+server address. Now <code>client</code> looks like this:</p>
+
+<pre><code>type client struct {
+    addr string
+}
+</code></pre>
+
+<p>Now that we have a client type that satisfies <code>trib.Stroage</code>, we 
+can return this type in our entry function <code>NewClient()</code>. So remove
+the <code>panic("todo")</code> line in <code>NewClient()</code>, and replace it by
+returning a new <code>client</code> object. Now the <code>NewClient()</code> function
+should look something like this:</p>
+
+<pre><code>func NewClient(addr string) trib.Storage {
+    return &amp;client{addr: addr}
+}
+</code></pre>
+
+<p>Now we have the code skeleton for the RPC client, and we will fill
+in the actual logic of performing RPC calls.</p>
+
+<p>To do an RPC call, we need to use the <code>rpc</code> package, so at the 
+start of <code>client.go</code> file, lets import that after the package
+name statement.</p>
+
+<pre><code>import (
+    "net/rpc"
+)
+</code></pre>
+
+<p>And following the examples given in the <code>rpc</code> package, we can 
+write the RPC client logic. For example, the <code>Get()</code> method
+should look something like this:</p>
+
+<pre><code>func (self *client) Get(key string, value *string) error {
+    // connect to the server
+    conn, e := rpc.DialHTTP("tcp", self.addr)
+    if e != nil {
+        return e
+    }
+
+    // perform the call
+    e = conn.Call("Storage.Get", key, value)
+    if e != nil {
+        conn.Close()
+        return e
+    }
+
+    // close the connection
+    return conn.Close()
+}
+</code></pre>
+
+<p>However, note that if you do it this way, you will open a new HTTP
+connection for every RPC call. It is okay, but it is not the most
+efficient way to do it.  I will leave it for yourself to figure out
+how to maintain a persistent RPC connection.</p>
+
+<p>That was the client side. You also need to wrap the server side 
+in the <code>ServeBack</code> function using the <code>rpc</code> library. This should be
+pretty straight-forward by creating an RPC server, registering the
+<code>Store</code> fields in <code>b *trib.Config</code> parameter under the name of
+<code>Storage</code>, and serving it as an HTTP server. The code should be
+similar to one of the examples given in the
+<a href="http://golang.org/pkg/net/rpc"><code>rpc</code></a> package documentation. Just
+remember that you need to register as <code>Storage</code> and also need to send
+a <code>true</code> over the <code>Ready</code> channel (if the <code>Ready</code> is not <code>nil</code>) when
+the service is ready, but send a <code>false</code> when you encounter any error
+on starting your service.</p>
+
+<p>When all of those are done, you should pass the test cases written in
+<code>back_test.go</code> file. It calls the <code>CheckStorage()</code> function defined
+in <code>trib/tribtest</code> package, and performs some basic checks on if an
+RPC client and a server (that runs on the same host) will satisfy the
+specification of a key-value pair service (as a local
+<code>trib/store.Storage</code> will but without RPC).</p>
 
 <h2>
 <a name="playing-with-it" class="anchor" href="#playing-with-it"><span class="octicon octicon-link"></span></a>Playing with It</h2>
@@ -352,13 +468,13 @@ have multiple front-ends that connects to a single back-end.</p>
 
 <ul>
 <li>When the network and the storage is errorless, RPC to your back-end
-should not return any error, and valid function calls to the Tribbler
-front-end service should not any error.</li>
-<li>When the network or storage has error on the back-end (which you 
-might not tell the difference), the front-end should handle them 
+should not return any error, and valid function calls to the
+Tribbler front-end service should not any error.</li>
+<li>When the network or storage has error on the back-end (which you
+might not tell the difference), the front-end should handle them
 correctly. The system should always be kept in a consistent state.</li>
-<li>When running on the lab machines, every function call 
-to the Tribbler front-end service should return within 1 second.</li>
+<li>When running on the lab machines, every function call to the
+Tribbler front-end service should return within 1 second.</li>
 </ul><h2>
 <a name="common-mistakes" class="anchor" href="#common-mistakes"><span class="octicon octicon-link"></span></a>Common Mistakes</h2>
 
