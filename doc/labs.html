@@ -14,6 +14,7 @@ all of the lab assignements.</p>
 <li>c08-17.sysnet.ucsd.edu</li>
 <li>c08-18.sysnet.ucsd.edu</li>
 <li>c08-19.sysnet.ucsd.edu</li>
+<li>c08-20.sysnet.ucsd.edu</li>
 </ul><h2>
 <a name="programming-language" class="anchor" href="#programming-language"><span class="octicon octicon-link"></span></a>Programming Language</h2>
 
@@ -60,16 +61,16 @@ type safe and pointer safe. When you have a pointer,
 the content it points to is always
 valid.</li>
 <li>Identifier that starts with
-a capital letter is <em>public</em> and visible to other modules; others
-are <em>private</em> and only visible inside its module.</li>
+a capital letter is <em>public</em> and visible to other packages; others
+are <em>private</em> and only visible inside its own package.</li>
 <li>
-<em>Inheritance</em> is done by
-compositions of anonymous members.</li>
-<li>Virtual functions are binded
-via <em>interfaces</em>. Unlike Java, <em>interface</em> does not require explicit
-binding (via the <em>implements</em> keyword). As long as the 
-type has the set of methods implemented, it can be automatically
-assigned to an inteface. As a result, it is okay to write the implementation first and declare the interface afterwards.</li>
+<em>Inheritance</em> is done by compositions of anonymous members.</li>
+<li>Virtual functions are binded via <em>interfaces</em>. Unlike Java,
+<em>interface</em> does not require explicit binding (via the <em>implements</em>
+keyword). As long as the type has the set of methods implemented, it
+can be automatically assigned to an inteface. As a result, it is
+okay to write the implementation first and declare the interface
+afterwards.</li>
 <li>Circular package dependency is not allowed.</li>
 </ul><h2>
 <a name="the-tribbler-story" class="anchor" href="#the-tribbler-story"><span class="octicon octicon-link"></span></a>The Tribbler Story</h2>

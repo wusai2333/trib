@@ -12,6 +12,7 @@ all of the lab assignements.
 - c08-17.sysnet.ucsd.edu
 - c08-18.sysnet.ucsd.edu
 - c08-19.sysnet.ucsd.edu
+- c08-20.sysnet.ucsd.edu
 
 ## Programming Language
 
@@ -54,15 +55,15 @@ already, here are some hints that might help you bootstrap.
   the content it points to is always
   valid.
 - Identifier that starts with
-  a capital letter is *public* and visible to other modules; others
-  are *private* and only visible inside its module.
-- *Inheritance* is done by
-  compositions of anonymous members.
-- Virtual functions are binded
-  via *interfaces*. Unlike Java, *interface* does not require explicit
-  binding (via the *implements* keyword). As long as the 
-  type has the set of methods implemented, it can be automatically
-  assigned to an inteface. As a result, it is okay to write the implementation first and declare the interface afterwards.
+  a capital letter is *public* and visible to other packages; others
+  are *private* and only visible inside its own package.
+- *Inheritance* is done by compositions of anonymous members.
+- Virtual functions are binded via *interfaces*. Unlike Java,
+  *interface* does not require explicit binding (via the *implements*
+  keyword). As long as the type has the set of methods implemented, it
+  can be automatically assigned to an inteface. As a result, it is
+  okay to write the implementation first and declare the interface
+  afterwards.
 - Circular package dependency is not allowed.
 
 ## The Tribbler Story
