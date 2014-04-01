@@ -11,12 +11,12 @@ interface and RPCs a remote key-value pair server.
 
 More specifically, you need to implement two entry functions that are
 defined in `triblab/lab1.go` file: `ServeBack()` and `NewClient()`.
-Now, they are both placeheld by `panic("todo")`.
+Now, they are both implemented with `panic("todo")`.
 
-## Get Up-to-date
+## Get Your Repo Up-to-date
 
-If you cloned your source folder before April, 1st. You might need to
-first get your repo up-to-date:
+If you cloned your source folder before Tuesday April, 1st.
+You might need to first get your repo up-to-date:
 
 ```
 $ cd ~/gopath/src/trib
@@ -25,12 +25,18 @@ $ cd ~/gopath/src/triblab
 $ git pull /classes/cse223b/sp14/labs/triblab lab1
 ```
 
-(The instruction here assumes you used the the default directory
-setup.)
+The instructions here assume you used the the default directory
+setup.
 
 ## The Key-value Pair Service Interface
 
-Data structure and interfaces for the key-value pair service is
+The goal of Lab1 is to wrap a key-value pair interface
+with RPC. Although you don't need to implement the key-value
+pair storage by
+yourself, you need to use it extensively in later labs, so it will be
+good for you to understand the service semantics here.
+
+The data structure and interfaces for the key-value pair service is
 defined in `trib/kv.go` file (in the `trib` repository). The main
 interface is `trib.Storage` interface, which consists of three parts.
 
@@ -65,10 +71,10 @@ type KeyList interface {
 	// Get the list.
 	ListGet(key string, list *List) error
 
-	// Append a string to the list, succ will always set to true.
+	// Append a string to the list. Set succ to true when no error.
 	ListAppend(kv *KeyValue, succ *bool) error
 
-	// Removes all elements that equals to kv.Value in list kv.Key
+	// Removes all elements that equal to kv.Value in list kv.Key
 	// n is set to the number of elements removed.
 	ListRemove(kv *KeyValue, n *int) error
 
@@ -94,24 +100,26 @@ type Storage interface {
 ```
 
 Note that the function signature of these methods are all RPC
-friendly. You should directly implement the RPC inteface with Go
+friendly. You should directly implement the RPC interface with Go
 language's [`rpc`](http://golang.org/pkg/net) package.  By doing this,
 another person's client that speaks the same protocol will be able to
 talk to your server as well.
 
-Under the defintion of the execution logic, all the methods will
+Under the definition of the execution logic, all the methods will
 always return `nil` error. Hence all errors you see from this
 interface will be communication errors. You can assume that each call
 (on the same key) is an atomic transaction; two concurrent writes
 won't give the key a weird value that comes from nowhere.  However,
 when an error occurs, the caller won't know if the transaction is
-commited or not, because the error might occur before or after the
+committed or not, because the error might occur before or after the
 transaction.
 
 ## Entry Functions
 
-These are the 2 entry functions you need to implement. This is how
-other people's code will use your code.
+These are the two entry functions you need to implement for
+this Lab.
+This is how other people's code (and your own code in later
+labs) will use your code.
 
 ```
 func ServeBack(b *trib.Back) error
@@ -129,7 +137,7 @@ configuration `b *trib.Back`. Structure `trib.Back` is defined in
   fact, You should not store persistent data anywhere else.
   `Store` will never be nil.
 - `Ready` is a channel for notifying the other parts in the program
-  that the server is ready to accept RPC calls from the network 
+  that the server is ready to accept RPC calls from the network
   (by sending value `true`) of failed to setup the connection
   (by sending value `false`). `Ready` might be nil (means the caller
   does not care about when it is ready).
@@ -167,37 +175,14 @@ library, and we will just use that.  Note that the `trib.Store`
 interface is already in its "RPC friendly" form.
 
 Your RPC needs to use the default encoding `encoding/gob`, listen on
-the given address, and serve as an http RPC server. The server 
+the given address, and serve as an http RPC server. The server
 needs to register the back-end key-value pair object under the
 name `Storage`.
-
-## Testing
-
-Both the `trib` and `triblab` repository comes with a makefile with
-some handy command lines, and also some basic testing code.
-
-Under the `trib` directory, if you type `make test`, you should see
-that the tests runs and all passed.
-
-Under the `triblab` directory, if you type `make test` however, you
-would see the test fails with a todo panic.
-
-Your first attempt should be implement the logic and try to pass those
-test cases. If you pass those, you should be fairly confident that you
-can get at least 30% of the credits for Lab1 (unless you are cheating
-in some way).
-
-However, the test that comes with the repository is very basic and
-simple.  Though you don't have to, you should really write more test
-cases to make sure your implementation matches the specification.
-
-For more information on writing test cases in Go language, see the
-[testing](http://golang.org/pkg/testing/) package document page.
 
 ## Starting Hints
 
 While you are free to do the project in your own way as long as
-it fits the specification, matches the interfaces and passes the 
+it fits the specification, matches the interfaces and passes the
 tests, here are some suggested steps for you to start.
 
 First, create a `client.go` file under `triblab` repo, and declare a
@@ -211,7 +196,7 @@ type client struct {
 }
 ```
 
-Then add method functions to this new `client` type so that 
+Then add method functions to this new `client` type so that
 it matches `trib.Storage` interface. For example, for the `Get()`
 function:
 
@@ -241,7 +226,7 @@ type client struct {
 }
 ```
 
-Now that we have a client type that satisfies `trib.Stroage`, we 
+Now that we have a client type that satisfies `trib.Stroage`, we
 can return this type in our entry function `NewClient()`. So remove
 the `panic("todo")` line in `NewClient()`, and replace it by
 returning a new `client` object. Now the `NewClient()` function
@@ -256,7 +241,7 @@ func NewClient(addr string) trib.Storage {
 Now we have the code skeleton for the RPC client, and we will fill
 in the actual logic of performing RPC calls.
 
-To do an RPC call, we need to use the `rpc` package, so at the 
+To do an RPC call, we need to use the `rpc` package, so at the
 start of `client.go` file, lets import that after the package
 name statement.
 
@@ -266,7 +251,7 @@ import (
 )
 ```
 
-And following the examples given in the `rpc` package, we can 
+And following the examples given in the `rpc` package, we can
 write the RPC client logic. For example, the `Get()` method
 should look something like this:
 
@@ -295,10 +280,10 @@ connection for every RPC call. It is okay, but it is not the most
 efficient way to do it.  I will leave it for yourself to figure out
 how to maintain a persistent RPC connection.
 
-That was the client side. You also need to wrap the server side 
-in the `ServeBack()` function using the `rpc` library. This should be
-pretty straight-forward by creating an RPC server, registering the
-`Store` member field in `b *trib.Config` parameter under the name of
+That was the client side. You also need to wrap the server side in the
+`ServeBack()` function using the `rpc` library. This should be pretty
+straight-forward by creating an RPC server, registering the `Store`
+member field in `b *trib.Config` parameter under the name of
 `Storage`, and serving it as an HTTP server. The code should be
 similar to one of the examples given in the
 [`rpc`](http://golang.org/pkg/net/rpc) package documentation. Just
@@ -312,7 +297,7 @@ When all of those are done, you should pass the test cases written in
 in `trib/tribtest` package, and performs some basic checks on if an
 RPC client and a server (that runs on the same host) will satisfy the
 specification of a key-value pair service (as a local
-`trib/store.Storage` will but without RPC).
+`trib/store.Storage` will do without RPC).
 
 ## Playing with It
 
@@ -331,9 +316,10 @@ $ kv-server
 
 And you should see an address printing out, say it is
 `localhost:12086`. (Note that you can also specify your own address
-via command line. The default is `localhost:rand`.)
+via command line. The default address is `localhost:rand`.)
 
 Now you can play with your server via the `kv-client` program.
+For example:
 
 ```
 $ kv-client localhost:12086 get hello
@@ -344,7 +330,7 @@ $ kv-client localhost:12086 get h8liu
 run
 $ kv-client localhost:12086 keys h8
 h8liu
-$ kv-client localhost:12086 list-get hello 
+$ kv-client localhost:12086 list-get hello
 $ kv-client localhost:12086 list-get h8liu
 $ kv-client localhost:12086 list-append h8liu something
 true
@@ -360,17 +346,47 @@ $ kv-client localhost:12086 clock 200
 200
 ```
 
+## Testing
+
+Both the `trib` and `triblab` repository comes with a makefile with
+some handy command lines shorthands, and also some basic testing code.
+
+Under the `trib` directory, if you type `make test`, you should see
+that the tests runs and all passed.
+
+Under the `triblab` directory, if you type `make test` however, you
+would see the test fails with a todo panic.
+
+You should implement the logic and try to pass those test cases. If
+you pass those, you should be fairly confident that you can get at
+least 30% of the credits for Lab1 (unless you are cheating in some
+way).
+
+However, the test that comes with the repository is very basic and
+simple.  Though you don't have to, you should really write more test
+cases to make sure your implementation matches the specification.
+
+For more information on writing test cases in Go language, please read
+the [testing](http://golang.org/pkg/testing/) package document page.
+
 ## Requirements
 
-- When the network and the storage is errorless, RPC to your back-end
+- When the network and the storage is errorless, RPC to your server
   should not return any error.
+- When the network has error (like the back-end server crashed, and
+  the client hence cannot connect), your RPC client should return
+  error. However when the server is back up, your RPC client should
+  act as normal.
+- When the server and the clients are running on the lab machines, for
+  each function call, the latency introduced by your RPC (comparing
+  with direct local function calls) should be less than 0.1 second.
 
 ## Turning In
 
-First, make sure every piece of your code is commited into the
-repository in `triblab`. Then just type `make turnin` under the root
+First, make sure that you have committed every piece of your code into
+the repository `triblab`. Then just type `make turnin` under the root
 of the repository.  It will generate a `turnin.zip` that contains
-everything in your git repository, and then copy the zip file to a
-place where only the lab instructors can read.
+everything in your git repository, and will then copy the zip file to
+a place where only the lab instructors can read.
 
 ## Happy Lab1!

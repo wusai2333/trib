@@ -47,7 +47,7 @@ type KeyList interface {
 	// Get the list.
 	ListGet(key string, list *List) error
 
-	// Append a string to the list, succ will always set to true.
+	// Append a string to the list. Set succ to true when no error.
 	ListAppend(kv *KeyValue, succ *bool) error
 
 	// Removes all elements that equals to kv.Value in list kv.Key

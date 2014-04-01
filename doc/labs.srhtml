@@ -73,7 +73,7 @@
 <a name="machines" class="anchor" href="#machines"><span class="octicon octicon-link"></span></a>Machines</h2>
 
 <p>We have set up a cluster of 10 machines. You should use those for
-all of the lab assignements.</p>
+all of the lab assignments.</p>
 
 <ul>
 <li>c08-11.sysnet.ucsd.edu</li>
@@ -92,7 +92,7 @@ all of the lab assignements.</p>
 <p>You will write the labs in Google's <a href="http://golang.org">golang</a>.  It
 is a young language with a language syntax at somewhere between C/C++
 and Python. It comes with a very rich standard library, and also
-language-level support for light-weight but powerful concurrency 
+language-level support for light-weight but powerful concurrency
 semantics like <em>go routines</em> and <em>channels</em>.</p>
 
 <p>Here is some key documentation on the language:</p>
@@ -127,8 +127,8 @@ encouraged to use that for error handling.</li>
 <em>Foreach</em> is implemented with <code>range</code> keyword.</li>
 <li>Semicolons at the end of statements are optional.</li>
 <li>On the other hand though, trailing comma in a list is a must.</li>
-<li>Variables are garbage collected. The language is hence 
-type safe and pointer safe. When you have a pointer, 
+<li>Variables are garbage collected. The language is hence
+type safe and pointer safe. When you have a pointer,
 the content it points to is always
 valid.</li>
 <li>Identifier that starts with
@@ -148,14 +148,14 @@ afterwards.</li>
 
 <p>Here is the story: some cowboy programmer wrote a
 simple online microblogging service called Tribbler, and leveraging
-the power of the Web, it becomes quite popular. However, 
-the program runs in one single process; it does not scale, 
-cannot support many concurrent connections, 
+the power of the Web, it becomes quite popular. However,
+the program runs in one single process; it does not scale,
+cannot support many concurrent connections,
 and is vulnerable to machine crashes. Knowing that you
 are taking the distributed computing system course at UCSD, he asks
 you for help. You answered his call and started this project.</p>
 
-<p>Your goal is to refactor Tribbler into a distributed system, 
+<p>Your goal is to refactor Tribbler into a distributed system,
 make it robust and scalable.</p>
 
 <h2>
@@ -189,12 +189,12 @@ generated).</p>
 
 <p>Now open your browser and type in the address. For example, if the
 machine you logged in was <code>c08-11.sysnet.ucsd.edu</code>, and Tribbler is
-running on port 27944, then open <code>http://c08-11.sysnet.ucsd.edu:27944</code>.  You should see a list of Tribbler users, where you can view their tribs and login as them (with no authentication). </p>
+running on port 27944, then open <code>http://c08-11.sysnet.ucsd.edu:27944</code>.  You should see a list of Tribbler users, where you can view their tribs and login as them (with no authentication).</p>
 
-<p>This is how the Tribbler service looks like to the user clients. 
+<p>This is how the Tribbler service looks like to the user clients.
 It is a single Web page the performs AJAX calls (a type of RPC
 that is widely used in Web 2.0) to the web server behind. The
-webserver then in turn calls the Tribbler logic functions 
+webserver then in turn calls the Tribbler logic functions
 and returns the results back to the Web page in the
 browser.</p>
 
@@ -213,30 +213,35 @@ campus, you need to setup a UCSD VPN or ssh tunnel.</p>
 <code>trib/tribtest</code> provides several basic test cases for the
 interfaces.</li>
 <li>
+<code>trib/cmd/kv-client</code> is a command line key-value RPC client
+for quick testing.</li>
+<li>
+<code>trib/cmd/kv-server</code> runs a key-value service as an RPC server.</li>
+<li>
 <code>trib/cmd/trib-front</code> is the web-server launcher that you just run.</li>
 <li>
 <code>trib/cmd/trib-back</code> is the back-end storage server launcher. We
 will use it when we have an back-end.</li>
 <li>
-<code>trib/entries</code> defines helper functions on constructing a Tribbler
-front-end or a back-end.</li>
+<code>trib/entries</code> defines helper several functions on
+constructing a Tribbler front-end or a back-end.</li>
 <li>
-<code>trib/ref</code> is a reference implementation of the interface
-<code>trib.Server</code> interface. All the logic runs in one single process.
+<code>trib/ref</code> is a reference monolithic implementation of the
+<code>trib.Server</code> interface. All the server logic runs in one single process.
 It is not scalable and vulnerable to machine crashes.</li>
+<li>
+<code>trib/store</code> contains an in-memory thread-safe implementation of the
+<code>trib.Store</code> interface. We will use this as
+the basic building block for our back-end storage system.</li>
 <li>
 <code>trib/randaddr</code> provides helper functions that generate a network
 address with a random port number.</li>
-<li>
-<code>trib/store</code> contains an in-memory thread-safe implementation of the
-Store interface. We will use this as the basic building block for
-our back-end storage system.</li>
 <li>
 <code>trib/www</code> contains the static files (html, css, js, etc.) for the
 web front-end.</li>
 </ul><p>Don't be scared by the number of packages. Most of the packages are
 very small. In fact, all Go language files under <code>trib</code> directory is
-less than 1500 lines in total (the beauty of Go!).</p>
+less than 1600 lines in total (the beauty of Go!).</p>
 
 <p>Through the entire lab, you do not need to modify anything in this
 <code>trib</code> repository. If you feel that you have to change some code to
@@ -251,7 +256,7 @@ reported it, you might get some bonus credit.</p>
 It is in the second repo that we checked out.</p>
 
 <p>It would be a good practice for you to periodically commit your code
-into your own <code>triblab</code> git repo. Only files commited in that repo 
+into your own <code>triblab</code> git repo. Only files commited in that repo
 will be submitted for grading.  </p>
 
 <h2>
@@ -272,20 +277,23 @@ have both the front-end and the back-end scalable.</li>
 hash table and replications. As a result, at the end of this lab,
 back-end servers can join, leave, or be killed, without breaking
 down the entire service.</li>
-</ul><p>By the end of the labs, you will have a new Tribller service 
+</ul><p>By the end of the labs, you will have a new Tribbler service
 implementation that is scalable and fault-tolerant.</p>
 
 <h2>
 <a name="misc" class="anchor" href="#misc"><span class="octicon octicon-link"></span></a>Misc</h2>
 
-<p>For convenience, you might set environment variables in your <code>.bashrc</code>:</p>
+<p>For convenience, you might set environment variables in your <code>.bashrc</code>
+or <code>.bash_profile</code>:</p>
 
 <pre><code>export GOPATH=$HOME/gopath
 export PATH=$PATH:$GOPATH/bin
 </code></pre>
 
 <p>We should have Vim and Emaces installed on the machines. If you need
-to install other utility packages, ask the TA.</p>
+to install other utility packages, ask the TA. Note that you do not
+have <code>sudo</code> permissions on any of the machines; any <code>sudo</code> attempt
+will be automatically reported, so please don't even try it.</p>
 
 <p>You could also write your code on your own machine if you want to.
 See Go language's <a href="http://golang.org/doc/install">install</a> page for
@@ -295,7 +303,7 @@ machines.</p>
 <h2>
 <a name="ready" class="anchor" href="#ready"><span class="octicon octicon-link"></span></a>Ready?</h2>
 
-<p>If you feel comfortable with the lab setup now, 
+<p>If you feel comfortable with the lab setup now,
 go forward and read <a href="./lab1.html">Lab1</a>.</p>
 </div>
 <%= pagebottom() %>
