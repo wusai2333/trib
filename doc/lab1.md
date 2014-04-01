@@ -331,7 +331,7 @@ specification of a key-value pair service (as a local
 To do some simple test with your own implementation, you can use the
 `kv-client` and `kv-server` command line launcher.
 
-First make sure you code compiles.
+First make sure your code compiles.
 
 Then run the server.
 
