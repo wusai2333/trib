@@ -6,8 +6,8 @@ key-value pair service that can be called via RPC. In particular
 you need to:</p>
 
 <ol>
-<li>Implement a key-value storage server type that fits <code>trib.Store</code>
-interface and takes http RPC requests from the network.</li>
+<li>Implement a key-value storage server type that wraps a <code>trib.Store</code>
+interface object and takes http RPC requests from the network.</li>
 <li>Implement a key-value storage client type that fits <code>trib.Store</code>
 interface and RPCs a remote key-value pair server.</li>
 </ol><p>More specifically, you need to implement two entry functions that are
@@ -42,7 +42,7 @@ good for you to understand the service semantics here.</p>
 defined in <code>trib/kv.go</code> file (in the <code>trib</code> repository). The main
 interface is <code>trib.Storage</code> interface, which consists of three parts.</p>
 
-<p>First is the key-value pair part.</p>
+<p>First is the key-string pair part.</p>
 
 <pre><code>// Key-value pair interfaces
 // Default value for all keys is empty string
@@ -62,7 +62,7 @@ type KeyString interface {
 <p><code>Pattern</code> is a prefix-suffix tuple. It has a <code>Match(string)</code> function
 that returns true when the string matches the pattern.</p>
 
-<p>Second is the key-string pair part.</p>
+<p>Second is the key-list pair part.</p>
 
 <pre><code>// Key-list interfaces.
 // Default value for all lists is an empty list.
@@ -84,7 +84,7 @@ type KeyList interface {
 }
 </code></pre>
 
-<p>And finally we put it together with an auto-incrementing clock service:</p>
+<p>And finally we put it together, and add an auto-incrementing clock service:</p>
 
 <pre><code>type Storage interface {
     // Returns an auto-incrementing clock, the returned value
@@ -133,7 +133,7 @@ configuration <code>b *trib.Back</code>. Structure <code>trib.Back</code> is def
 <code>Addr</code> is the address the server should listen on, in the form of
 <code>&lt;host&gt;:&lt;port&gt;</code>. Go language uses this address in its <a href="http://golang.org/pkg/net">standard
 <code>net</code> package</a>, so you should be able to
-use it directly.<br>
+use it directly on opening connections.<br>
 </li>
 <li>
 <code>Store</code> is the storage device you will use for storing stuff. In
@@ -142,27 +142,28 @@ fact, You should not store persistent data anywhere else.
 <li>
 <code>Ready</code> is a channel for notifying the other parts in the program
 that the server is ready to accept RPC calls from the network
-(by sending value <code>true</code>) of failed to setup the connection
-(by sending value <code>false</code>). <code>Ready</code> might be nil (means the caller
-does not care about when it is ready).</li>
+(by sending value <code>true</code>) or the server failed to setup the
+connection (by sending value <code>false</code>). <code>Ready</code> might be nil (means
+the caller does not care about when it is ready).</li>
 </ul><p>This function should be a blocking call. It does not return until an
 error (like the network is shutdown) occurred.</p>
 
 <p>Note that you don't need to (and should not) implement the key-value
-pair by yourself.  You only need to wrap the given <code>Store</code> with RPC,
-so that a remote client can access it via the network.</p>
+pair storage by yourself.  You only need to wrap the given <code>Store</code>
+with RPC, so that a remote client can access it via the network.</p>
 
 <hr><pre><code>func NewClient(addr string) trib.Stroage
 </code></pre>
 
 <p>This function takes <code>addr</code> as a TCP address in the form of
-<code>&lt;host&gt;:&lt;port&gt;</code>, and connect to this address for an
+<code>&lt;host&gt;:&lt;port&gt;</code>, and connects to this address for an http
 RPC server. It returns an implementation of <code>trib.Storage</code>, which
 will provide the interface, but all calls will be actually RPCs
-to the server. You can assume <code>addr</code> will always be a valid one.</p>
+to the server. You can assume <code>addr</code> will always be a valid TCP
+address.</p>
 
-<p>Note that when <code>NewClient()</code> is called, the server might not be there
-already. While it is okay to try to connect the server at this
+<p>Note that when <code>NewClient()</code> is called, the server might not start
+up yet. While it is okay to make a try to connect the server at this
 time, you should not report any error if your attempt failed.  It
 might be better to establish the connection when you need to perform
 your first RPC function call.</p>
@@ -179,6 +180,30 @@ interface is already in its "RPC friendly" form.</p>
 the given address, and serve as an http RPC server. The server
 needs to register the back-end key-value pair object under the
 name <code>Storage</code>.</p>
+
+<h2>
+<a name="testing" class="anchor" href="#testing"><span class="octicon octicon-link"></span></a>Testing</h2>
+
+<p>Both the <code>trib</code> and <code>triblab</code> repository comes with a makefile with
+some handy command line shorthands, and also some basic testing code.</p>
+
+<p>Under the <code>trib</code> directory, if you type <code>make test</code>, you should see
+that the test runs and all passed.</p>
+
+<p>Under the <code>triblab</code> directory, if you type <code>make test</code> however, you
+would see the test fails with a todo panic if you have not implement.</p>
+
+<p>You should implement the logic and try to pass those test cases. If
+you pass those, you should be fairly confident that you can get at
+least 30% of the credits for Lab1 (unless you are cheating in some
+way).</p>
+
+<p>However, the test that comes with the repository is very basic and
+simple.  Though you don't have to, you should really write more test
+cases to make sure your implementation matches the specification.</p>
+
+<p>For more information on writing test cases in Go language, please read
+the <a href="http://golang.org/pkg/testing/">testing</a> package document page.</p>
 
 <h2>
 <a name="starting-hints" class="anchor" href="#starting-hints"><span class="octicon octicon-link"></span></a>Starting Hints</h2>
@@ -213,8 +238,11 @@ time checking if all the functions are implemented:</p>
 </code></pre>
 
 <p>This creates a zero-filled <code>client</code> and assigns it to an anonymous
-object of <code>trig.Storage</code> interface. It only compiles when <code>client</code>
-satisfies the interface.</p>
+object of <code>trig.Storage</code> interface. Your code hence only compiles when
+<code>client</code> satisfies the interface. (Since this zero-filled variable is
+anonymous and nobody can access it, it will be removed as dead code by
+the compiler optimizer and hence has no negative effect to the
+run-time execution.)</p>
 
 <p>Now add a field into <code>client</code> called <code>addr</code>, which will save the
 server address. Now <code>client</code> looks like this:</p>
@@ -228,7 +256,7 @@ server address. Now <code>client</code> looks like this:</p>
 can return this type in our entry function <code>NewClient()</code>. So remove
 the <code>panic("todo")</code> line in <code>NewClient()</code>, and replace it by
 returning a new <code>client</code> object. Now the <code>NewClient()</code> function
-should look something like this:</p>
+should somehow look like this:</p>
 
 <pre><code>func NewClient(addr string) trib.Storage {
     return &amp;client{addr: addr}
@@ -236,11 +264,11 @@ should look something like this:</p>
 </code></pre>
 
 <p>Now we have the code skeleton for the RPC client, and we will fill
-in the actual logic of performing RPC calls.</p>
+in the actual logic that performs the RPC calls.</p>
 
-<p>To do an RPC call, we need to use the <code>rpc</code> package, so at the
-start of <code>client.go</code> file, lets import that after the package
-name statement.</p>
+<p>To do an RPC call, we need to import the <code>rpc</code> package, so at the
+start of <code>client.go</code> file, lets import that after the package name
+statement.</p>
 
 <pre><code>import (
     "net/rpc"
@@ -249,7 +277,7 @@ name statement.</p>
 
 <p>And following the examples given in the <code>rpc</code> package, we can
 write the RPC client logic. For example, the <code>Get()</code> method
-should look something like this:</p>
+should somehow look like this:</p>
 
 <pre><code>func (self *client) Get(key string, value *string) error {
     // connect to the server
@@ -271,8 +299,8 @@ should look something like this:</p>
 </code></pre>
 
 <p>However, note that if you do it this way, you will open a new HTTP
-connection for every RPC call. It is okay, but it is not the most
-efficient way to do it.  I will leave it for yourself to figure out
+connection for every RPC call. It is okay but obviously not the most
+efficient way to do so.  I will leave it for yourself to figure out
 how to maintain a persistent RPC connection.</p>
 
 <p>That was the client side. You also need to wrap the server side in the
@@ -283,7 +311,7 @@ member field in <code>b *trib.Config</code> parameter under the name of
 similar to one of the examples given in the
 <a href="http://golang.org/pkg/net/rpc"><code>rpc</code></a> package documentation. Just
 remember that you need to register as <code>Storage</code> and also need to send
-a <code>true</code> over the <code>Ready</code> channel when the service is ready (and
+a <code>true</code> over the <code>Ready</code> channel when the service is ready (when
 <code>Ready</code> is not <code>nil</code>), but send a <code>false</code> when you encounter any error
 on starting your service.</p>
 
@@ -297,8 +325,8 @@ specification of a key-value pair service (as a local
 <h2>
 <a name="playing-with-it" class="anchor" href="#playing-with-it"><span class="octicon octicon-link"></span></a>Playing with It</h2>
 
-<p>To run your own implementation, you could use the <code>kv-client</code> and
-<code>kv-server</code> command line launcher.</p>
+<p>To do some simple test with your own implementation, you can use the
+<code>kv-client</code> and <code>kv-server</code> command line launcher.</p>
 
 <p>First make sure you code compiles.</p>
 
@@ -339,30 +367,6 @@ $ kv-client localhost:12086 clock
 $ kv-client localhost:12086 clock 200
 200
 </code></pre>
-
-<h2>
-<a name="testing" class="anchor" href="#testing"><span class="octicon octicon-link"></span></a>Testing</h2>
-
-<p>Both the <code>trib</code> and <code>triblab</code> repository comes with a makefile with
-some handy command lines shorthands, and also some basic testing code.</p>
-
-<p>Under the <code>trib</code> directory, if you type <code>make test</code>, you should see
-that the tests runs and all passed.</p>
-
-<p>Under the <code>triblab</code> directory, if you type <code>make test</code> however, you
-would see the test fails with a todo panic.</p>
-
-<p>You should implement the logic and try to pass those test cases. If
-you pass those, you should be fairly confident that you can get at
-least 30% of the credits for Lab1 (unless you are cheating in some
-way).</p>
-
-<p>However, the test that comes with the repository is very basic and
-simple.  Though you don't have to, you should really write more test
-cases to make sure your implementation matches the specification.</p>
-
-<p>For more information on writing test cases in Go language, please read
-the <a href="http://golang.org/pkg/testing/">testing</a> package document page.</p>
 
 <h2>
 <a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>

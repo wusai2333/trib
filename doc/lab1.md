@@ -4,8 +4,8 @@ Welcome to Lab1. The goal of this lab is to implement a
 key-value pair service that can be called via RPC. In particular
 you need to:
 
-1. Implement a key-value storage server type that fits `trib.Store`
-interface and takes http RPC requests from the network.
+1. Implement a key-value storage server type that wraps a `trib.Store`
+interface object and takes http RPC requests from the network.
 2. Implement a key-value storage client type that fits `trib.Store`
 interface and RPCs a remote key-value pair server.
 
@@ -40,7 +40,7 @@ The data structure and interfaces for the key-value pair service is
 defined in `trib/kv.go` file (in the `trib` repository). The main
 interface is `trib.Storage` interface, which consists of three parts.
 
-First is the key-value pair part.
+First is the key-string pair part.
 
 ```
 // Key-value pair interfaces
@@ -61,7 +61,7 @@ type KeyString interface {
 `Pattern` is a prefix-suffix tuple. It has a `Match(string)` function
 that returns true when the string matches the pattern.
 
-Second is the key-string pair part.
+Second is the key-list pair part.
 
 ```
 // Key-list interfaces.
@@ -84,7 +84,7 @@ type KeyList interface {
 }
 ```
 
-And finally we put it together with an auto-incrementing clock service:
+And finally we put it together, and add an auto-incrementing clock service:
 
 ```
 type Storage interface {
@@ -132,22 +132,22 @@ configuration `b *trib.Back`. Structure `trib.Back` is defined in
 - `Addr` is the address the server should listen on, in the form of
   `<host>:<port>`. Go language uses this address in its [standard
   `net` package] (http://golang.org/pkg/net), so you should be able to
-  use it directly.  
+  use it directly on opening connections.  
 - `Store` is the storage device you will use for storing stuff. In
   fact, You should not store persistent data anywhere else.
   `Store` will never be nil.
 - `Ready` is a channel for notifying the other parts in the program
   that the server is ready to accept RPC calls from the network
-  (by sending value `true`) of failed to setup the connection
-  (by sending value `false`). `Ready` might be nil (means the caller
-  does not care about when it is ready).
+  (by sending value `true`) or the server failed to setup the
+  connection (by sending value `false`). `Ready` might be nil (means
+  the caller does not care about when it is ready).
 
 This function should be a blocking call. It does not return until an
 error (like the network is shutdown) occurred.
 
 Note that you don't need to (and should not) implement the key-value
-pair by yourself.  You only need to wrap the given `Store` with RPC,
-so that a remote client can access it via the network.
+pair storage by yourself.  You only need to wrap the given `Store`
+with RPC, so that a remote client can access it via the network.
 
 ***
 
@@ -156,13 +156,14 @@ func NewClient(addr string) trib.Stroage
 ```
 
 This function takes `addr` as a TCP address in the form of
-`<host>:<port>`, and connect to this address for an
+`<host>:<port>`, and connects to this address for an http
 RPC server. It returns an implementation of `trib.Storage`, which
 will provide the interface, but all calls will be actually RPCs
-to the server. You can assume `addr` will always be a valid one.
+to the server. You can assume `addr` will always be a valid TCP
+address.
 
-Note that when `NewClient()` is called, the server might not be there
-already. While it is okay to try to connect the server at this
+Note that when `NewClient()` is called, the server might not start
+up yet. While it is okay to make a try to connect the server at this
 time, you should not report any error if your attempt failed.  It
 might be better to establish the connection when you need to perform
 your first RPC function call.
@@ -178,6 +179,29 @@ Your RPC needs to use the default encoding `encoding/gob`, listen on
 the given address, and serve as an http RPC server. The server
 needs to register the back-end key-value pair object under the
 name `Storage`.
+
+## Testing
+
+Both the `trib` and `triblab` repository comes with a makefile with
+some handy command line shorthands, and also some basic testing code.
+
+Under the `trib` directory, if you type `make test`, you should see
+that the test runs and all passed.
+
+Under the `triblab` directory, if you type `make test` however, you
+would see the test fails with a todo panic if you have not implement.
+
+You should implement the logic and try to pass those test cases. If
+you pass those, you should be fairly confident that you can get at
+least 30% of the credits for Lab1 (unless you are cheating in some
+way).
+
+However, the test that comes with the repository is very basic and
+simple.  Though you don't have to, you should really write more test
+cases to make sure your implementation matches the specification.
+
+For more information on writing test cases in Go language, please read
+the [testing](http://golang.org/pkg/testing/) package document page.
 
 ## Starting Hints
 
@@ -214,8 +238,11 @@ var _ trib.Storage = new(client)
 ```
 
 This creates a zero-filled `client` and assigns it to an anonymous
-object of `trig.Storage` interface. It only compiles when `client`
-satisfies the interface.
+object of `trig.Storage` interface. Your code hence only compiles when
+`client` satisfies the interface. (Since this zero-filled variable is
+anonymous and nobody can access it, it will be removed as dead code by
+the compiler optimizer and hence has no negative effect to the
+run-time execution.)
 
 Now add a field into `client` called `addr`, which will save the
 server address. Now `client` looks like this:
@@ -230,7 +257,7 @@ Now that we have a client type that satisfies `trib.Stroage`, we
 can return this type in our entry function `NewClient()`. So remove
 the `panic("todo")` line in `NewClient()`, and replace it by
 returning a new `client` object. Now the `NewClient()` function
-should look something like this:
+should somehow look like this:
 
 ```
 func NewClient(addr string) trib.Storage {
@@ -239,11 +266,11 @@ func NewClient(addr string) trib.Storage {
 ```
 
 Now we have the code skeleton for the RPC client, and we will fill
-in the actual logic of performing RPC calls.
+in the actual logic that performs the RPC calls.
 
-To do an RPC call, we need to use the `rpc` package, so at the
-start of `client.go` file, lets import that after the package
-name statement.
+To do an RPC call, we need to import the `rpc` package, so at the
+start of `client.go` file, lets import that after the package name
+statement.
 
 ```
 import (
@@ -253,7 +280,7 @@ import (
 
 And following the examples given in the `rpc` package, we can
 write the RPC client logic. For example, the `Get()` method
-should look something like this:
+should somehow look like this:
 
 ```
 func (self *client) Get(key string, value *string) error {
@@ -276,8 +303,8 @@ func (self *client) Get(key string, value *string) error {
 ```
 
 However, note that if you do it this way, you will open a new HTTP
-connection for every RPC call. It is okay, but it is not the most
-efficient way to do it.  I will leave it for yourself to figure out
+connection for every RPC call. It is okay but obviously not the most
+efficient way to do so.  I will leave it for yourself to figure out
 how to maintain a persistent RPC connection.
 
 That was the client side. You also need to wrap the server side in the
@@ -288,7 +315,7 @@ member field in `b *trib.Config` parameter under the name of
 similar to one of the examples given in the
 [`rpc`](http://golang.org/pkg/net/rpc) package documentation. Just
 remember that you need to register as `Storage` and also need to send
-a `true` over the `Ready` channel when the service is ready (and
+a `true` over the `Ready` channel when the service is ready (when
 `Ready` is not `nil`), but send a `false` when you encounter any error
 on starting your service.
 
@@ -301,8 +328,8 @@ specification of a key-value pair service (as a local
 
 ## Playing with It
 
-To run your own implementation, you could use the `kv-client` and
-`kv-server` command line launcher.
+To do some simple test with your own implementation, you can use the
+`kv-client` and `kv-server` command line launcher.
 
 First make sure you code compiles.
 
@@ -345,29 +372,6 @@ $ kv-client localhost:12086 clock
 $ kv-client localhost:12086 clock 200
 200
 ```
-
-## Testing
-
-Both the `trib` and `triblab` repository comes with a makefile with
-some handy command lines shorthands, and also some basic testing code.
-
-Under the `trib` directory, if you type `make test`, you should see
-that the tests runs and all passed.
-
-Under the `triblab` directory, if you type `make test` however, you
-would see the test fails with a todo panic.
-
-You should implement the logic and try to pass those test cases. If
-you pass those, you should be fairly confident that you can get at
-least 30% of the credits for Lab1 (unless you are cheating in some
-way).
-
-However, the test that comes with the repository is very basic and
-simple.  Though you don't have to, you should really write more test
-cases to make sure your implementation matches the specification.
-
-For more information on writing test cases in Go language, please read
-the [testing](http://golang.org/pkg/testing/) package document page.
 
 ## Requirements
 
