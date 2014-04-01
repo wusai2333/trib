@@ -88,8 +88,8 @@ repository now. To get started, run these commands in command line:
 $ cd                       # go to your home directory
 $ mkdir -p gopath/src      # the path you use for storing golang src
 $ cd gopath/src
-$ git clone /classes/cse223b/sp14/labs/trib -b lab1 --depth=1
-$ git clone /classes/cse223b/sp14/labs/triblab -b lab1 --depth=1
+$ git clone /classes/cse223b/sp14/labs/trib -b lab1
+$ git clone /classes/cse223b/sp14/labs/triblab -b lab1
 $ export GOPATH=~/gopath
 $ go install ./...
 ```
@@ -167,6 +167,7 @@ It would be a good practice for you to periodically commit your code
 into your own `triblab` git repo. Only files commited in that repo 
 will be submitted for grading.  
 
+<!--
 ## Lab Roadmap
 
 - **Lab 1**. Wrap the key-value pair service interface with RPC, so
@@ -183,6 +184,7 @@ will be submitted for grading.
 
 By the end of the labs, you will have a new Tribller service 
 implementation that is scalable and fault-tolerant.
+-->
 
 ## Misc
 
