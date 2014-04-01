@@ -71,7 +71,7 @@ already, here are some hints that might help you bootstrap.
 Here is the story: some cowboy programmer wrote a
 simple online microblogging service called Tribbler, and leveraging
 the power of the Web, it becomes quite popular. However, 
-the program runs as one single process; it does not scale, 
+the program runs in one single process; it does not scale, 
 cannot support many concurrent connections, 
 and is vulnerable to machine crashes. Knowing that you
 are taking the distributed computing system course at UCSD, he asks
@@ -129,23 +129,22 @@ campus, you need to setup a UCSD VPN or ssh tunnel.
 
 The source code in the `trib` package repository is organized as follow:
 
-- `trib` defines the general Tribbler logic interfaces and and
-  common data structures.
+- `trib` defines the common Tribbler interfaces and data structures.
 - `trib/tribtest` provides several basic test cases for the
   interfaces.
 - `trib/cmd/trib-front` is the web-server launcher that you just run.
-- `trib/cmd/trib-back` is the back-end storage server launcher. We will
-  use it when we have an back-end.
+- `trib/cmd/trib-back` is the back-end storage server launcher. We
+  will use it when we have an back-end.
 - `trib/entries` defines helper functions on constructing a Tribbler
   front-end or a back-end.
 - `trib/ref` is a reference implementation of the interface
-  `trib.Server` interface. All the logic runs as one single process.
+  `trib.Server` interface. All the logic runs in one single process.
   It is not scalable and vulnerable to machine crashes.
-- `trib/randaddr` provides helper functions that 
-  generate a network address with a random port number.
+- `trib/randaddr` provides helper functions that generate a network
+  address with a random port number.
 - `trib/store` contains an in-memory thread-safe implementation of the
-  Store interface. We will use this as the basic building block
-  for our back-end storage system.
+  Store interface. We will use this as the basic building block for
+  our back-end storage system.
 - `trib/www` contains the static files (html, css, js, etc.) for the
   web front-end.
 

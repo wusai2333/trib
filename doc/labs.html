@@ -78,7 +78,7 @@ afterwards.</li>
 <p>Here is the story: some cowboy programmer wrote a
 simple online microblogging service called Tribbler, and leveraging
 the power of the Web, it becomes quite popular. However, 
-the program runs as one single process; it does not scale, 
+the program runs in one single process; it does not scale, 
 cannot support many concurrent connections, 
 and is vulnerable to machine crashes. Knowing that you
 are taking the distributed computing system course at UCSD, he asks
@@ -137,30 +137,29 @@ campus, you need to setup a UCSD VPN or ssh tunnel.</p>
 
 <ul>
 <li>
-<code>trib</code> defines the general Tribbler logic interfaces and and
-common data structures.</li>
+<code>trib</code> defines the common Tribbler interfaces and data structures.</li>
 <li>
 <code>trib/tribtest</code> provides several basic test cases for the
 interfaces.</li>
 <li>
 <code>trib/cmd/trib-front</code> is the web-server launcher that you just run.</li>
 <li>
-<code>trib/cmd/trib-back</code> is the back-end storage server launcher. We will
-use it when we have an back-end.</li>
+<code>trib/cmd/trib-back</code> is the back-end storage server launcher. We
+will use it when we have an back-end.</li>
 <li>
 <code>trib/entries</code> defines helper functions on constructing a Tribbler
 front-end or a back-end.</li>
 <li>
 <code>trib/ref</code> is a reference implementation of the interface
-<code>trib.Server</code> interface. All the logic runs as one single process.
+<code>trib.Server</code> interface. All the logic runs in one single process.
 It is not scalable and vulnerable to machine crashes.</li>
 <li>
-<code>trib/randaddr</code> provides helper functions that 
-generate a network address with a random port number.</li>
+<code>trib/randaddr</code> provides helper functions that generate a network
+address with a random port number.</li>
 <li>
 <code>trib/store</code> contains an in-memory thread-safe implementation of the
-Store interface. We will use this as the basic building block
-for our back-end storage system.</li>
+Store interface. We will use this as the basic building block for
+our back-end storage system.</li>
 <li>
 <code>trib/www</code> contains the static files (html, css, js, etc.) for the
 web front-end.</li>
