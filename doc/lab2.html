@@ -1,5 +1,5 @@
 <h1>
-<a name="lab2" class="anchor" href="#lab2"><span class="octicon octicon-link"></span></a>Lab2</h1>
+<a name="user-content-lab2" class="anchor" href="#lab2"><span class="octicon octicon-link"></span></a>Lab2</h1>
 
 <p>Welcome to Lab2. The goal of this labe is to ...
 The goal of this lab is to split the logic into
@@ -11,7 +11,7 @@ particular, you need to:</p>
 <code>trib.Server</code> interface that calls a remote RPC key-value pair
 back-end server.</li>
 </ol><h2>
-<a name="tribble" class="anchor" href="#tribble"><span class="octicon octicon-link"></span></a>Tribble</h2>
+<a name="user-content-tribble" class="anchor" href="#tribble"><span class="octicon octicon-link"></span></a>Tribble</h2>
 
 <p>A Tribble is a structure type that has 4 fields:</p>
 
@@ -46,7 +46,7 @@ the fields following this priority:</p>
 </ol><p>We call this the <em>Tribble Order</em>.</p>
 
 <h2>
-<a name="tribbler-service-interface" class="anchor" href="#tribbler-service-interface"><span class="octicon octicon-link"></span></a>Tribbler Service Interface</h2>
+<a name="user-content-tribbler-service-interface" class="anchor" href="#tribbler-service-interface"><span class="octicon octicon-link"></span></a>Tribbler Service Interface</h2>
 
 <p>The Tribbler service logic is all defined in <code>trib.Server</code> interface
 (in <code>trib/trib.go</code> file).</p>
@@ -134,7 +134,7 @@ error means that the call is successfully executed; returning a
 non-nill error means that the call might be executed or not.</p>
 
 <h2>
-<a name="entry-functions" class="anchor" href="#entry-functions"><span class="octicon octicon-link"></span></a>Entry Functions</h2>
+<a name="user-content-entry-functions" class="anchor" href="#entry-functions"><span class="octicon octicon-link"></span></a>Entry Functions</h2>
 
 <pre><code>func NewFront(backs []string) trib.Server
 </code></pre>
@@ -154,7 +154,7 @@ correctly.</p>
 <p>In Lab1, <code>backs</code> will always contain only one address.</p>
 
 <h2>
-<a name="playing-with-it" class="anchor" href="#playing-with-it"><span class="octicon octicon-link"></span></a>Playing with It</h2>
+<a name="user-content-playing-with-it" class="anchor" href="#playing-with-it"><span class="octicon octicon-link"></span></a>Playing with It</h2>
 
 <p>Next for the front-end part. Run on the same machine (since it is
 listening on <code>localhost</code>).</p>
@@ -176,7 +176,7 @@ play with your own implementation.</p>
 have multiple front-ends that connects to a single back-end.</p>
 
 <h2>
-<a name="common-mistakes" class="anchor" href="#common-mistakes"><span class="octicon octicon-link"></span></a>Common Mistakes</h2>
+<a name="user-content-common-mistakes" class="anchor" href="#common-mistakes"><span class="octicon octicon-link"></span></a>Common Mistakes</h2>
 
 <p>Here are some common mistakes that a lazy and quick
 but incorrect implementation might do:</p>

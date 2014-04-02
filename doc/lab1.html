@@ -1,5 +1,5 @@
 <h2>
-<a name="lab1" class="anchor" href="#lab1"><span class="octicon octicon-link"></span></a>Lab1</h2>
+<a name="user-content-lab1" class="anchor" href="#lab1"><span class="octicon octicon-link"></span></a>Lab1</h2>
 
 <p>Welcome to Lab1. The goal of this lab is to implement a
 key-value pair service that can be called via RPC. In particular
@@ -15,7 +15,7 @@ defined in <code>triblab/lab1.go</code> file: <code>ServeBack()</code> and <code
 Now, they are both implemented with <code>panic("todo")</code>.</p>
 
 <h2>
-<a name="get-your-repo-up-to-date" class="anchor" href="#get-your-repo-up-to-date"><span class="octicon octicon-link"></span></a>Get Your Repo Up-to-date</h2>
+<a name="user-content-get-your-repo-up-to-date" class="anchor" href="#get-your-repo-up-to-date"><span class="octicon octicon-link"></span></a>Get Your Repo Up-to-date</h2>
 
 <p>If you cloned your source folder before Tuesday April, 1st.
 You might need to first get your repo up-to-date:</p>
@@ -30,7 +30,7 @@ $ git pull /classes/cse223b/sp14/labs/triblab lab1
 setup.</p>
 
 <h2>
-<a name="the-key-value-pair-service-interface" class="anchor" href="#the-key-value-pair-service-interface"><span class="octicon octicon-link"></span></a>The Key-value Pair Service Interface</h2>
+<a name="user-content-the-key-value-pair-service-interface" class="anchor" href="#the-key-value-pair-service-interface"><span class="octicon octicon-link"></span></a>The Key-value Pair Service Interface</h2>
 
 <p>The goal of Lab1 is to wrap a key-value pair interface
 with RPC. Although you don't need to implement the key-value
@@ -114,7 +114,7 @@ committed or not, because the error might occur before or after the
 transaction.</p>
 
 <h2>
-<a name="entry-functions" class="anchor" href="#entry-functions"><span class="octicon octicon-link"></span></a>Entry Functions</h2>
+<a name="user-content-entry-functions" class="anchor" href="#entry-functions"><span class="octicon octicon-link"></span></a>Entry Functions</h2>
 
 <p>These are the two entry functions you need to implement for
 this Lab.
@@ -169,7 +169,7 @@ might be better to establish the connection when you need to perform
 your first RPC function call.</p>
 
 <h2>
-<a name="the-rpc-package" class="anchor" href="#the-rpc-package"><span class="octicon octicon-link"></span></a>The RPC Package</h2>
+<a name="user-content-the-rpc-package" class="anchor" href="#the-rpc-package"><span class="octicon octicon-link"></span></a>The RPC Package</h2>
 
 <p>Go language comes with its own
 <a href="http://golang.org/pkg/net/rpc"><code>net/rpc</code></a> package in its standard
@@ -182,7 +182,7 @@ needs to register the back-end key-value pair object under the
 name <code>Storage</code>.</p>
 
 <h2>
-<a name="testing" class="anchor" href="#testing"><span class="octicon octicon-link"></span></a>Testing</h2>
+<a name="user-content-testing" class="anchor" href="#testing"><span class="octicon octicon-link"></span></a>Testing</h2>
 
 <p>Both the <code>trib</code> and <code>triblab</code> repository comes with a makefile with
 some handy command line shorthands, and also some basic testing code.</p>
@@ -206,7 +206,7 @@ cases to make sure your implementation matches the specification.</p>
 the <a href="http://golang.org/pkg/testing/">testing</a> package document page.</p>
 
 <h2>
-<a name="starting-hints" class="anchor" href="#starting-hints"><span class="octicon octicon-link"></span></a>Starting Hints</h2>
+<a name="user-content-starting-hints" class="anchor" href="#starting-hints"><span class="octicon octicon-link"></span></a>Starting Hints</h2>
 
 <p>While you are free to do the project in your own way as long as
 it fits the specification, matches the interfaces and passes the
@@ -323,12 +323,12 @@ specification of a key-value pair service (as a local
 <code>trib/store.Storage</code> will do without RPC).</p>
 
 <h2>
-<a name="playing-with-it" class="anchor" href="#playing-with-it"><span class="octicon octicon-link"></span></a>Playing with It</h2>
+<a name="user-content-playing-with-it" class="anchor" href="#playing-with-it"><span class="octicon octicon-link"></span></a>Playing with It</h2>
 
 <p>To do some simple test with your own implementation, you can use the
 <code>kv-client</code> and <code>kv-server</code> command line launcher.</p>
 
-<p>First make sure you code compiles.</p>
+<p>First make sure your code compiles.</p>
 
 <p>Then run the server.</p>
 
@@ -369,20 +369,21 @@ $ kv-client localhost:12086 clock 200
 </code></pre>
 
 <h2>
-<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
+<a name="user-content-requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
 
 <ul>
 <li>When the network and the storage is errorless, RPC to your server
 should not return any error.</li>
 <li>When the network has error (like the back-end server crashed, and
 the client hence cannot connect), your RPC client should return
-error. However when the server is back up, your RPC client should
-act as normal.</li>
+error. However when the server is back up running, your RPC client
+should act as normal again (without the need of creating a new
+client). </li>
 <li>When the server and the clients are running on the lab machines, for
 each function call, the latency introduced by your RPC (comparing
 with direct local function calls) should be less than 0.1 second.</li>
 </ul><h2>
-<a name="turning-in" class="anchor" href="#turning-in"><span class="octicon octicon-link"></span></a>Turning In</h2>
+<a name="user-content-turning-in" class="anchor" href="#turning-in"><span class="octicon octicon-link"></span></a>Turning In</h2>
 
 <p>First, make sure that you have committed every piece of your code into
 the repository <code>triblab</code>. Then just type <code>make turnin</code> under the root
@@ -391,4 +392,4 @@ everything in your git repository, and will then copy the zip file to
 a place where only the lab instructors can read.</p>
 
 <h2>
-<a name="happy-lab1" class="anchor" href="#happy-lab1"><span class="octicon octicon-link"></span></a>Happy Lab1!</h2>
+<a name="user-content-happy-lab1" class="anchor" href="#happy-lab1"><span class="octicon octicon-link"></span></a>Happy Lab1!</h2>

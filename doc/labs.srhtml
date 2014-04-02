@@ -70,7 +70,7 @@
 
 <div class="labbody">
 <h2>
-<a name="machines" class="anchor" href="#machines"><span class="octicon octicon-link"></span></a>Machines</h2>
+<a name="user-content-machines" class="anchor" href="#machines"><span class="octicon octicon-link"></span></a>Machines</h2>
 
 <p>We have set up a cluster of 10 machines. You should use those for
 all of the lab assignments.</p>
@@ -87,7 +87,7 @@ all of the lab assignments.</p>
 <li>c08-19.sysnet.ucsd.edu</li>
 <li>c08-20.sysnet.ucsd.edu</li>
 </ul><h2>
-<a name="programming-language" class="anchor" href="#programming-language"><span class="octicon octicon-link"></span></a>Programming Language</h2>
+<a name="user-content-programming-language" class="anchor" href="#programming-language"><span class="octicon octicon-link"></span></a>Programming Language</h2>
 
 <p>You will write the labs in Google's <a href="http://golang.org">golang</a>.  It
 is a young language with a language syntax at somewhere between C/C++
@@ -144,7 +144,7 @@ okay to write the implementation first and declare the interface
 afterwards.</li>
 <li>Circular package dependency is not allowed.</li>
 </ul><h2>
-<a name="the-tribbler-story" class="anchor" href="#the-tribbler-story"><span class="octicon octicon-link"></span></a>The Tribbler Story</h2>
+<a name="user-content-the-tribbler-story" class="anchor" href="#the-tribbler-story"><span class="octicon octicon-link"></span></a>The Tribbler Story</h2>
 
 <p>Here is the story: some cowboy programmer wrote a
 simple online microblogging service called Tribbler, and leveraging
@@ -159,7 +159,7 @@ you for help. You answered his call and started this project.</p>
 make it robust and scalable.</p>
 
 <h2>
-<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+<a name="user-content-getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
 
 <p>The Tribbler project is written in golang and stored in a git
 repository now. To get started, run these commands in command line:</p>
@@ -202,7 +202,7 @@ browser.</p>
 campus, you need to setup a UCSD VPN or ssh tunnel.</p>
 
 <h2>
-<a name="source-code-organization" class="anchor" href="#source-code-organization"><span class="octicon octicon-link"></span></a>Source Code Organization</h2>
+<a name="user-content-source-code-organization" class="anchor" href="#source-code-organization"><span class="octicon octicon-link"></span></a>Source Code Organization</h2>
 
 <p>The source code in the <code>trib</code> package repository is organized as follow:</p>
 
@@ -250,7 +250,7 @@ to read the code in <code>trib</code> repository. If you find any bug and
 reported it, you might get some bonus credit.</p>
 
 <h2>
-<a name="your-job" class="anchor" href="#your-job"><span class="octicon octicon-link"></span></a>Your Job</h2>
+<a name="user-content-your-job" class="anchor" href="#your-job"><span class="octicon octicon-link"></span></a>Your Job</h2>
 
 <p>Your job is to complete the implementation of the <code>triblab</code> package.
 It is in the second repo that we checked out.</p>
@@ -260,7 +260,7 @@ into your own <code>triblab</code> git repo. Only files commited in that repo
 will be submitted for grading.  </p>
 
 <h2>
-<a name="lab-roadmap" class="anchor" href="#lab-roadmap"><span class="octicon octicon-link"></span></a>Lab Roadmap</h2>
+<a name="user-content-lab-roadmap" class="anchor" href="#lab-roadmap"><span class="octicon octicon-link"></span></a>Lab Roadmap</h2>
 
 <ul>
 <li>
@@ -281,7 +281,7 @@ down the entire service.</li>
 implementation that is scalable and fault-tolerant.</p>
 
 <h2>
-<a name="misc" class="anchor" href="#misc"><span class="octicon octicon-link"></span></a>Misc</h2>
+<a name="user-content-misc" class="anchor" href="#misc"><span class="octicon octicon-link"></span></a>Misc</h2>
 
 <p>For convenience, you might set environment variables in your <code>.bashrc</code>
 or <code>.bash_profile</code>:</p>
@@ -301,7 +301,7 @@ more information. However, you should test your code on the lab
 machines.</p>
 
 <h2>
-<a name="ready" class="anchor" href="#ready"><span class="octicon octicon-link"></span></a>Ready?</h2>
+<a name="user-content-ready" class="anchor" href="#ready"><span class="octicon octicon-link"></span></a>Ready?</h2>
 
 <p>If you feel comfortable with the lab setup now,
 go forward and read <a href="./lab1.html">Lab1</a>.</p>

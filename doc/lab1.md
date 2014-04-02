@@ -379,8 +379,9 @@ $ kv-client localhost:12086 clock 200
   should not return any error.
 - When the network has error (like the back-end server crashed, and
   the client hence cannot connect), your RPC client should return
-  error. However when the server is back up, your RPC client should
-  act as normal.
+  error. However when the server is back up running, your RPC client
+  should act as normal again (without the need of creating a new
+  client). 
 - When the server and the clients are running on the lab machines, for
   each function call, the latency introduced by your RPC (comparing
   with direct local function calls) should be less than 0.1 second.
