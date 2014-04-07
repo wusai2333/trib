@@ -1,13 +1,13 @@
 # Lab2
 
-Welcome to Lab2. The goal of this labe is to ...
-The goal of this lab is to split the logic into
-stateless scalable front-ends and a key-value pair backend. In
-particular, you need to:
-
-3. Implement a stateless Tribbler front-end type that fits
-`trib.Server` interface that calls a remote RPC key-value pair
-back-end server.
+Welcome to Lab2. The goal of this lab is to use the RPC key-value
+pair we built in the last lab to implement scalable Tribbler
+front-ends and back-ends. In, particular,
+you need to mplement a stateless Tribbler front-end type that fits
+`trib.Server` interface that perform calls to
+a list of remote RPC key-value pair back-end server, which
+save all the user information and Tribbles in a distributed
+fashion.
 
 ## Tribble
 
@@ -23,12 +23,14 @@ type Trib struct {
 ```
 
 `Time` is what the front-end claims when this tribble is created,
-by reading the front-end's own physical time clock on the machine when
-`Post()` is called. However, to sort tribbles in a globally 
-consistent and reasonable order, this timestamp cannot be used
-because different front-ends have different physical time readings.
-Tribbler service maintains a distributed logical `Clock` in `uint64`
-for sorting.
+by reading the front-end's own physical time clock on the machine
+when `Post()` in a `trib.Server` is called.
+However, to sort tribbles in a globally
+consistent and reasonable order, we can not sort the tribbles
+only by this timestamp, because different front-ends have
+different physical time readings. For sorting,
+Tribbler service needs to maintain
+a distributed logical `Clock` in `uint64`.
 
 When sorting many tribbles into a single timeline, you should sort by
 the fields following this priority:
@@ -45,17 +47,19 @@ We call this the *Tribble Order*.
 The Tribbler service logic is all defined in `trib.Server` interface
 (in `trib/trib.go` file).
 
-*** 
+***
 
 ```
 SignUp(user string) error
 ```
 
-Creates a new user. After a user is created, it will always exist.  A
-user name must be no longer than `trib.MaxUsernameLen=15` characters
+Creates a new user. After a user is created, it will never disappear
+in the system.  
+
+A valid user name must be no longer than
+`trib.MaxUsernameLen=15` characters
 but not empty, must start with a lower-case letter, and can only
 contain lower-case letters or numbers.
-
 There is a helper function called `trib.IsValidUsername(string)` which
 you can use to check if a username is valid.
 
@@ -201,7 +205,7 @@ but incorrect implementation might do:
   several RPC calls to the backend. It is important to properly handle
   *any* error returned by these calls.
 - **Sorting by the timestamps first**. Again, Tribble Order means that
-  the logic clock is the first field to consider on sorting. 
+  the logic clock is the first field to consider on sorting.
 - **Use the clock argument from the front-end for the clock field of a
   new Tribble**. Well, technically, you can do that in your code
   internally as long as you can satisfy the ordering requirements
@@ -219,4 +223,3 @@ but incorrect implementation might do:
   tribbles of a user matter. Not handling old tribbles might lead to
   worse and worse performance over time and eventually break the
   performance promise.
-
