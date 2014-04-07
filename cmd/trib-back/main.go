@@ -3,28 +3,42 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 
-	"trib/entries"
-	"trib/randaddr"
+	"trib"
 	"trib/store"
+	"triblab"
 )
 
 var (
-	addr = flag.String("addr", "localhost:rand", "backend serve address")
+	frc   = flag.String("rc", "trib.rc", "tribbler service config")
+	index = flag.Int("index", 0, "index in the back-end list")
 )
+
+func noError(e error) {
+	if e != nil {
+		log.Fatal(e)
+	}
+}
 
 func main() {
 	flag.Parse()
 
-	*addr = randaddr.Resolve(*addr)
+	rc, e := trib.LoadRC(*frc)
+	noError(e)
 
-	s := store.NewStorage()
-
-	log.Printf("tribble backend serve on %s", *addr)
-
-	e := entries.ServeBackSingle(*addr, s, nil)
-	if e != nil {
+	if *index >= rc.BackCount() {
+		e = fmt.Errorf("back-end index out of range: %d/%d",
+			*index, rc.BackCount())
 		log.Fatal(e)
 	}
+
+	backConfig := rc.BackConfig(*index, store.NewStorage())
+
+	log.Printf("tribble backend serve on %s, peer on %s",
+		backConfig.Addr, backConfig.Peer.Addr(),
+	)
+
+	noError(triblab.ServeBack(backConfig))
 }

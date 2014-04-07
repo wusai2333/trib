@@ -6,7 +6,7 @@ type BackConfig struct {
 	Store Storage     // the underlying storage it should use
 	Ready chan<- bool // send a value when server is ready
 
-	Peer  *PeerConfig // only used in Lab2 and Lab3
+	Peer *PeerConfig // only used in Lab2 and Lab3
 }
 
 type PeerConfig struct {
@@ -17,5 +17,9 @@ type PeerConfig struct {
 	This int
 
 	// Non zero incarnation identifier
-	Id int
+	Id int64
+}
+
+func (p *PeerConfig) Addr() string {
+	return p.Addrs[p.This]
 }

@@ -12,16 +12,16 @@ import (
 	"strings"
 
 	"trib"
-	"trib/entries"
 	"trib/randaddr"
 	"trib/ref"
+	"triblab"
 )
 
 var (
 	verbose = flag.Bool("v", false, "verbose logging")
 	lab     = flag.Bool("lab", false, "use lab implementation")
 	addr    = flag.String("addr", "localhost:rand", "serve address")
-	back    = flag.String("back", "localhost:9000", "backend address")
+	frc     = flag.String("rc", "trib.rc", "tribbler service config")
 	dbinit  = flag.Bool("init", false, "do not populate with test data")
 
 	server trib.Server
@@ -131,10 +131,12 @@ func makeServer() trib.Server {
 		return ref.NewServer()
 	}
 
-	log.Println("using lab front")
+	rc, e := trib.LoadRC(*frc)
+	ne(e)
 
-	s := entries.MakeFrontSingle(*back)
-	return s
+	backs := rc.ServeAddrs()
+
+	return triblab.NewFront(backs)
 }
 
 func populate(server trib.Server) {
@@ -163,6 +165,7 @@ func wwwPath() string {
 
 func main() {
 	flag.Parse()
+
 	server = makeServer()
 	if *dbinit {
 		populate(server)
