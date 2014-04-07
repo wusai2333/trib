@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"trib"
 	"triblab"
@@ -17,26 +19,43 @@ func noError(e error) {
 	}
 }
 
+func logError(e error) {
+	if e != nil {
+		fmt.Fprintln(os.Stderr, e)
+	}
+}
+
 func kv(k, v string) *trib.KeyValue {
 	return &trib.KeyValue{k, v}
 }
 
+func pat(pre, suf string) *trib.Pattern {
+	return &trib.Pattern{pre, suf}
+}
+
 func kva(args []string) *trib.KeyValue {
-	return kv(args[2], args[3])
+	if len(args) == 1 {
+		return kv("", "")
+	} else if len(args) == 2 {
+		return kv(args[1], "")
+	}
+	return kv(args[1], args[2])
 }
 
 func pata(args []string) *trib.Pattern {
-	if len(args) == 2 {
+	if len(args) == 1 {
 		return pat("", "")
-	} else if len(args) == 3 {
-		return pat(args[2], "")
+	} else if len(args) == 2 {
+		return pat(args[1], "")
 	}
-
-	return pat(args[2], args[3])
+	return pat(args[1], args[2])
 }
 
-func pat(pre, suf string) *trib.Pattern {
-	return &trib.Pattern{pre, suf}
+func single(args []string) string {
+	if len(args) == 1 {
+		return ""
+	}
+	return args[1]
 }
 
 func printList(lst trib.List) {
@@ -46,7 +65,7 @@ func printList(lst trib.List) {
 }
 
 const help = `Usage:
-   kv-client <server address> cmd <args...>
+   kv-client <server address> [command <args...>]
 
 Command list:
    get <key>
@@ -57,55 +76,93 @@ Command list:
    list-remove <key> <value>
    list-keys [<prefix> [<suffix]]
    clock [<atleast=0>]
+
+With no command specified to enter interactive mode.
 `
 
-func main() {
-	flag.Parse()
-	args := flag.Args()
-	if len(args) < 2 {
-		fmt.Fprintln(os.Stderr, help)
-		os.Exit(1)
-	}
-
-	s := triblab.NewClient(args[0])
-
+func runCmd(s trib.Storage, args []string) {
 	var v string
 	var b bool
 	var lst trib.List
 	var n int
 	var cret uint64
 
-	switch args[1] {
+	cmd := args[0]
+
+	switch cmd {
 	case "get":
-		noError(s.Get(args[2], &v))
+		logError(s.Get(single(args), &v))
 		fmt.Println(v)
 	case "set":
-		noError(s.Set(kva(args), &b))
+		logError(s.Set(kva(args), &b))
 		fmt.Println(b)
 	case "keys":
-		noError(s.Keys(pata(args), &lst))
+		logError(s.Keys(pata(args), &lst))
 		printList(lst)
 	case "list-get":
-		noError(s.ListGet(args[2], &lst))
+		logError(s.ListGet(single(args), &lst))
 		printList(lst)
 	case "list-append":
-		noError(s.ListAppend(kva(args), &b))
+		logError(s.ListAppend(kva(args), &b))
 		fmt.Println(b)
 	case "list-remove":
-		noError(s.ListRemove(kva(args), &n))
+		logError(s.ListRemove(kva(args), &n))
 		fmt.Println(n)
 	case "list-keys":
-		noError(s.ListKeys(pata(args), &lst))
+		logError(s.ListKeys(pata(args), &lst))
 		printList(lst)
 	case "clock":
 		var c uint64
 		var e error
-		if len(args) >= 3 {
-			c, e = strconv.ParseUint(args[2], 10, 64)
-			noError(e)
+		if len(args) >= 2 {
+			c, e = strconv.ParseUint(args[1], 10, 64)
+			logError(e)
 		}
-		noError(s.Clock(c, &cret))
+		logError(s.Clock(c, &cret))
 		fmt.Println(cret)
+	}
+}
+
+func fields(s string) []string {
+	return strings.Fields(s)
+}
+
+func runPrompt(s trib.Storage) {
+	scanner := bufio.NewScanner(os.Stdin)
+
+	fmt.Print("> ")
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		args := fields(line)
+		if len(args) > 0 {
+			runCmd(s, args)
+		}
+		fmt.Print("> ")
+	}
+
+	e := scanner.Err()
+	if e != nil {
+		panic(e)
+	}
+}
+
+func main() {
+	flag.Parse()
+	args := flag.Args()
+	if len(args) < 1 {
+		fmt.Fprintln(os.Stderr, help)
+		os.Exit(1)
+	}
+
+	addr := args[0]
+	s := triblab.NewClient(addr)
+
+	cmdArgs := args[1:]
+	if len(cmdArgs) == 0 {
+		runPrompt(s)
+	} else {
+		runCmd(s, cmdArgs)
 	}
 
 }
