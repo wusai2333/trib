@@ -191,20 +191,18 @@ as an service front-end that takes Tribbler service function calls,
 and translates them into key-value pair RPC calls. This front-end
 should be stateless, thread safe, and ready to be killed at any time.
 This means that at any time during its execution, the back-end
-key-value pair storage always stays in a consistent state. Also, note
-that one front-end might be taking multiple concurrent requests from
-the Web, and there might be multiple front-ends talking to the same
+key-value pair storage always needs to stay in a consistent state. 
+Also, note that one front-end might be taking multiple 
+concurrent requests from the Web, 
+and there might be multiple front-ends talking to the same
 back-end, so make sure it handles all the concurrency issues
 correctly.
-
-In Lab1, `backs` will always contain only one address.
 
 ```
 func ServeBacks(b *trib.BackConfig, p *trib.PeeringConfig) error
 ```
 
-xxx:
-
+XXX
 
 ## Playing with It
 
