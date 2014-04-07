@@ -5,16 +5,17 @@ type BackConfig struct {
 	Addr  string      // listen address
 	Store Storage     // the underlying storage it should use
 	Ready chan<- bool // send a value when server is ready
+
+	Peer  *PeerConfig // only used in Lab2 and Lab3
 }
 
-// Peering parameters, used in Lab2/3
-type PeeringConfig struct {
-	// Non zero incarnation identifier, 0 if have no peers
+type PeerConfig struct {
+	// The addresses of peers including the address of this back-end
+	Addrs []string
+
+	// The index of this back-end
+	This int
+
+	// Non zero incarnation identifier
 	Id int
-
-	// The address of this backend, empty string if have no peers
-	You string
-
-	// The addresses of peers including you, nil if have no peers
-	Peers []string
 }
