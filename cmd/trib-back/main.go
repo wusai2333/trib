@@ -3,8 +3,11 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
+	"net"
+	"strconv"
+	"strings"
+	"time"
 
 	"trib"
 	"trib/store"
@@ -12,8 +15,7 @@ import (
 )
 
 var (
-	frc   = flag.String("rc", "trib.rc", "tribbler service config")
-	index = flag.Int("index", 0, "index in the back-end list")
+	frc = flag.String("rc", "trib.rc", "tribbler service config")
 )
 
 func noError(e error) {
@@ -22,23 +24,75 @@ func noError(e error) {
 	}
 }
 
+var localAddrs = func() []string {
+	addrs, e := net.InterfaceAddrs()
+	noError(e)
+
+	ret := make([]string, 0, len(addrs))
+
+	for _, addr := range addrs {
+		ret = append(ret, addr.String())
+	}
+
+	return ret
+}()
+
+func onThisMachine(addr string) bool {
+	a, e := net.ResolveTCPAddr("tcp", addr)
+	noError(e)
+
+	ip := a.IP.String()
+	for _, addr := range localAddrs {
+		if strings.HasPrefix(addr, ip) {
+			return true
+		}
+	}
+
+	return false
+}
+
 func main() {
 	flag.Parse()
 
 	rc, e := trib.LoadRC(*frc)
 	noError(e)
 
-	if *index >= rc.BackCount() {
-		e = fmt.Errorf("back-end index out of range: %d/%d",
-			*index, rc.BackCount())
-		log.Fatal(e)
+	run := func(i int) {
+		backConfig := rc.BackConfig(i, store.NewStorage())
+		log.Printf("tribble backend serve on %s, peer on %s",
+			backConfig.Addr, backConfig.Peer.Addr(),
+		)
+		noError(triblab.ServeBack(backConfig))
 	}
 
-	backConfig := rc.BackConfig(*index, store.NewStorage())
+	args := flag.Args()
 
-	log.Printf("tribble backend serve on %s, peer on %s",
-		backConfig.Addr, backConfig.Peer.Addr(),
-	)
+	if len(args) == 0 {
+		// scan for addresses on this machine
+		n := 0
+		for i, b := range rc.Backs {
+			saddr := b.Serve
+			if onThisMachine(saddr) {
+				go run(i)
+				n++
+			}
+		}
 
-	noError(triblab.ServeBack(backConfig))
+		if n == 0 {
+			log.Fatal("no back-end found for this host")
+		}
+	} else {
+		// scan for indices for the addresses
+		for _, a := range args {
+			i, e := strconv.Atoi(a)
+			if e != nil {
+				log.Fatal(e)
+			}
+			go run(i)
+		}
+	}
+
+	for {
+		time.Sleep(time.Hour)
+	}
 }
