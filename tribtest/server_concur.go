@@ -42,18 +42,19 @@ func CheckServerConcur(t *testing.T, server trib.Server) {
 		done <- true
 	}
 
-	done := make(chan bool, 5)
-	for i := 0; i < 5; i++ {
+	nconcur := 9
+	done := make(chan bool, nconcur)
+	for i := 0; i < nconcur; i++ {
 		go p(i, 10, done)
 	}
 
-	for i := 0; i < 5; i++ {
+	for i := 0; i < nconcur; i++ {
 		<-done
 	}
 
 	ret, e := server.Tribs("user")
 	ne(e)
-	as(len(ret) == 50)
+	as(len(ret) == 10 * nconcur || len(ret) == trib.MaxTribFetch)
 
 	ne(server.SignUp("other"))
 	fo := func(done chan<- bool) {
@@ -66,11 +67,11 @@ func CheckServerConcur(t *testing.T, server trib.Server) {
 		done <- (e == nil)
 	}
 
-	for i := 0; i < 5; i++ {
+	for i := 0; i < nconcur; i++ {
 		go fo(done)
 	}
 	cnt := 0
-	for i := 0; i < 5; i++ {
+	for i := 0; i < nconcur; i++ {
 		if <-done {
 			cnt++
 		}
@@ -84,11 +85,11 @@ func CheckServerConcur(t *testing.T, server trib.Server) {
 	as(len(fos) == 1)
 	as(fos[0] == "other")
 
-	for i := 0; i < 5; i++ {
+	for i := 0; i < nconcur; i++ {
 		go unfo(done)
 	}
 	cnt = 0
-	for i := 0; i < 5; i++ {
+	for i := 0; i < nconcur; i++ {
 		if <-done {
 			cnt++
 		}

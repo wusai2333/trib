@@ -7,7 +7,6 @@ import (
 	"net"
 	"strconv"
 	"strings"
-	"time"
 
 	"trib"
 	"trib/store"
@@ -92,7 +91,5 @@ func main() {
 		}
 	}
 
-	for {
-		time.Sleep(time.Hour)
-	}
+	select { }
 }
