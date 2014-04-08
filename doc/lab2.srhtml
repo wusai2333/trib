@@ -373,6 +373,9 @@ default reference implementation.</p>
 <p>Now you can open your browser, connect to the front-end machine and
 play with your own implementation.</p>
 
+<p>If you want to use some other config file, use the <code>-rc</code> flag.
+It is supported in all <code>trib-*</code> utilities.</p>
+
 <p>Note that, when you completes this lab, it should be perfectly fine to
 have multiple front-ends that connects to the set of back-ends.
 Also both the front-ends and the back-ends should be scalable.</p>

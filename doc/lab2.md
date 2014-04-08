@@ -309,13 +309,15 @@ to the back-ends service addresses specified in `trib.rc`.
 
 Again `-init` will populate the service with some sample data.
 
-
 `-init` will populate the service with some sample data.  `-lab` tells
 the front-end to connect to a back-end rather than running with the
 default reference implementation.
 
 Now you can open your browser, connect to the front-end machine and
 play with your own implementation.
+
+If you want to use some other config file, use the `-rc` flag.
+It is supported in all `trib-*` utilities.
 
 Note that, when you completes this lab, it should be perfectly fine to
 have multiple front-ends that connects to the set of back-ends.
