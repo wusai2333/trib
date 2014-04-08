@@ -12,7 +12,7 @@ import (
 var (
 	local = flag.Bool("local", false, "always use local ports")
 	n     = flag.Int("n", 1, "number of servers")
-	out   = flag.String("o", "trib.rc", "output")
+	frc   = flag.String("rc", "trib.rc", "back-end config file")
 )
 
 func main() {
@@ -45,8 +45,8 @@ func main() {
 
 	fmt.Println(rc.String())
 
-	if *out != "" {
-		e := rc.Save(*out)
+	if *frc != "" {
+		e := rc.Save(*frc)
 		if e != nil {
 			log.Fatal(e)
 		}
