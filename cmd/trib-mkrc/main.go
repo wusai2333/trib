@@ -12,10 +12,13 @@ import (
 var (
 	local = flag.Bool("local", false, "always use local ports")
 	n     = flag.Int("n", 1, "number of servers")
+	out   = flag.String("o", "trib.rc", "output")
 )
 
 func main() {
-	if *n > 100 {
+	flag.Parse()
+
+	if *n > 10 {
 		log.Fatal(fmt.Errorf("too many servers"))
 	}
 
@@ -31,10 +34,21 @@ func main() {
 			saddr := fmt.Sprintf("%s:%d", host, p)
 			paddr := fmt.Sprintf("%s:%d", host, p+1)
 			rc.Backs[i] = &trib.BackAddr{saddr, paddr}
-
-			p += 2
 		}
 	} else {
-		// TODO:
+		for i := 0; i < *n; i++ {
+			saddr := fmt.Sprintf("localhost:%d", p+i)
+			paddr := fmt.Sprintf("localhost:%d", p+10+i)
+			rc.Backs[i] = &trib.BackAddr{saddr, paddr}
+		}
+	}
+
+	fmt.Println(rc.String())
+
+	if *out != "" {
+		e := rc.Save(*out)
+		if e != nil {
+			log.Fatal(e)
+		}
 	}
 }

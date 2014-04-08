@@ -2,6 +2,7 @@ package trib
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"time"
 )
@@ -70,11 +71,18 @@ func LoadRC(p string) (*RC, error) {
 	return ret, nil
 }
 
-func (self *RC) Save(p string) error {
+func (self *RC) marshal() []byte {
 	b, e := json.MarshalIndent(self, "", "    ")
 	if e != nil {
-		return e
+		panic(e)
 	}
+
+	return b
+}
+
+func (self *RC) Save(p string) error {
+	b := self.marshal()
+
 	fout, e := os.Create(p)
 	if e != nil {
 		return e
@@ -85,5 +93,15 @@ func (self *RC) Save(p string) error {
 		return e
 	}
 
+	_, e = fmt.Fprintln(fout)
+	if e != nil {
+		return e
+	}
+
 	return fout.Close()
+}
+
+func (self *RC) String() string {
+	b := self.marshal()
+	return string(b)
 }
