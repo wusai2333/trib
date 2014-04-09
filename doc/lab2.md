@@ -178,8 +178,7 @@ non-nil error means that the call might be succefully executed or not.
 
 ## System Architecture
 
-TODO
-
+![System Arch](./arch.png)
 ## Entry Functions
 
 You can find these entry functions in `lab2.go` file under

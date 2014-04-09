@@ -236,7 +236,7 @@ non-nil error means that the call might be succefully executed or not.</p>
 <h2>
 <a name="user-content-system-architecture" class="anchor" href="#system-architecture"><span class="octicon octicon-link"></span></a>System Architecture</h2>
 
-<p>TODO</p>
+<p><a href="./arch.png" target="_blank"><img src="./arch.png" alt="System Arch" style="max-width:100%;"></a></p>
 
 <h2>
 <a name="user-content-entry-functions" class="anchor" href="#entry-functions"><span class="octicon octicon-link"></span></a>Entry Functions</h2>
