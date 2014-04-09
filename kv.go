@@ -69,3 +69,7 @@ type Storage interface {
 	KeyString
 	KeyList
 }
+
+type HashStorage interface {
+	Hash(h string) Storage
+}

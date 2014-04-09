@@ -54,7 +54,7 @@ func CheckServerConcur(t *testing.T, server trib.Server) {
 
 	ret, e := server.Tribs("user")
 	ne(e)
-	as(len(ret) == 10 * nconcur || len(ret) == trib.MaxTribFetch)
+	as(len(ret) == 10*nconcur || len(ret) == trib.MaxTribFetch)
 
 	ne(server.SignUp("other"))
 	fo := func(done chan<- bool) {

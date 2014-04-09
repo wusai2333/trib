@@ -4,36 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"time"
 )
 
 type RC struct {
-	Backs []*BackAddr
+	Backs   []string
+	Keepers []string
 }
 
 type BackAddr struct {
 	Serve string
 	Peer  string
-}
-
-func (self *RC) ServeAddrs() []string {
-	ret := make([]string, 0, len(self.Backs))
-
-	for _, b := range self.Backs {
-		ret = append(ret, b.Serve)
-	}
-
-	return ret
-}
-
-func (self *RC) PeerAddrs() []string {
-	ret := make([]string, 0, len(self.Backs))
-
-	for _, b := range self.Backs {
-		ret = append(ret, b.Peer)
-	}
-
-	return ret
 }
 
 func (self *RC) BackCount() int {
@@ -42,15 +22,9 @@ func (self *RC) BackCount() int {
 
 func (self *RC) BackConfig(i int, s Storage) *BackConfig {
 	ret := new(BackConfig)
-	back := self.Backs[i]
-	ret.Addr = back.Serve
+	ret.Addr = self.Backs[i]
 	ret.Store = s
 	ret.Ready = make(chan bool, 1)
-
-	ret.Peer = new(PeerConfig)
-	ret.Peer.Addrs = self.PeerAddrs()
-	ret.Peer.This = i
-	ret.Peer.Id = time.Now().UnixNano()
 
 	return ret
 }

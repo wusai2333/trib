@@ -25,23 +25,21 @@ func main() {
 	p := randaddr.RandPort()
 
 	rc := new(trib.RC)
-	rc.Backs = make([]*trib.BackAddr, *n)
+	rc.Backs = make([]string, *n)
 
 	if !*local {
 		const ipOffset = 211
 		for i := 0; i < *n; i++ {
 			host := fmt.Sprintf("172.22.14.%d", ipOffset+i)
-			saddr := fmt.Sprintf("%s:%d", host, p)
-			paddr := fmt.Sprintf("%s:%d", host, p+1)
-			rc.Backs[i] = &trib.BackAddr{saddr, paddr}
+			rc.Backs[i] = fmt.Sprintf("%s:%d", host, p)
 		}
 	} else {
 		for i := 0; i < *n; i++ {
-			saddr := fmt.Sprintf("localhost:%d", p+i)
-			paddr := fmt.Sprintf("localhost:%d", p+10+i)
-			rc.Backs[i] = &trib.BackAddr{saddr, paddr}
+			rc.Backs[i] = fmt.Sprintf("localhost:%d", p+i)
 		}
 	}
+
+	rc.Keepers = make([]string, 0, 3)
 
 	fmt.Println(rc.String())
 

@@ -58,9 +58,7 @@ func main() {
 
 	run := func(i int) {
 		backConfig := rc.BackConfig(i, store.NewStorage())
-		log.Printf("tribble backend serve on %s, peer on %s",
-			backConfig.Addr, backConfig.Peer.Addr(),
-		)
+		log.Printf("tribble back-end serve on %s", backConfig.Addr)
 		noError(triblab.ServeBack(backConfig))
 	}
 
@@ -70,8 +68,7 @@ func main() {
 		// scan for addresses on this machine
 		n := 0
 		for i, b := range rc.Backs {
-			saddr := b.Serve
-			if onThisMachine(saddr) {
+			if onThisMachine(b) {
 				go run(i)
 				n++
 			}
@@ -91,5 +88,5 @@ func main() {
 		}
 	}
 
-	select { }
+	select {}
 }

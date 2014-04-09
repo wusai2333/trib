@@ -5,11 +5,9 @@ type BackConfig struct {
 	Addr  string      // listen address
 	Store Storage     // the underlying storage it should use
 	Ready chan<- bool // send a value when server is ready
-
-	Peer *PeerConfig // only used in Lab2 and Lab3
 }
 
-type PeerConfig struct {
+type KeeperConfig struct {
 	// The addresses of peers including the address of this back-end
 	Addrs []string
 
@@ -20,6 +18,6 @@ type PeerConfig struct {
 	Id int64
 }
 
-func (p *PeerConfig) Addr() string {
-	return p.Addrs[p.This]
+func (c *KeeperConfig) Addr() string {
+	return c.Addrs[c.This]
 }
