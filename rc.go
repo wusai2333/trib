@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 )
 
 type RC struct {
@@ -25,6 +26,20 @@ func (self *RC) BackConfig(i int, s Storage) *BackConfig {
 	ret.Addr = self.Backs[i]
 	ret.Store = s
 	ret.Ready = make(chan bool, 1)
+
+	return ret
+}
+
+func (self *RC) KeeperConfig(i int) *KeeperConfig {
+	if i >= len(self.Keepers) {
+		panic("keeper index out of range")
+	}
+
+	ret := new(KeeperConfig)
+	ret.Backs = self.Backs
+	ret.Addrs = self.Keepers
+	ret.This = i
+	ret.Id = time.Now().UnixNano()
 
 	return ret
 }

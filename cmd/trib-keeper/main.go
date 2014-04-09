@@ -1,4 +1,4 @@
-// Tribbler back-end launcher.
+// Tribbler back-end keeper launcher.
 package main
 
 import (
@@ -8,7 +8,6 @@ import (
 
 	"trib"
 	"trib/local"
-	"trib/store"
 	"triblab"
 )
 
@@ -29,31 +28,29 @@ func main() {
 	noError(e)
 
 	run := func(i int) {
-		backConfig := rc.BackConfig(i, store.NewStorage())
-		log.Printf("tribbler back-end serve on %s", backConfig.Addr)
-		noError(triblab.ServeBack(backConfig))
+		keeperConfig := rc.KeeperConfig(i)
+		log.Printf("tribbler keeper serve on %s", keeperConfig.Addr())
+		noError(triblab.ServeKeeper(keeperConfig))
 	}
 
 	args := flag.Args()
-
 	if len(args) == 0 {
-		// scan for addresses on this machine
 		n := 0
-		for i, b := range rc.Backs {
-			if local.Check(b) {
+		for i, k := range rc.Keepers {
+			if local.Check(k) {
 				go run(i)
 				n++
 			}
 		}
 
 		if n == 0 {
-			log.Fatal("no back-end found for this host")
+			log.Fatal("no keeper found for this host")
 		}
 	} else {
-		// scan for indices for the addresses
 		for _, a := range args {
 			i, e := strconv.Atoi(a)
 			noError(e)
+
 			go run(i)
 		}
 	}

@@ -8,6 +8,9 @@ type BackConfig struct {
 }
 
 type KeeperConfig struct {
+	// The addresses of back-ends
+	Backs []string
+
 	// The addresses of peers including the address of this back-end
 	Addrs []string
 
