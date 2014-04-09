@@ -178,7 +178,29 @@ non-nil error means that the call might be succefully executed or not.
 
 ## System Architecture
 
+The system architecture looks like this:
+
 ![System Arch](./arch.png)
+
+Users use the Tribbler system from their browsers, each user visiting
+one state-less front-end at a time (probably distributed via DNA
+multiplexing). Upon a service request, the front-end will translate
+the request into key-value pair requests and issue these requests to
+the back-ends over RPC. The back-ends can talk to each other via
+back-end peering channels (which you will implement with your own
+design), so that they can sync on their view of the world from
+time to time. 
+
+The peering channels should serve for these purposes:
+
+1. Coarse grained time synchronization, so that the clock in the system
+   won't be offset too much.
+2. Fault detection, so that when a back-end joins or leaves, the
+   system can adjust itself.
+3. Consistent storage management, so that when a back-end joins or
+   leaves, the system won't lose any-data and keeps the service
+   in a consistent view.
+
 ## Entry Functions
 
 You can find these entry functions in `lab2.go` file under

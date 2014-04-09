@@ -236,9 +236,30 @@ non-nil error means that the call might be succefully executed or not.</p>
 <h2>
 <a name="user-content-system-architecture" class="anchor" href="#system-architecture"><span class="octicon octicon-link"></span></a>System Architecture</h2>
 
+<p>The system architecture looks like this:</p>
+
 <p><a href="./arch.png" target="_blank"><img src="./arch.png" alt="System Arch" style="max-width:100%;"></a></p>
 
-<h2>
+<p>Users use the Tribbler system from their browsers, each user visiting
+one state-less front-end at a time (probably distributed via DNA
+multiplexing). Upon a service request, the front-end will translate
+the request into key-value pair requests and issue these requests to
+the back-ends over RPC. The back-ends can talk to each other via
+back-end peering channels (which you will implement with your own
+design), so that they can sync on their view of the world from
+time to time. </p>
+
+<p>The peering channels should serve for these purposes:</p>
+
+<ol>
+<li>Coarse grained time synchronization, so that the clock in the system
+won't be offset too much.</li>
+<li>Fault detection, so that when a back-end joins or leaves, the
+system can adjust itself.</li>
+<li>Consistent storage management, so that when a back-end joins or
+leaves, the system won't lose any-data and keeps the service
+in a consistent view.</li>
+</ol><h2>
 <a name="user-content-entry-functions" class="anchor" href="#entry-functions"><span class="octicon octicon-link"></span></a>Entry Functions</h2>
 
 <p>You can find these entry functions in <code>lab2.go</code> file under
