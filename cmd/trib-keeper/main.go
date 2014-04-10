@@ -3,6 +3,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"strconv"
 
@@ -28,14 +29,18 @@ func main() {
 	noError(e)
 
 	run := func(i int) {
+		if i > len(rc.Keepers) {
+			noError(fmt.Errorf("keeper index out of range: %d", i))
+		}
+
 		keeperConfig := rc.KeeperConfig(i)
-		log.Printf("tribbler keeper serve on %s", keeperConfig.Addr())
+		log.Printf("tribbler keeper serving on %s", keeperConfig.Addr())
 		noError(triblab.ServeKeeper(keeperConfig))
 	}
 
 	args := flag.Args()
+	n := 0
 	if len(args) == 0 {
-		n := 0
 		for i, k := range rc.Keepers {
 			if local.Check(k) {
 				go run(i)
@@ -52,8 +57,11 @@ func main() {
 			noError(e)
 
 			go run(i)
+			n++
 		}
 	}
 
-	select {}
+	if n > 0 {
+		select {}
+	}
 }

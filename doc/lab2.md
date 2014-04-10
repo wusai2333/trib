@@ -189,7 +189,7 @@ the request into key-value pair requests and issue these requests to
 the back-ends over RPC. The back-ends can talk to each other via
 back-end peering channels (which you will implement with your own
 design), so that they can sync on their view of the world from
-time to time. 
+time to time.
 
 The peering channels should serve for these purposes:
 
@@ -207,7 +207,67 @@ You can find these entry functions in `lab2.go` file under
 `triblab` repo:
 
 ```
-func NewFront(backs []string) trib.Server
+func NewHashClient(backs []string) trib.MapStorage
+```
+
+This function is similar to `NewClient()` in `lab1.go` but
+instead returns a `trib.HashStorage` interface.
+`trib.MapStorage` has only one function called `Map()`,
+which takes a string and returns a `trib.Storage`. A
+hash storage provides another layer of mapping,
+where the caller will first get a key-value storage
+for the key string specified and then perform
+key-value function calls defined in `trib.Storage` interface.
+Different key strings should logically return completely
+separate key-value stores, but note that key-value stores
+for different key strings can actually physically share a single
+store by appending the mapping key string as a prefix to the
+storage key.
+Just don't forget to escape the prefix suffix character
+in the hash string.
+
+***
+
+```
+func ServeKeeper(b *trib.KeeperConfig) error
+```
+
+This function is a blocking function (similar to `ServeBack()`).
+It will spawn a keeper instance that maintains the
+distributed back-ends in consistent state. For Lab2,
+the keepers do not need to do much, but in Lab3, they
+will be responsible for handling all the back-end joining,
+leaving, faults and key migrations. In Lab2, there
+will be only one keeper, but in Lab3, there
+will be multiple keepers for fault-tolerent.
+
+The `trib.KeeperConfig` structure contains all the
+back-end serving addresses and also a set of peering
+information for the keepers:
+
+- `Backs []string` These are the addresses of the back-ends.
+  These are the back-ends that the keeper needs to maintain.
+- `Keepers []string` These are the addresses that the
+  keeper will listen so that they can connect to each other.
+  For Lab2, there will be only one keeper.
+- `This int` The index of this keeper (in the `Keepers` list).
+- `Id int64` A non-zero incarnation identifier for this keeper,
+  usually derived from system clock.
+
+A keeper can do whatever it wants to do, but a keeper
+should be only maintain the general key-pair service
+in consistent state, and maybe also keep the back-ends'
+logical clocks coarsely synchronized. A keeper
+should understand the hashing prefix, but should not
+need to parse anything further beyond the prefix
+in the keys or the values. This means the keeper
+should not rely on how Tribbler uses the key-value storage,
+In fact, your Tribbler should just work if the back-ends.
+
+***
+
+```
+func NewFront(hs trib.MapStorage) trib.Server
 ```
 
 This function takes the addresses of the backends, and returns an
@@ -222,56 +282,6 @@ concurrent requests from the Web,
 and there might be multiple front-ends talking to the same
 back-end, so make sure it handles all the concurrency issues
 correctly.
-
-In addition to `NewFront()`, you also need to make changes to
-`ServeBacks()` in `lab1.go1`.
-
-```
-func ServeBacks(b *trib.BackConfig) error
-```
-
-The signature remains unchanged, but we added a new field in
-`trib.BackConfig` called `Peer`. Now `trib.BackConfig` looks like
-this
-
-```
-// Backend config
-type BackConfig struct {
-	Addr  string      // listen address
-	Store Storage     // the underlying storage it should use
-	Ready chan<- bool // send a value when server is ready
-
-	Peer *PeerConfig // only used in Lab2 and Lab3
-}
-
-type PeerConfig struct {
-	// The addresses of peers including the address of this back-end
-	Addrs []string
-
-	// The index of this back-end
-	This int
-
-	// Non zero incarnation identifier
-	Id int64
-}
-```
-
-Here explains the new fields in `Peer`:
-
-- `Addrs` are the addresses where the back-ends will listen on for
-  peering. This is different from `Addr` in `BackConfig`. Theses
-  addresses are only for back-ends to communicate with each other,
-  where the `Addr` is for a front-end (like a `kv-client`) to connect
-  into this back-end.
-- `This` indicates the index of this back-end in the `Addrs`, so the
-  back-end should listen on `Addrs[This]` for connections from other
-  back-ends.
-- `Id` is a unique incarnation identifier for this backend. It is not
-  particularly useful in Lab2, but will be useful in Lab3 when the
-  back-ends need to be fault-tolerant.
-
-You can design your own protocol for communication
-among the back-ends.
 
 ## Playing with It
 

@@ -3,6 +3,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"strconv"
 
@@ -29,16 +30,20 @@ func main() {
 	noError(e)
 
 	run := func(i int) {
+		if i > len(rc.Backs) {
+			noError(fmt.Errorf("keeper index out of range: %d", i))
+		}
+
 		backConfig := rc.BackConfig(i, store.NewStorage())
-		log.Printf("tribbler back-end serve on %s", backConfig.Addr)
+		log.Printf("tribbler back-end serving on %s", backConfig.Addr)
 		noError(triblab.ServeBack(backConfig))
 	}
 
 	args := flag.Args()
 
+	n := 0
 	if len(args) == 0 {
 		// scan for addresses on this machine
-		n := 0
 		for i, b := range rc.Backs {
 			if local.Check(b) {
 				go run(i)
@@ -55,8 +60,11 @@ func main() {
 			i, e := strconv.Atoi(a)
 			noError(e)
 			go run(i)
+			n++
 		}
 	}
 
-	select {}
+	if n > 0 {
+		select {}
+	}
 }

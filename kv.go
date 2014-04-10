@@ -70,6 +70,6 @@ type Storage interface {
 	KeyList
 }
 
-type HashStorage interface {
-	Hash(h string) Storage
+type MapStorage interface {
+	Map(h string) Storage
 }

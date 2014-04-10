@@ -134,7 +134,9 @@ func makeServer() trib.Server {
 	rc, e := trib.LoadRC(*frc)
 	ne(e)
 
-	return triblab.NewFront(rc.Backs)
+	c := triblab.NewMapClient(rc.Backs)
+
+	return triblab.NewFront(c)
 }
 
 func populate(server trib.Server) {

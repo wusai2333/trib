@@ -11,35 +11,55 @@ import (
 
 var (
 	local = flag.Bool("local", false, "always use local ports")
-	n     = flag.Int("n", 1, "number of servers")
+	nback = flag.Int("nback", 1, "number of back-ends")
+	nkeep = flag.Int("nkeep", 1, "number of keepers")
 	frc   = flag.String("rc", "trib.rc", "back-end config file")
+	full  = flag.Bool("full", false, "full setup with 10 back-ends and 3 keepers")
 )
 
 func main() {
 	flag.Parse()
 
-	if *n > 10 {
-		log.Fatal(fmt.Errorf("too many servers"))
+	if *nback > 10 {
+		log.Fatal(fmt.Errorf("too many back-ends"))
+	}
+	if *nkeep > 10 {
+		log.Fatal(fmt.Errorf("too many keepers"))
+	}
+
+	if *full {
+		*nback = 10
+		*nkeep = 3
 	}
 
 	p := randaddr.RandPort()
 
 	rc := new(trib.RC)
-	rc.Backs = make([]string, *n)
+	rc.Backs = make([]string, *nback)
+	rc.Keepers = make([]string, *nkeep)
 
 	if !*local {
 		const ipOffset = 211
-		for i := 0; i < *n; i++ {
+		for i := 0; i < *nback; i++ {
 			host := fmt.Sprintf("172.22.14.%d", ipOffset+i)
 			rc.Backs[i] = fmt.Sprintf("%s:%d", host, p)
 		}
+
+		for i := 0; i < *nkeep; i++ {
+			host := fmt.Sprintf("172.22.14.%d", ipOffset+i)
+			rc.Keepers[i] = fmt.Sprintf("%s:%d", host, p+1)
+		}
 	} else {
-		for i := 0; i < *n; i++ {
-			rc.Backs[i] = fmt.Sprintf("localhost:%d", p+i)
+		for i := 0; i < *nback; i++ {
+			rc.Backs[i] = fmt.Sprintf("localhost:%d", p)
+			p++
+		}
+
+		for i := 0; i < *nkeep; i++ {
+			rc.Keepers[i] = fmt.Sprintf("localhost:%d", p)
+			p++
 		}
 	}
-
-	rc.Keepers = make([]string, 0, 3)
 
 	fmt.Println(rc.String())
 
