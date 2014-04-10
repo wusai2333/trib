@@ -176,7 +176,7 @@ the request into key-value pair requests and issue these requests to
 the back-ends over RPC. The back-ends can talk to each other via
 back-end peering channels (which you will implement with your own
 design), so that they can sync on their view of the world from
-time to time. </p>
+time to time.</p>
 
 <p>The peering channels should serve for these purposes:</p>
 
@@ -194,7 +194,69 @@ in a consistent view.</li>
 <p>You can find these entry functions in <code>lab2.go</code> file under
 <code>triblab</code> repo:</p>
 
-<pre><code>func NewFront(backs []string) trib.Server
+<pre><code>func NewHashClient(backs []string) trib.MapStorage
+</code></pre>
+
+<p>This function is similar to <code>NewClient()</code> in <code>lab1.go</code> but
+instead returns a <code>trib.HashStorage</code> interface.
+<code>trib.MapStorage</code> has only one function called <code>Map()</code>,
+which takes a string and returns a <code>trib.Storage</code>. A
+hash storage provides another layer of mapping,
+where the caller will first get a key-value storage
+for the key string specified and then perform
+key-value function calls defined in <code>trib.Storage</code> interface.
+Different key strings should logically return completely
+separate key-value stores, but note that key-value stores
+for different key strings can actually physically share a single
+store by appending the mapping key string as a prefix to the
+storage key.
+Just don't forget to escape the prefix suffix character
+in the hash string.</p>
+
+<hr><pre><code>func ServeKeeper(b *trib.KeeperConfig) error
+</code></pre>
+
+<p>This function is a blocking function (similar to <code>ServeBack()</code>).
+It will spawn a keeper instance that maintains the
+distributed back-ends in consistent state. For Lab2,
+the keepers do not need to do much, but in Lab3, they
+will be responsible for handling all the back-end joining,
+leaving, faults and key migrations. In Lab2, there
+will be only one keeper, but in Lab3, there
+will be multiple keepers for fault-tolerent.</p>
+
+<p>The <code>trib.KeeperConfig</code> structure contains all the
+back-end serving addresses and also a set of peering
+information for the keepers:</p>
+
+<ul>
+<li>
+<code>Backs []string</code> These are the addresses of the back-ends.
+These are the back-ends that the keeper needs to maintain.</li>
+<li>
+<code>Keepers []string</code> These are the addresses that the
+keeper will listen on so that all the keepers can talk
+to each other. For Lab2, there will be only one keeper,
+and for that, you don't have to listen on this address,
+since nobody will ring the bell.</li>
+<li>
+<code>This int</code> The index of this keeper (in the <code>Keepers</code> list).
+For Lab2, it will always be zero.</li>
+<li>
+<code>Id int64</code> A non-zero incarnation identifier for this keeper,
+usually derived from system clock. For Lab2, this
+fields does not matter.</li>
+</ul><p>A keeper can do whatever it wants to do, but a keeper
+should be only maintain the general key-pair service
+in consistent state, and maybe also keep the back-ends'
+logical clocks coarsely synchronized. A keeper
+should understand the hashing prefix, but should not
+need to parse anything further beyond the prefix
+in the keys or the values. This means the keeper
+should not rely on how Tribbler uses the key-value storage,
+In fact, your Tribbler should just work if the back-ends.</p>
+
+<hr><pre><code>func NewFront(hs trib.MapStorage) trib.Server
 </code></pre>
 
 <p>This function takes the addresses of the backends, and returns an
@@ -209,57 +271,6 @@ concurrent requests from the Web,
 and there might be multiple front-ends talking to the same
 back-end, so make sure it handles all the concurrency issues
 correctly.</p>
-
-<p>In addition to <code>NewFront()</code>, you also need to make changes to
-<code>ServeBacks()</code> in <code>lab1.go1</code>.</p>
-
-<pre><code>func ServeBacks(b *trib.BackConfig) error
-</code></pre>
-
-<p>The signature remains unchanged, but we added a new field in
-<code>trib.BackConfig</code> called <code>Peer</code>. Now <code>trib.BackConfig</code> looks like
-this</p>
-
-<pre><code>// Backend config
-type BackConfig struct {
-    Addr  string      // listen address
-    Store Storage     // the underlying storage it should use
-    Ready chan&lt;- bool // send a value when server is ready
-
-    Peer *PeerConfig // only used in Lab2 and Lab3
-}
-
-type PeerConfig struct {
-    // The addresses of peers including the address of this back-end
-    Addrs []string
-
-    // The index of this back-end
-    This int
-
-    // Non zero incarnation identifier
-    Id int64
-}
-</code></pre>
-
-<p>Here explains the new fields in <code>Peer</code>:</p>
-
-<ul>
-<li>
-<code>Addrs</code> are the addresses where the back-ends will listen on for
-peering. This is different from <code>Addr</code> in <code>BackConfig</code>. Theses
-addresses are only for back-ends to communicate with each other,
-where the <code>Addr</code> is for a front-end (like a <code>kv-client</code>) to connect
-into this back-end.</li>
-<li>
-<code>This</code> indicates the index of this back-end in the <code>Addrs</code>, so the
-back-end should listen on <code>Addrs[This]</code> for connections from other
-back-ends.</li>
-<li>
-<code>Id</code> is a unique incarnation identifier for this backend. It is not
-particularly useful in Lab2, but will be useful in Lab3 when the
-back-ends need to be fault-tolerant.</li>
-</ul><p>You can design your own protocol for communication
-among the back-ends.</p>
 
 <h2>
 <a name="user-content-playing-with-it" class="anchor" href="#playing-with-it"><span class="octicon octicon-link"></span></a>Playing with It</h2>
@@ -278,7 +289,7 @@ automatically.</p>
 
 <p>Find a directory as your working directory (like <code>triblab</code>).</p>
 
-<pre><code>$ trib-mkrc -local -n=3
+<pre><code>$ trib-mkrc -local -nback=3
 </code></pre>
 
 <p>This will generate a file called <code>trib.rc</code> under the current
@@ -331,20 +342,18 @@ Also both the front-ends and the back-ends should be scalable.</p>
 
 <ul>
 <li>No network communication error will happen.</li>
-<li>Once a back-end starts, it will remain online forever.</li>
+<li>Once a back-end or a keeper starts, it will remain online forever.</li>
 <li>The <code>trib.Storage</code> used in the backend will return every <code>Clock()</code>
 call in less than 1 second.</li>
 <li>In the <code>trib.Storage</code> used in the backend, each key visiting
 (checking if the key exist, locating its corresponding value, or as
 a process of iterating all keys) will take less than 1 millisecond.
-Read and write 1MB of data on the value part (in list or string)
+Read and write 1MB of data on the value part (in a list or a string)
 will take less than 1 millisecond.  Note that <code>Keys()</code> and
 <code>ListKeys()</code> might take longer time to complete because it needs to
 scan over all the keys.</li>
-<li>All back-end servers will run on the lab machines.</li>
-<li>Although a front-end can be killed at any-time, the killing only
-happens very occasionally.</li>
-</ul><p>Note that some of them won't stay in Lab3, so
+<li>All front-ends, back-ends and keepers will run on the lab machines.</li>
+</ul><p>Note that some of them won't stay true in Lab3, so
 try not to rely on the assumptions too much.</p>
 
 <h2>

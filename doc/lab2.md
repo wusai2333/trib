@@ -207,14 +207,14 @@ You can find these entry functions in `lab2.go` file under
 `triblab` repo:
 
 ```
-func NewHashClient(backs []string) trib.MapStorage
+func NewMapClient(backs []string) trib.MapStorage
 ```
 
 This function is similar to `NewClient()` in `lab1.go` but
-instead returns a `trib.HashStorage` interface.
+instead returns a `trib.MapStorage` interface.
 `trib.MapStorage` has only one function called `Map()`,
 which takes a string and returns a `trib.Storage`. A
-hash storage provides another layer of mapping,
+map storage provides another layer of mapping,
 where the caller will first get a key-value storage
 for the key string specified and then perform
 key-value function calls defined in `trib.Storage` interface.
@@ -222,9 +222,8 @@ Different key strings should logically return completely
 separate key-value stores, but note that key-value stores
 for different key strings can actually physically share a single
 store by appending the mapping key string as a prefix to the
-storage key.
-Just don't forget to escape the prefix suffix character
-in the hash string.
+storage key. If you do that, just don't forget to escape the prefix separating character
+in the key strings.
 
 ***
 
@@ -248,11 +247,15 @@ information for the keepers:
 - `Backs []string` These are the addresses of the back-ends.
   These are the back-ends that the keeper needs to maintain.
 - `Keepers []string` These are the addresses that the
-  keeper will listen so that they can connect to each other.
-  For Lab2, there will be only one keeper.
+  keeper will listen on so that all the keepers can talk
+  to each other. For Lab2, there will be only one keeper,
+  and for that, you don't have to listen on this address,
+  since nobody will ring the bell.
 - `This int` The index of this keeper (in the `Keepers` list).
+  For Lab2, it will always be zero.
 - `Id int64` A non-zero incarnation identifier for this keeper,
-  usually derived from system clock.
+  usually derived from system clock. For Lab2, this
+  fields does not matter.
 
 A keeper can do whatever it wants to do, but a keeper
 should be only maintain the general key-pair service
@@ -300,7 +303,7 @@ automatically.
 Find a directory as your working directory (like `triblab`).
 
 ```
-$ trib-mkrc -local -n=3
+$ trib-mkrc -local -nback=3
 ```
 
 This will generate a file called `trib.rc` under the current
@@ -353,21 +356,19 @@ Also both the front-ends and the back-ends should be scalable.
 These are some unreal assumptions you can have for Lab2.
 
 - No network communication error will happen.
-- Once a back-end starts, it will remain online forever.
+- Once a back-end or a keeper starts, it will remain online forever.
 - The `trib.Storage` used in the backend will return every `Clock()`
   call in less than 1 second.
 - In the `trib.Storage` used in the backend, each key visiting
   (checking if the key exist, locating its corresponding value, or as
   a process of iterating all keys) will take less than 1 millisecond.
-  Read and write 1MB of data on the value part (in list or string)
+  Read and write 1MB of data on the value part (in a list or a string)
   will take less than 1 millisecond.  Note that `Keys()` and
   `ListKeys()` might take longer time to complete because it needs to
   scan over all the keys.
-- All back-end servers will run on the lab machines.
-- Although a front-end can be killed at any-time, the killing only
-  happens very occasionally.
+- All front-ends, back-ends and keepers will run on the lab machines.
 
-Note that some of them won't stay in Lab3, so
+Note that some of them won't stay true in Lab3, so
 try not to rely on the assumptions too much.
 
 ## Requirements
