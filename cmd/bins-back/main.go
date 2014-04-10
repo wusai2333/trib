@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	frc = flag.String("rc", "trib.rc", "tribbler service config file")
+	frc = flag.String("rc", trib.DefaultRCPath, "bin storage config file")
 )
 
 func noError(e error) {
@@ -31,11 +31,11 @@ func main() {
 
 	run := func(i int) {
 		if i > len(rc.Backs) {
-			noError(fmt.Errorf("keeper index out of range: %d", i))
+			noError(fmt.Errorf("back-end index out of range: %d", i))
 		}
 
 		backConfig := rc.BackConfig(i, store.NewStorage())
-		log.Printf("tribbler back-end serving on %s", backConfig.Addr)
+		log.Printf("bin storage back-end serving on %s", backConfig.Addr)
 		noError(triblab.ServeBack(backConfig))
 	}
 

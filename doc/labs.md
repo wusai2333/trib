@@ -175,9 +175,9 @@ will be submitted for grading.
 - **Lab 1**. Wrap the key-value pair service interface with RPC, so
   that a remote client can call the service via network connections.
 - **Lab 2**. Reimplement the Tribbler service, split the current
-  Tribbler logic into a stateless scalable front-end and a key-value
-  pair scalable back-end. The front-ends will call the back-ends via
-  RPC that is implemented in Lab 1. When this lab is done, we should
+  Tribbler logic into stateless scalable front-ends and key-value
+  pair scalable back-ends. The front-ends will call the back-ends via
+  RPCs that is implemented in Lab 1. When this lab is done, we should
   have both the front-end and the back-end scalable.
 - **Lab 3**. We make the back-end fault-tolerent, by using distributed
   hash table and replications. As a result, at the end of this lab,

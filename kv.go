@@ -28,6 +28,8 @@ func KV(k, v string) *KeyValue { return &KeyValue{k, v} }
 
 // Key-value pair interfaces
 // Default value for all keys is empty string
+// When a pointer parameter is nil, the implementation is free to
+// panic.
 type KeyString interface {
 	// Gets a value. Empty string by default.
 	Get(key string, value *string) error
@@ -43,6 +45,8 @@ type KeyString interface {
 // Key-list interfaces.
 // Default value for all lists is an empty list.
 // After the call, list.L should never by nil.
+// When a pointer paramter is nil, the implementation is free to
+// panic.
 type KeyList interface {
 	// Get the list.
 	ListGet(key string, list *List) error
@@ -70,6 +74,20 @@ type Storage interface {
 	KeyList
 }
 
-type MapStorage interface {
-	Map(h string) Storage
+// Key-Storage interface
+type BinStorage interface {
+	// Fetch a storage based on the given bin name.
+	// The key will always satisfy IsValidBinName(name).
+	// If IsValidBinName(name) is false, the implementation
+	// should panic.
+	Bin(name string) Storage
+}
+
+func IsValidBinName(name string) bool {
+	for _, r := range name {
+		if r == ':' {
+			return false
+		}
+	}
+	return true
 }

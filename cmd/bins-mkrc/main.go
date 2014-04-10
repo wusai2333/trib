@@ -13,8 +13,8 @@ var (
 	local = flag.Bool("local", false, "always use local ports")
 	nback = flag.Int("nback", 1, "number of back-ends")
 	nkeep = flag.Int("nkeep", 1, "number of keepers")
-	frc   = flag.String("rc", "trib.rc", "back-end config file")
-	full  = flag.Bool("full", false, "full setup with 10 back-ends and 3 keepers")
+	frc   = flag.String("rc", trib.DefaultRCPath, "bin storage config file")
+	full  = flag.Bool("full", false, "setup of 10 back-ends and 3 keepers")
 )
 
 func main() {

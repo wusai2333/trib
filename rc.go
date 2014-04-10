@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+var DefaultRCPath = "bins.rc"
+
 type RC struct {
 	Backs   []string
 	Keepers []string

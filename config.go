@@ -19,6 +19,11 @@ type KeeperConfig struct {
 
 	// Non zero incarnation identifier
 	Id int64
+
+	// Send a value when the keeper is ready The distributed key-value
+	// service should be ready to serve when *any* of the keepers is
+	// ready.
+	Ready chan<- bool
 }
 
 func (c *KeeperConfig) Addr() string {

@@ -21,8 +21,9 @@ var (
 	verbose = flag.Bool("v", false, "verbose logging")
 	lab     = flag.Bool("lab", false, "use lab implementation")
 	addr    = flag.String("addr", "localhost:rand", "serve address")
-	frc     = flag.String("rc", "trib.rc", "tribbler service config")
-	dbinit  = flag.Bool("init", false, "do not populate with test data")
+	frc     = flag.String("rc", trib.DefaultRCPath,
+		"bin storage config file")
+	dbinit = flag.Bool("init", false, "do not populate with test data")
 
 	server trib.Server
 )
@@ -134,7 +135,7 @@ func makeServer() trib.Server {
 	rc, e := trib.LoadRC(*frc)
 	ne(e)
 
-	c := triblab.NewMapClient(rc.Backs)
+	c := triblab.NewBinClient(rc.Backs)
 
 	return triblab.NewFront(c)
 }

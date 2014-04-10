@@ -64,13 +64,8 @@ func printList(lst trib.List) {
 	}
 }
 
-const help = `Usage:
-   kv-client <server address> [command <args...>]
-
-With no command specified to enter interactive mode. 
-` + cmdHelp
-
-const cmdHelp = `Command list:
+const cmdHelp = `Command List:
+   bin [<bin name>]
    get <key>
    set <key> <value>
    keys [<prefix> [<suffix>]]
@@ -83,12 +78,23 @@ const cmdHelp = `Command list:
    exit
 `
 
-func runCmd(s trib.Storage, args []string) bool {
+type client struct {
+	bin string
+	s   trib.BinStorage
+}
+
+func (self *client) printBin() {
+	fmt.Printf("(working on bin %q)\n", self.bin)
+}
+
+func (self *client) runCmd(args []string) bool {
 	var v string
 	var b bool
 	var lst trib.List
 	var n int
 	var cret uint64
+
+	s := self.s.Bin(self.bin)
 
 	cmd := args[0]
 
@@ -123,6 +129,11 @@ func runCmd(s trib.Storage, args []string) bool {
 		}
 		logError(s.Clock(c, &cret))
 		fmt.Println(cret)
+	case "bin":
+		if len(args) > 1 {
+			self.bin = args[1]
+		}
+		self.printBin()
 	case "help":
 		fmt.Println(cmdHelp)
 	case "exit":
@@ -137,8 +148,10 @@ func fields(s string) []string {
 	return strings.Fields(s)
 }
 
-func runPrompt(s trib.Storage) {
+func (self *client) runPrompt() {
 	scanner := bufio.NewScanner(os.Stdin)
+
+	self.printBin()
 
 	fmt.Print("> ")
 
@@ -146,7 +159,7 @@ func runPrompt(s trib.Storage) {
 		line := scanner.Text()
 		args := fields(line)
 		if len(args) > 0 {
-			if runCmd(s, args) {
+			if self.runCmd(args) {
 				break
 			}
 		}
@@ -159,22 +172,19 @@ func runPrompt(s trib.Storage) {
 	}
 }
 
+var (
+	frc = flag.String("rc", trib.DefaultRCPath, "bin storage config file")
+)
+
 func main() {
 	flag.Parse()
-	args := flag.Args()
-	if len(args) < 1 {
-		fmt.Fprintln(os.Stderr, help)
-		os.Exit(1)
-	}
 
-	addr := args[0]
-	s := triblab.NewClient(addr)
+	rc, e := trib.LoadRC(*frc)
+	noError(e)
 
-	cmdArgs := args[1:]
-	if len(cmdArgs) == 0 {
-		runPrompt(s)
-		fmt.Println()
-	} else {
-		runCmd(s, cmdArgs)
-	}
+	s := triblab.NewBinClient(rc.Backs)
+
+	cl := &client{s: s}
+	cl.runPrompt()
+	fmt.Println()
 }

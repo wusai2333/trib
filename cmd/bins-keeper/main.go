@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	frc = flag.String("rc", "trib.rc", "tribbler service config file")
+	frc = flag.String("rc", trib.DefaultRCPath, "bin storage config file")
 )
 
 func noError(e error) {
@@ -34,8 +34,20 @@ func main() {
 		}
 
 		keeperConfig := rc.KeeperConfig(i)
-		log.Printf("tribbler keeper serving on %s", keeperConfig.Addr())
-		noError(triblab.ServeKeeper(keeperConfig))
+		c := make(chan bool)
+		keeperConfig.Ready = c
+		go func() {
+			noError(triblab.ServeKeeper(keeperConfig))
+		}()
+
+		b := <-c
+		if b {
+			log.Printf("bin storage keeper serving on %s",
+				keeperConfig.Addr())
+		} else {
+			log.Printf("bin storage keeper on %s init failed",
+				keeperConfig.Addr())
+		}
 	}
 
 	args := flag.Args()

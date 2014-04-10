@@ -9,7 +9,7 @@ import (
 // Makes a front end that talks to one single backend
 // Used in Lab1
 func MakeFrontSingle(back string) Server {
-	return triblab.NewFront(triblab.NewMapClient([]string{back}))
+	return triblab.NewFront(triblab.NewBinClient([]string{back}))
 }
 
 // Serve as a single backend.
