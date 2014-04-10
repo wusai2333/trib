@@ -194,14 +194,14 @@ in a consistent view.</li>
 <p>You can find these entry functions in <code>lab2.go</code> file under
 <code>triblab</code> repo:</p>
 
-<pre><code>func NewHashClient(backs []string) trib.MapStorage
+<pre><code>func NewMapClient(backs []string) trib.MapStorage
 </code></pre>
 
 <p>This function is similar to <code>NewClient()</code> in <code>lab1.go</code> but
-instead returns a <code>trib.HashStorage</code> interface.
+instead returns a <code>trib.MapStorage</code> interface.
 <code>trib.MapStorage</code> has only one function called <code>Map()</code>,
 which takes a string and returns a <code>trib.Storage</code>. A
-hash storage provides another layer of mapping,
+map storage provides another layer of mapping,
 where the caller will first get a key-value storage
 for the key string specified and then perform
 key-value function calls defined in <code>trib.Storage</code> interface.
@@ -209,9 +209,8 @@ Different key strings should logically return completely
 separate key-value stores, but note that key-value stores
 for different key strings can actually physically share a single
 store by appending the mapping key string as a prefix to the
-storage key.
-Just don't forget to escape the prefix suffix character
-in the hash string.</p>
+storage key. If you do that, just don't forget to escape the prefix separating character
+in the key strings.</p>
 
 <hr><pre><code>func ServeKeeper(b *trib.KeeperConfig) error
 </code></pre>
