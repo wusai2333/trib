@@ -82,12 +82,3 @@ type BinStorage interface {
 	// should panic.
 	Bin(name string) Storage
 }
-
-func IsValidBinName(name string) bool {
-	for _, r := range name {
-		if r == ':' {
-			return false
-		}
-	}
-	return true
-}
