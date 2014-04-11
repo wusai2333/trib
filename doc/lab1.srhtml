@@ -64,7 +64,7 @@
 <ul class="labs">
     <li><a href="labs.html">Lab Home</a></li>
     <li><a href="lab1.html">Lab 1</a></li>
-    <!-- <a href="lab2.html">Lab 2</a> -->
+    <li><a href="lab2.html">Lab 2</a></li>
     <!-- <a href="lab3.html">Lab 3</a> -->
 </ul>
 
@@ -463,6 +463,5 @@ everything in your git repository, and will then copy the zip file to
 a place where only the lab instructors can read.</p>
 
 <h2>
-<a name="user-content-happy-lab1" class="anchor" href="#happy-lab1"><span class="octicon octicon-link"></span></a>Happy Lab1!</h2>
-</div>
+<a name="user-content-happy-lab1" class="anchor" href="#happy-lab1"><span class="octicon octicon-link"></span></a>Happy Lab1!</h2></div>
 <%= pagebottom() %>

@@ -64,7 +64,7 @@
 <ul class="labs">
     <li><a href="labs.html">Lab Home</a></li>
     <li><a href="lab1.html">Lab 1</a></li>
-    <!-- <a href="lab2.html">Lab 2</a> -->
+    <li><a href="lab2.html">Lab 2</a></li>
     <!-- <a href="lab3.html">Lab 3</a> -->
 </ul>
 
@@ -304,6 +304,5 @@ machines.</p>
 <a name="user-content-ready" class="anchor" href="#ready"><span class="octicon octicon-link"></span></a>Ready?</h2>
 
 <p>If you feel comfortable with the lab setup now,
-go forward and read <a href="./lab1.html">Lab1</a>.</p>
-</div>
+go forward and read <a href="./lab1.html">Lab1</a>.</p></div>
 <%= pagebottom() %>

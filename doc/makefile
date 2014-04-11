@@ -11,3 +11,4 @@ scp:
 	scp lab1.srhtml hobo:/classes/cse223b/coursegen/ex/cse223b-sp14-h8liu/.
 	scp lab2.srhtml hobo:/classes/cse223b/coursegen/ex/cse223b-sp14-h8liu/.
 	scp arch.png hobo:/classes/cse223b/coursegen/ex/cse223b-sp14-h8liu/.
+	scp bins.png hobo:/classes/cse223b/coursegen/ex/cse223b-sp14-h8liu/.

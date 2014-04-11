@@ -80,9 +80,8 @@ func CheckStorage(t *testing.T, s trib.Storage) {
 	as(l.L[0] == "h8he")
 	as(l.L[1] == "h8liu")
 
-	l.L = nil
 	ne(s.ListGet("lst", l))
-	as(l.L == nil || len(l.L) == 0)
+	as(l.L != nil && len(l.L) == 0)
 
 	ne(s.ListAppend(kv("lst", "a"), &b))
 	as(b)
@@ -102,9 +101,8 @@ func CheckStorage(t *testing.T, s trib.Storage) {
 	ne(s.ListRemove(kv("lst", "a"), &n))
 	as(n == 2)
 
-	l.L = nil
 	ne(s.ListGet("lst", l))
-	as(l.L == nil || len(l.L) == 0)
+	as(l.L != nil && len(l.L) == 0)
 
 	ne(s.ListAppend(kv("lst", "h8liu"), &b))
 	as(b)
@@ -116,16 +114,13 @@ func CheckStorage(t *testing.T, s trib.Storage) {
 	as(l.L[0] == "h8liu")
 	as(l.L[1] == "h7liu")
 
-	l.L = nil
 	ne(s.ListKeys(pat("ls", "st"), l))
 	as(len(l.L) == 1)
 	as(l.L[0] == "lst")
 
-	l.L = nil
 	ne(s.ListKeys(pat("z", ""), l))
-	as(len(l.L) == 0)
+	as(l.L != nil && len(l.L) == 0)
 
-	l.L = nil
 	ne(s.ListKeys(pat("", ""), l))
 	as(len(l.L) == 1)
 	as(l.L[0] == "lst")
