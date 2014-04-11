@@ -346,7 +346,7 @@ share a single physical storage underlying by appending the bin name
 as a prefix (or a suffix) in the keys. </p>
 
 <p>For ease of implementation, we added a new small package called
-<code>trib/colon</code> which you can be used for escaping and unescaping all the
+<code>trib/colon</code> which you can use for escaping and unescaping all the
 colons in a string. The escaping rule is simple, all <code>'|'</code> runes
 are escaped into <code>"||"</code>, and all <code>':'</code> runes 
 are escaped into <code>"|:"</code>. Please use this package wisely.</p>

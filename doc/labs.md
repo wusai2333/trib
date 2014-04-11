@@ -132,12 +132,14 @@ The source code in the `trib` package repository is organized as follow:
 - `trib` defines the common Tribbler interfaces and data structures.
 - `trib/tribtest` provides several basic test cases for the
   interfaces.
+- `trib/cmd/trib-front` is the web-server launcher that you just run.
 - `trib/cmd/kv-client` is a command line key-value RPC client
   for quick testing.
 - `trib/cmd/kv-server` runs a key-value service as an RPC server.
-- `trib/cmd/trib-front` is the web-server launcher that you just run.
-- `trib/cmd/trib-back` is the back-end storage server launcher. We
-  will use it when we have an back-end.
+- `trib/cmd/bins-client` is a bin storage service client.
+- `trib/cmd/bins-back` is a bin storage service back-end launcher.
+- `trib/cmd/bins-keeper` is a bin stroage service keeper launcher.
+- `trib/cmd/bins-mkrc` generates a bin storage configuration file.
 - `trib/entries` defines helper several functions on
   constructing a Tribbler front-end or a back-end.
 - `trib/ref` is a reference monolithic implementation of the
@@ -148,18 +150,22 @@ The source code in the `trib` package repository is organized as follow:
   the basic building block for our back-end storage system.
 - `trib/randaddr` provides helper functions that generate a network
   address with a random port number.
+- `trib/local` provides helper functions that check if an address
+  belongs to the machine that the program is running.
+- `trib/colon` provides helper functions that escape and unescape
+  colons in a string.
 - `trib/www` contains the static files (html, css, js, etc.) for the
   web front-end.
 
 Don't be scared by the number of packages. Most of the packages are
 very small. In fact, all Go language files under `trib` directory is
-less than 1600 lines in total (the beauty of Go!).
+less than 2500 lines in total (the beauty of Go!).
 
-Through the entire lab, you do not need to modify anything in this
-`trib` repository. If you feel that you have to change some code to
-complete your lab, please discuss with the TA. You are always welcome
-to read the code in `trib` repository. If you find any bug and
-reported it, you might get some bonus credit.
+Through the entire lab, you do not need to (and should not) modify anything in
+this `trib` repository. If you feel that you have to change some code to
+complete your lab, please discuss with the TA. You are always welcome to read
+the code in `trib` repository. If you find any bug and reported it, you might
+get some bonus credit.
 
 ## Your Job
 
@@ -179,10 +185,10 @@ will be submitted for grading.
   pair scalable back-ends. The front-ends will call the back-ends via
   RPCs that is implemented in Lab 1. When this lab is done, we should
   have both the front-end and the back-end scalable.
-- **Lab 3**. We make the back-end fault-tolerent, by using distributed
-  hash table and replications. As a result, at the end of this lab,
-  back-end servers can join, leave, or be killed, without breaking
-  down the entire service.
+- **Lab 3**. We make the back-ends fault-tolerent, by applying
+  techniques like distributed hash table and replications. As a result, at the
+  end of this lab, back-end servers can join, leave, or be killed, without
+  breaking down the entire service.
 
 By the end of the labs, you will have a new Tribbler service
 implementation that is scalable and fault-tolerant.
@@ -190,7 +196,7 @@ implementation that is scalable and fault-tolerant.
 ## Misc
 
 For convenience, you might set environment variables in your `.bashrc`
-or `.bash_profile`:
+and/or `.bash_profile`:
 
 ```
 export GOPATH=$HOME/gopath
