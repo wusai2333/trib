@@ -68,9 +68,9 @@ storage tasks.
 ## Bin Storage
 
 **Bin Storage** is a distributed key-value pair storage that combines
-**a bunch of `trib.Storage` back-ends and presents a single and
-**scalable storage service over the network. Bin storage service is
-**provided via the `trib.BinStorage` interface.
+a bunch of `trib.Storage` back-ends and presents a single and
+scalable storage service over the network. Bin storage service is
+provided via the `trib.BinStorage` interface.
 
 On one hand, conceptually, bin storage combines an infinite set of
 separated `trib.Storage` instances called *bins*. Each bin has a
@@ -78,47 +78,46 @@ different name, and a caller can fetch a bin via the
 `BinStorage.Bin()` function -- the only function in the
 `trib.BinStorage` interface.  Initially, all bins are empty.
 
-On the other hand, physically, a bin storage
-is built on top of a finite set of
-key-value storge back-ends (which we built in the last lab), where a
-bin (a virtual KV store) will be mapped to one of
-the key-value back-ends (physical KV stores). As
-a result, multiple bins might share a same back-end by splitting
-the key space with prefixes (or suffixes) that encode the bin names.
-As shown in the figure below, an example bin storage hashes 6 bins
-into 3 back-ends, storing each bin with different prefixes inside.
-When a caller calls `Get("some-key")` on the bin `"alice"` for
-example, the bin storage client will translate that call into a
-`Get("alice::some-key")` RPC call on back-end 0.
+On the other hand, physically, a bin storage is built on top of a
+finite set of key-value storage back-ends (which we built in the last
+lab), where a bin (a virtual KV store) will be mapped to one of the
+key-value back-ends (physical KV stores). As a result, multiple bins
+might share a same back-end by splitting its key space with prefixes
+(or suffixes) that encode the bin names.  As shown in the figure
+below, an example bin storage hashes 6 bins into 3 back-ends, storing
+each bin with different prefixes inside.  When a caller calls
+`Get("some-key")` on the bin `"alice"` for example, the bin storage
+client will translate that call into a `Get("alice::some-key")` RPC
+call on back-end 0.
 
 ![Bin Storage](./bins.png)
 
-In addition to key-value stores in bins, a bin
-storage also coarsely synchronizes the logical clock accross *all* the
-bins, so that the clocks won't be offset too much over time. Since the
-back-ends are "dumb" and do not talk to each other, this clock
-synchronization is done by a keeper process that runs in the
-back-ground. Note that the clocks are NOT tightly synchronized in
-real-time, but only coarsely synchronized.  In particular, bin storage
-guarantees that if two `Clock()` class are issued with a time interval
-larger than 3 seconds, even if they are called in different bins, the
-later `Clock()` call will always return a value no smaller than the
-earlier `Clock()` call does. Note that a bin storage with one single
-back-end will by definition automatically satisfy this requirement,
-but when there are multiple back-ends, the keeper must do some
-maintenance from time to time.
+In addition to key-value stores in bins, a bin storage also coarsely
+synchronizes the logical clock across *all* the bins, so that the
+clocks won't be offset too much over time. Since the back-ends are
+"dumb" and they do not talk to each other, this clock synchronization
+is done by a background keeper process. Note that the clocks are NOT
+real-time synchronized (which would be too expensive for a distributed
+system), but only coarsely synchronized. In particular it means that
+if a `Clock()` is issued at least 3 seconds after another `Clock()`
+call, no matter which bins they are issued in, bin storage always
+guarantees that the later one always returns a clock value no smaller
+than the earlier one's.  Note that by definition, a bin storage with
+one single back-end will automatically satisfy this requirement, but
+when there are multiple back-ends, the keeper must do some maintenance
+from time to time.
 
-As said, in Lab1, we already implemented the back-ends (key-value
-server) and the APIs that call these back-ends, so we will simply
-reuse them with no changes (assuming that you implemented them
-correctly). Both the bin storage client and the keeper will query and
-maintain the data stored on the back-ends, cooperatively present a
-coherent bin storage interface to upper layer applications.
+As said, in Lab1, we already implemented the back-ends, the APIs for
+both the server and the client, so we will just reuse them without
+changes (assuming that you implemented them correctly). Both the bin
+storage client and the keeper will communicate with the "dumb"
+back-ends via the RPC calls we implemented, and cooperatively they
+present a coherent bin storage interface to upper layer applications.
 
 ## Tribble
 
-Before we look into how the Tribbler service works, let's first
-define what a tribble is.
+Before we look into how the Tribbler service works, let's first define
+what a tribble is.
 
 A Tribble is a structure type that has 4 fields:
 
@@ -137,9 +136,7 @@ in a `trib.Server` is called.  However, to sort tribbles in a globally
 consistent and *reasonable* order, we cannot sort the tribbles only by
 this timestamp, because different front-ends always have different
 physical time readings. For sorting, Tribbler service needs to
-maintain a distributed logical `Clock` in `uint64`. (How convenient
-that it is of the same type that `Clock()` call is using in
-the key-value store!)
+maintain a distributed logical `Clock` in `uint64`. 
 
 When sorting many tribbles into a single timeline, you should sort by
 the fields following this priority:
@@ -253,11 +250,11 @@ It returns error when the user does not exist.
 
 ***
 
-In addition to normal errors, it might also return IO errors if the
-implementation needs to communicate to a remote part.  Returning a nil
-error means that the call is successfully executed; returning a
-non-nil error means that the call might be successfully executed or
-not.
+In addition to normal errors, these calls might also return IO errors
+if the implementation needs to communicate to a remote part.
+Returning a nil error means that the call is successfully executed;
+returning a non-nil error means that the call might be successfully
+executed or not.
 
 Note that `trib/ref` package contains a reference implementation for
 `trib.Server` (which use tried in the lab setup).
@@ -266,12 +263,12 @@ Note that `trib/ref` package contains a reference implementation for
 
 Your job for Lab2 is two-folded.
 
-1. Implement the bin storage service by implementing the keeper
-(the `ServeKeeper()` function)    and the bin storage client logic
-(the `NewBinClient()` function)
+1. Implement the bin storage service by implementing the keeper (the
+`ServeKeeper()` function) and the bin storage client logic (the
+`NewBinClient()` function).
 2. Reimplement the Tribbler service by translating all the Tribbler
 service calls into bin storage service calls (the `NewFront()`
-function)
+function).
 
 You can find these entry functions in `lab2.go` file under `triblab`
 repo:
@@ -284,18 +281,18 @@ This function is similar to `NewClient()` in `lab1.go` but instead
 returns a `trib.BinStorage` interface.  `trib.BinStorage` has only one
 function called `Bin()`, which takes a bin name and returns a
 `trib.Storage`. A bin storage provides another layer of mapping, where
-the caller will first get a key-value storage for a specified bin
+the caller will first get a key-value storage (the bin) with a bin
 name, and then perform key-value function calls on the returned
 storage. Different bin names should logically return completely
-separated key-value storage spaces, but note that multiple bins can
+separated key-value storage spaces, but note that multiple bins might
 share a single physical storage underlying by appending the bin name
 as a prefix (or a suffix) in the keys.
 
-For ease of implementation, we added a new small package called
-`trib/colon` which you can use for escaping and unescaping all the
-colons in a string. The escaping rule is simple, all `'|'` runes
-are escaped into `"||"`, and all `':'` runes
-are escaped into `"|:"`. Please use this package wisely.
+For your convenience, we have a new small package called `trib/colon`
+which you can use for escaping all the colons in a string. The
+escaping rule is simple, all `'|'` runes are escaped into `"||"`, and
+all `':'` runes are escaped into `"|:"`.  Please use this package
+wisely.
 
 ***
 
@@ -303,36 +300,41 @@ are escaped into `"|:"`. Please use this package wisely.
 func ServeKeeper(b *trib.KeeperConfig) error
 ```
 
-This function is a blocking function (similar to `ServeBack()`).  It
+This function is a blocking function, similar to `ServeBack()`.  It
 will spawn a keeper instance that maintains the distributed back-ends
-in consistent states. For Lab2, there will be
-only one keeper and the keeper do not need to do much,
-but in Lab3, they will be responsible of handling all the back-end
-joining, leaving, crashing and related key migrations. In Lab2, there
-will be only one keeper, but in Lab3, there will be multiple keepers
-for fault-tolerent.
+in consistent states. For Lab2, there will be only one keeper and the
+keeper do not need to do much, but in Lab3, they will be responsible
+of handling all the back-end joining, leaving, crashing and related
+key migrations. In Lab2, there will be only one keeper, but in Lab3,
+there will be multiple keepers for fault-tolerent.
 
-The `trib.KeeperConfig` structure contains all the
-back-end serving addresses and also a set of peering
-information for the keepers:
+(Note: A blocking function here means that it never returns in normal
+states, and whenever it does return, it always returns an error. Some
+students implemented `ServeBack()` with `go http.Serve(...)` or
+`return nil` in Lab1; that was not correct. The right thing should be
+doing something like `return http.Serve(...)`.) 
 
-+ `Backs []string` These are the addresses of the back-ends.  These
+The `trib.KeeperConfig` structure contains all the back-end serving
+addresses and also some peering information for the keepers which you
+would need in Lab3:
+
+- `Backs []string` These are the addresses of the back-ends.  These
   are the back-ends that the keeper needs to maintain.
-+ `Keepers []string` These are the addresses that the keepers might listen
-  on. Lab2 will have only one keeper; in Lab3, there will
-  be at least three keepers.
-+ `This int` The index of this keeper (in the `Keepers` list).  For
+- `Keepers []string` These are the addresses that the keepers might
+  listen on. Lab2 will have only one keeper; Lab3 will have least
+  three keepers.
+- `This int` The index of this keeper (in the `Keepers` list).  For
   Lab2, it will always be zero.
-+ `Id int64` A non-zero incarnation identifier for this keeper,
-  usually derived from system clock. For Lab2, since the
-  keeper will never crash, this fields does not matter.
-+ `Ready` A ready signal channel. It works in a way similar to how
-  `Ready` works in `trib.BackConfig`. When a `true` is received
-  on this channel, the distributed bin storage should be ready
-  to serve. Therefore, if you need to
-  initialize the physical back-ends in some way, make sure you do it
-  before you send a signal over `Ready`, and don't forget to send a
-  `false` to `Ready` when the initialization fails.
+- `Id int64` A non-zero incarnation identifier for this keeper,
+  usually derived from system clock. For Lab2, since the keeper will
+  never crash, this fields does not matter.
+- `Ready` A ready signal channel. It works in a way similar to how
+  `Ready` works in `trib.BackConfig`. When a `true` is received on
+  this channel, the distributed bin storage should be ready to serve.
+  Therefore, if you need to initialize the physical back-ends in some
+  way, make sure you do it before you send a signal over `Ready`, and
+  don't forget to send a `false` to `Ready` when the initialization
+  fails.
 
 The keeper can do whatever it wants to do, but the keeper should do no
 more than maintaining the bin storage in a consistent state. A keeper
@@ -343,6 +345,11 @@ Lab1) and `ServeKeeper()` calls, they should together provide a
 general distributed key-value pair bin storage layer, where it could
 work for any kinds of service (including but not only Tribbler).
 
+The keeper does not need to listen on the address given. The keeper
+address here serves more like a keeper configuration name; it tells
+the keeper launcher if a keeper should be running on the current
+machine.
+
 ***
 
 ```
@@ -350,10 +357,10 @@ func NewFront(s trib.BinStorage) trib.Server
 ```
 
 This function takes a bin storage, and returns an implementation of
-`trib.Server`. The returned instance then will serve as an service
+`trib.Server`. The returned instance then will serve as a service
 front-end that takes Tribbler service function calls, and translates
 them into key-value pair bin storage calls. This front-end should be
-stateless, thread safe, and ready to be killed at any time.  This
+stateless, concurrency safe, and ready to be killed at any time.  This
 means that at any time during its execution on any call, the back-end
 key-value pair storage always needs to stay in a consistent state.
 Also, note that one front-end might be taking multiple concurrent
@@ -361,13 +368,13 @@ requests from the Web, and there might be multiple front-ends talking
 to the same back-end, so make sure it handles all the concurrency
 issues correctly.
 
-Also, be aware that the `trib.BinStorage` instance receives might be *not*
-one that you just implemented for previous entry functions, but as
-long as it satisfies the bin storage interface specification, your
-Tribbler server should work just fine.  This means that you cannot
-rely on the bin storage keeper to perform Tribbler related garbage
-cleaning. The front-ends might spawn back-ground routines that do the
-garbage cleaning by themselves.
+Also, be aware that the `trib.BinStorage` parameter might be *not* one
+that you just implemented in the previous entry functions, but as long
+as it satisfies the bin storage interface specification, your Tribbler
+server should work just fine.  This means that you cannot rely on the
+bin storage keeper to perform Tribbler related garbage cleaning. The
+front-ends might spawn back-ground routines that do the garbage
+cleaning by themselves.
 
 ## Playing with It
 
@@ -412,19 +419,19 @@ back-ends we generate here are on `localhost`, so all the 3 back-ends
 are created for this case (in different go routines). You should see
 three log lines showing that three back-ends started, but listening on
 different ports. Besides that `bins-back` reads from the configuration
-file, it is not much different from the `kv-serve` program.
-You can also manually specify the back-ends you would like to
-start from the command line. For example, you can run the following
-to start only the first two back-ends:
+file, it is not much different from the `kv-serve` program.  You can
+also manually specify the back-ends you would like to start from the
+command line. For example, you can run the following to start only the
+first two back-ends:
 
 ```
 $ bins-back 0 1
 ```
 
 By the way, see how this program starts several independent servers at
-the same time in differet go routines but in the same process, and now
-you should better understand why using the `rpc.DefaultServer` is not
-the right thing to do in Lab1.
+the same time in different go routines but in the same process, and
+now you should better understand why using the `rpc.DefaultServer` is
+not the right thing to do in Lab1.
 
 After the back-ends are ready, we can now start the keeper.
 
@@ -482,7 +489,7 @@ Again `-init` will populate the service with some sample data.
 Now you can open your browser, connect to the front-end machine and
 play with your own implementation.
 
-If you want to use some other config file, use the `-rc` flag.
+If you want to use some other configuration file, use the `-rc` flag.
 It is supported in all the utilities above.
 
 Again, when you completes this lab, it should be perfectly fine to
@@ -512,8 +519,8 @@ These are some unreal assumptions you can have for Lab2.
 - Although the Tribbler front-ends can be killed at any time, the
   killing won't happen very often (less than once per second).
 
-Note that some of them won't stay true in Lab3, so
-try not to rely on the assumptions too much.
+Note that some of them won't stay true in Lab3, so try not to rely on
+the assumptions too much if possible.
 
 ## Requirements
 
@@ -530,9 +537,9 @@ implementation should also satisfy the following requirements:
   high probability) mitigate the bottleneck and lead to better overall
   system performance.
 - When running on the lab machines, with more than 5 back-ends
-  supporting (and assuming all the back-ends statisfies the
-  performance assumptions), every Tribbler service call should return
-  within 3 seconds.
+  supporting (and assuming all the back-ends satisfies the performance
+  assumptions), every Tribbler service call should return within 3
+  seconds.
 - Each back-end should maintain the same general key-value pair
   semantics as they were in Lab1. As a result, all test cases that
   pass for Lab1 should also pass for Lab2. This means that, the
