@@ -74,8 +74,8 @@ can be called via the `trib.BinStorage` interface.
 
 From a high-level abstract view, bin storage combines an infinite set of
 seperated `trib.Storage` instances that are called *bins*. Different bins have
-different names, and a caller call fetch a bin by its name
-using the `Bin()` function, which is the only function in the `trib.BinStorage` interface.
+different names, and a caller can fetch a bin by its name using the `Bin()`
+function, which is the only function in the `trib.BinStorage` interface.
 Initially, all bins are empty.
 
 Physically however, a bin storage is built on top of a finite set of key-value
