@@ -273,10 +273,12 @@ name, and then perform key-value function calls on the returned
 storage. Different bin names should logically return completely
 separated key-value storage spaces, but note that multiple bins can
 share a single physical storage underlying by appending the bin name
-as a prefix (or a suffix) in the keys. For the ease of implementation,
-we specify that a bin name cannot contain a colon (`':'`) in it (which
-you can check by calling `trib.IsValidBinName()`. If the bin name is
-invalid, the bin storage is free to panic.
+as a prefix (or a suffix) in the keys. 
+
+For ease of implementation, we added a new small package called
+`trib/colon` which you can be used for escaping and unescaping all the
+colons in a string. (The escape character is `'|'`. Please think
+carefully on how to use it this package correctly.)
 
 ***
 
