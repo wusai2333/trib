@@ -288,8 +288,9 @@ as a prefix (or a suffix) in the keys.
 
 For ease of implementation, we added a new small package called
 `trib/colon` which you can be used for escaping and unescaping all the
-colons in a string. (The escape character is `'|'`. Please think
-carefully on how to use it this package correctly.)
+colons in a string. The escaping rule is simple, all `'|'` runes
+are escaped into `"||"`, and all `':'` runes 
+are escaped into `"|:"`. Please use this package wisely.
 
 ***
 

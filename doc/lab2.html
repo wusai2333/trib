@@ -272,10 +272,13 @@ name, and then perform key-value function calls on the returned
 storage. Different bin names should logically return completely
 separated key-value storage spaces, but note that multiple bins can
 share a single physical storage underlying by appending the bin name
-as a prefix (or a suffix) in the keys. For the ease of implementation,
-we specify that a bin name cannot contain a colon (<code>':'</code>) in it (which
-you can check by calling <code>trib.IsValidBinName()</code>. If the bin name is
-invalid, the bin storage is free to panic.</p>
+as a prefix (or a suffix) in the keys. </p>
+
+<p>For ease of implementation, we added a new small package called
+<code>trib/colon</code> which you can be used for escaping and unescaping all the
+colons in a string. The escaping rule is simple, all <code>'|'</code> runes
+are escaped into <code>"||"</code>, and all <code>':'</code> runes 
+are escaped into <code>"|:"</code>. Please use this package wisely.</p>
 
 <hr><pre><code>func ServeKeeper(b *trib.KeeperConfig) error
 </code></pre>
