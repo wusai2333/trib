@@ -463,5 +463,6 @@ everything in your git repository, and will then copy the zip file to
 a place where only the lab instructors can read.</p>
 
 <h2>
-<a name="user-content-happy-lab1" class="anchor" href="#happy-lab1"><span class="octicon octicon-link"></span></a>Happy Lab1!</h2></div>
+<a name="user-content-happy-lab1" class="anchor" href="#happy-lab1"><span class="octicon octicon-link"></span></a>Happy Lab1!</h2>
+</div>
 <%= pagebottom() %>
