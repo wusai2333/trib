@@ -45,75 +45,79 @@ to solve the conflicts, please ask the TA for help.
 
 ## System Architecture
 
-The system architecture looks like this:
+The overall system architecture looks like this:
 
 ![System Arch](./arch.png)
 
-Users use the Tribbler system from their browsers, and each user
-visits one state-less front-end at a time (probably distributed via
-some DNS multiplexing). Upon a service request, the front-end will
-translate the request into dirtributed key-value pair service requests
-and issue these requests to the back-ends over RPC.  Several keepers
-will run in background to keep the back-ends work in an cooperative
-and consistent way. 
-
-In Lab1, we already implemented the back-ends (key-value server) and
-the APIs that call these back-ends, so we will just reuse them.  We
-will need to implement the front-ends and the keepers in this Lab.
-
-The job of the keepers is to glue all the back-ends so that they
-(roughly speaking) serve as if it is a huge, single key-value store
-but in a scalable and distributed fashion.
-In particular, the keepers should do two things:
-
-1. Synchronize the logical clocks of the back-ends from time to time,
-   so that the clocks won't be offset too much over time.
-2. Maintain a single and consistent key-value storage service view.
-   This task should be simple when the back-ends (and the keepers)
-   are 100% reliable, but will be more difficult when they can join,
-   leave and crash.
+The entire system is split into two parts, where the upper
+part is the Tribbler service, and the lower part is
+a general purpose distributed key-value store called "Bin Storage".
+The Tribbler front-ends take AJAX calls from the users
+and translate the calls into bin storage calls, where
+the bin storage client will issue the calls into the "dumb" key-value
+back-ends via RPC. Each back-end here is a simple independent key-value
+store that we implemented in the previous lab.
+There is also a keeper running
+in the background that maintains the bin storage in a coherent
+state. Both the bin storage clients and the keeper uses
+the RPC interface (which we implemented in the previous lab) to 
+communicate with the back-ends. The interface semantics
+defined in `trib.Storage` should be sufficient
+to perform all the bin storage tasks.
 
 ## Bin Storage
 
-To build a distirbuted key-value pair storage on top of what we built
-in Lab1, this lab introduces *bin storage* (defined as
-`trib.BinStorage` interface. Bin storage adds another layer of
-abstraction mapping. Logically, it combines an infinite set of
-separated `trib.Storage` instances called bins, where each bin has a
-*bin name*.  To use a bin storage, the caller will first perform a
-`Bin()` call with the bin name specified to get the key-value storage,
-and afterwards, the caller can perform normal key-value pair calls on
-the storage it gets. 
+**Bin Storage** is a distributed key-value pair storage by combining
+a bunch of `trib.Storage` back-ends to form a single and scalable
+storage space over the network. A bin storage implementation
+can be called via the `trib.BinStorage` interface. 
 
-The implementation idea is that we will first spawn a finite set of
-key-value storage servers as back-ends, and then map the bins to these
-back-end servers using consistent hashing (or whatever hashing that
-works). As a result, each storage server will be shared by multiple
-bins, where the bin storage client will automatically append a prefix
-(or a suffix) with the bin name encoded in the keys.
+From a high-level abstract view, bin storage combines an infinite set of
+seperated `trib.Storage` instances that are called *bins*. Different bins have
+different names, and a caller call fetch a bin by its name
+using the `Bin()` function, which is the only function in the `trib.BinStorage` interface.
+Initially, all bins are empty.
 
-The logical clocks in different bins do NOT need to be tighly
-synchronized, but they need to be *coarsely* synchronized. In
-particlar, this means that, if two `Clock()` calls are issued with a
-time interval larger than 3 seconds, even if they are called on
-different bins, the later `Clock()` call should always return a value
-no smaller than the earlier `Clock()` call. Note that a bin storage
-with one single back-end will by definition automatically satisfy this
-requirement, but when there are multiple back-ends, some extra work
-needs to be done. For this, in addition to the back-ends, a bin
-storage will also have a bunch of *keepers* (at least one), which will
-maintain the overall bin storage in a consistent and coherent state.
+Physically however, a bin storage is built on top of a finite set of key-value
+storge back-ends (which we built in the last lab), where a bin (a virtual
+key-value store) will be consistently hashed to one of the key-value back-ends
+(a physical key-value store). Each back-end is hence shared by multiple bins,
+where these bins split the key space of this back-end with prefices (or
+suffices) that encode their bin names. As shown in the figure below,
+an example bin storage hashes 6 bins into 3 back-ends, storeing each
+bin with differnet prefices inside. When a caller calls `Get("some-key")`
+on the bin `"alice"` for example, the bin storage client will
+translate that call into a `Get("alice::some-key")` RPC call on back-end 0.
 
-To implement this, it is suggested to reuse the key-value pair storage
-RPC service that we built in Lab1, and extend that into a distributed
-key-value bin storage where we can build Tribbler on top. Note that
-this bin storage is a general purpose storage, so it should not assume
-anything about the semantics of the upper layer application.
+![Bin Storage](./bins.png)
+
+In addition to providing key-value storage service in bins, a bin storage also
+coarsly synchronizes the logical clock accross *all* the bins, so that the
+clocks won't be offset too much over time. Since the back-ends are "dumb" and
+do not talk to each other, this clock synchronization is done by a keeper
+process that runs in the back-ground. Note that the clocks are NOT tighly
+synchronized in real-time, but only coarsly synchronized. 
+In particular, bin storage guarantees that if two `Clock()` class are issued
+with a time interval larger than 3 seconds, even if they are called in
+different bins, the later `Clock()` call will always return a value no smaller
+than the earlier `Clock()` call does. Note that a bin storage with one single
+back-end will by definition automatically satisfy this requirement, but when
+there are multiple back-ends, the keeper must do some maintenance from time to
+time.
+
+As said, in Lab1, we already implemented the back-ends (key-value server) and
+the APIs that call these back-ends, so we will simply reuse them without any
+change (assuming that you implemented them correctly). Both the bin storage
+client and the keeper will query and maintain the data stored on the back-ends,
+cooperatively presents a coherent bin storage interface to upper layer
+applications.
 
 ## Tribble
 
-We start defining the Tribbler service from the definition 
-of a Tribble. A Tribble is a structure type that has 4 fields:
+Before we look into how the Tribbler service works, let's first
+define what is a tribble.
+
+A Tribble is a structure type that has 4 fields:
 
 ```
 type Trib struct {
@@ -146,9 +150,9 @@ We call this the *Tribble Order*.
 
 ## Tribbler Service Interface
 
-The Tribbler service logic is all defined in `trib.Server` interface
-(in `trib/trib.go` file). This is how the webpage user interface
-interacts with a Tribbler server.
+The Tribbler service logic is defined by the `trib.Server` interface (in
+`trib/trib.go` file). This is how the Web user interface interacts with a
+Tribbler server.
 
 ***
 
@@ -256,9 +260,16 @@ Note that `trib/ref` package contains a reference implementation for
 
 ## Entry Functions
 
+Your job for Lab2 is two-folded.
+
+1. Implement the bin storage service by implementing the keeper 
+   (the `ServeKeeper()` function)
+   and the bin storage client logic (the `NewBinClient()` function)
+2. Reimplement the Tribbler service by translating all the 
+   Tribbler service calls into bin storage service calls (the `NewFront()` function)
+
 You can find these entry functions in `lab2.go` file under `triblab`
-repo. The first two are the entries for the bin storage, and the last
-is the entry for the Tribbler front-end.
+repo:
 
 ```
 func NewBinClient(backs []string) trib.BinStorage
@@ -286,7 +297,8 @@ func ServeKeeper(b *trib.KeeperConfig) error
 
 This function is a blocking function (similar to `ServeBack()`).  It
 will spawn a keeper instance that maintains the distributed back-ends
-in consistent states. For Lab2, the keepers do not need to do much,
+in consistent states. For Lab2, there will be
+only one keeper and the keeper do not need to do much,
 but in Lab3, they will be responsible of handling all the back-end
 joining, leaving, crashing and related key migrations. In Lab2, there
 will be only one keeper, but in Lab3, there will be multiple keepers
@@ -298,26 +310,25 @@ information for the keepers:
 
 - `Backs []string` These are the addresses of the back-ends.  These
   are the back-ends that the keeper needs to maintain.
-- `Keepers []string` These are the addresses that the keeper will
-  listen on so that all the keepers can talk to each other. For Lab2,
-  there will be only one keeper, and for that, you don't have to
-  listen on this address, since nobody will ring the bell.
+- `Keepers []string` These are the addresses that the keepers might listen
+  on. Lab2 will have only one keeper; in Lab3, there will
+  be at least three keepers.
 - `This int` The index of this keeper (in the `Keepers` list).  For
   Lab2, it will always be zero.
 - `Id int64` A non-zero incarnation identifier for this keeper,
-  usually derived from system clock. For Lab2, this fields does not
-  matter.
+  usually derived from system clock. For Lab2, since the
+  keeper will never crash, this fields does not matter.
 - `Ready` A ready signal channel. It works in a way similar to how
-  `Ready` works in `trib.BackConfig`. The difference is that when a
-  `Ready` is received on this channel at *any* of the keepers, the
-  distributed bin storage should be ready to serve. So if you need to
+  `Ready` works in `trib.BackConfig`. When a `true` is received
+  on this channel, the distributed bin storage should be ready
+  to serve. Therefore, if you need to
   initialize the physical back-ends in some way, make sure you do it
   before you send a signal over `Ready`, and don't forget to send a
   `false` to `Ready` when the initialization fails.
 
-A keeper can do whatever it wants to do, but a keeper should do no
+The keeper can do whatever it wants to do, but the keeper should do no
 more than maintaining the bin storage in a consistent state. A keeper
-should understand the how a bin storage client translates the keys,
+should understand how a bin storage client translates the keys,
 but should not need to parse anything further in the keys or values.
 This means that with `NewBinClient()`, `ServeBack()` (implemented in
 Lab1) and `ServeKeeper()` calls, they should together provide a
@@ -342,11 +353,11 @@ requests from the Web, and there might be multiple front-ends talking
 to the same back-end, so make sure it handles all the concurrency
 issues correctly. 
 
-Also, be aware that the `trib.BinStorage` instance receives might be
+Also, be aware that the `trib.BinStorage` instance receives might be *not*
 one that you just implemented for previous entry functions, but as
 long as it satisfies the bin storage interface specification, your
 Tribbler server should work just fine.  This means that you cannot
-rely on the bin storage keepers to perform Tribbler related garbage
+rely on the bin storage keeper to perform Tribbler related garbage
 cleaning. The front-ends might spawn back-ground routines that do the
 garbage cleaning by themselves.
 
@@ -355,7 +366,7 @@ garbage cleaning by themselves.
 First is to setup the bin storage. Since we might have multiple parts
 running at the same time probably on different machines, we will have
 a configuration file that specifies the serving addresses of the
-back-ends and the keepers for the distributed bin storage.  The config
+back-ends and the keeper for the distributed bin storage.  The config
 file by default will use `bins.rc` as its file name, where `bins`
 stands for bin storage.
 
@@ -377,7 +388,8 @@ generate back-ends starting from `172.22.14.211` to `172.22.14.220`,
 which are the IP address of our lab machines. For `bins-mkrc`, there
 can be at most 10 backends and 10 keepers (since we only have 10 lab
 machines).  However, you are free to create your own `bins.rc` file
-that has more back-ends and keepers.
+that has more back-ends and keepers. For this case, we use 3 back-ends
+and 1 keeper (the default value for `-nkeep`).
 
 With this configuration file generated, we can now launch the
 back-ends:
@@ -406,7 +418,7 @@ the same time in differet go routines but in the same process, and now
 you should better understand why using the `rpc.DefaultServer` is not
 the right thing to do in Lab1.
 
-After the back-ends are ready, we can now start the keepers.
+After the back-ends are ready, we can now start the keeper.
 
 ```
 $ bins-keeper
@@ -476,7 +488,7 @@ These are some unreal assumptions you can have for Lab2.
 - No network communication error will happen.
 - Once a back-end or a keeper starts, it will remain online forever.
 - The system will always start in the following order:
-  all the back-ends, the keepers, then all the front-ends.
+  all the back-ends, the keeper, then all the front-ends.
 - The `trib.Storage` used in the backend will return every `Clock()`
   call in less than 1 second.
 - In the `trib.Storage` used in the backend, all storgae IOs 
@@ -487,7 +499,8 @@ These are some unreal assumptions you can have for Lab2.
   value part (in a list or a string) will take less than 1
   millisecond.  Note that `Keys()` and `ListKeys()` might take longer
   time to complete because it needs to scan over all the keys.
-- All front-ends, back-ends and keepers will run on the lab machines.
+- All the front-ends, the back-ends and the keeper will be running 
+  on the lab machines.
 - Although the Tribbler front-ends can be killed at any time, the
   killing won't happen very often (less than once per second).
 
