@@ -67,7 +67,7 @@ to perform all the bin storage tasks.
 
 ## Bin Storage
 
-**Bin Storage** is a distributed key-value pair storage by combining
+**Bin Storage** is a distributed key-value pair storage that combines
 a bunch of `trib.Storage` back-ends to form a single and scalable
 storage space over the network. A bin storage implementation
 can be called via the `trib.BinStorage` interface. 

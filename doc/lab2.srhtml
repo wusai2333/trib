@@ -140,7 +140,7 @@ to perform all the bin storage tasks.</p>
 <h2>
 <a name="user-content-bin-storage" class="anchor" href="#bin-storage"><span class="octicon octicon-link"></span></a>Bin Storage</h2>
 
-<p><strong>Bin Storage</strong> is a distributed key-value pair storage by combining
+<p><strong>Bin Storage</strong> is a distributed key-value pair storage that combines
 a bunch of <code>trib.Storage</code> back-ends to form a single and scalable
 storage space over the network. A bin storage implementation
 can be called via the <code>trib.BinStorage</code> interface. </p>
