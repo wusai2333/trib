@@ -60,7 +60,7 @@ back-ends via RPC. Each back-end here is a simple independent key-value
 store that we implemented in the previous lab.
 There is also a keeper running
 in the background that maintains the bin storage in a coherent
-state. Both the bin storage clients and the keeper uses
+state. Both the bin storage clients and the keeper use
 the RPC interface (which we implemented in the previous lab) to 
 communicate with the back-ends. The interface semantics
 defined in <code>trib.Storage</code> should be sufficient
@@ -108,17 +108,17 @@ there are multiple back-ends, the keeper must do some maintenance from time to
 time.</p>
 
 <p>As said, in Lab1, we already implemented the back-ends (key-value server) and
-the APIs that call these back-ends, so we will simply reuse them without any
-change (assuming that you implemented them correctly). Both the bin storage
+the APIs that call these back-ends, so we will simply reuse them with
+no changes (assuming that you implemented them correctly). Both the bin storage
 client and the keeper will query and maintain the data stored on the back-ends,
-cooperatively presents a coherent bin storage interface to upper layer
+cooperatively present a coherent bin storage interface to upper layer
 applications.</p>
 
 <h2>
 <a name="user-content-tribble" class="anchor" href="#tribble"><span class="octicon octicon-link"></span></a>Tribble</h2>
 
 <p>Before we look into how the Tribbler service works, let's first
-define what is a tribble.</p>
+define what a tribble is.</p>
 
 <p>A Tribble is a structure type that has 4 fields:</p>
 
@@ -149,7 +149,7 @@ the fields following this priority:</p>
 <li>
 <code>Time</code> The physical timestamp.</li>
 <li>
-<code>User</code> The user id</li>
+<code>User</code> The user id.</li>
 <li>
 <code>Message</code> The message content.</li>
 </ol><p>We call this the <em>Tribble Order</em>.</p>
