@@ -29,29 +29,29 @@ type Server interface {
 	// signed up the service, all of them needs to be listed.  When there
 	// are more than 20 users that signed up the service, an arbitrary set
 	// of at lest 20 of them needs to be listed.
-	// The result should be sorted in alphabetical order
+	// The result should be sorted in alphabetical order.
 	ListUsers() ([]string, error)
 
 	// Post a tribble.  The clock is the maximum clock value this user has
 	// seen so far by reading tribbles or clock sync.
 	Post(who, post string, clock uint64) error
 
-	// List the tribs that a particular user posted
+	// List the tribs that a particular user posted.
 	Tribs(user string) ([]*Trib, error)
 
-	// Follow someone's timeline
+	// Follow someone's timeline. Returns error when who == whom.
 	Follow(who, whom string) error
 
-	// Unfollow
+	// Unfollow someone's timeline. Returns error when who == whom.
 	Unfollow(who, whom string) error
 
-	// Returns true when who following whom
+	// Returns true when who following whom. Returns error when who == whom.
 	IsFollowing(who, whom string) (bool, error)
 
-	// Returns the list of following users
+	// Returns the list of following users.
 	Following(who string) ([]string, error)
 
-	// List the trib of someone's following users
+	// List the tribs of someone's following users (including himself).
 	Home(user string) ([]*Trib, error)
 }
 
