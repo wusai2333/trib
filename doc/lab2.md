@@ -221,7 +221,8 @@ These are functions to follow/unfollow, check following and listing
 all following users of a user. A user can never follow or unfollow
 himself. When calling with `who` equals to `whom`, the functions
 return error. When the user does not exist, the functions return
-error.
+error. If a user performs `Folllow()` on another user over multiple
+client concurrently only one `Follow()` should succeed with no errors.
 
 A user can follow at most `trib.MaxFollowing=2000` users (not
 including himself). When a user tries to follow more than
@@ -571,6 +572,8 @@ suggested hints:
 - Keep multiple caches for the ListUsers() call when the users are
   many. Note that when the user count is more than 20, you don't
   need to track new registered users anymore.
+- Keep a log for the users that a user follows, where each log
+  entry is an action of `Follow()` or `Unfollow()`.
 
 ## Possible Mistakes
 
