@@ -224,9 +224,8 @@ return error. When the user does not exist, the functions return
 error.
 
 A user can follow at most `trib.MaxFollowing=2000` users. When a user
-tries to follow more than 2000 users, `Follow()` might either return
-an error or fail silently. The caller could use `Following()` to
-check if the `Follow()` actually succeeded.
+tries to follow more than `trib.MasFollowing=2000` users, `Follow()`
+should return error.
 
 ***
 
