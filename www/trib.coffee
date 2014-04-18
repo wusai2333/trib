@@ -169,7 +169,7 @@ signIn = (ev) ->
     if showing == "" || showing == "!home"
         return
 
-    console.log("sigin in as: " + showing)
+    console.log("sign in as: " + showing)
 
     me = showing
     $("div#who").show()

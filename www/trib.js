@@ -175,7 +175,7 @@
     if (showing === "" || showing === "!home") {
       return;
     }
-    console.log("sigin in as: " + showing);
+    console.log("sign in as: " + showing);
     me = showing;
     $("div#who").show();
     $("div#who h3").html("Signed in as " + me);

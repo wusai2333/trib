@@ -29,6 +29,7 @@ type Server interface {
 	// signed up the service, all of them needs to be listed.  When there
 	// are more than 20 users that signed up the service, an arbitrary set
 	// of at lest 20 of them needs to be listed.
+	// The result should be sorted in alphabetical order
 	ListUsers() ([]string, error)
 
 	// Post a tribble.  The clock is the maximum clock value this user has
@@ -36,7 +37,6 @@ type Server interface {
 	Post(who, post string, clock uint64) error
 
 	// List the tribs that a particular user posted
-	// The result should be sorted in alphabetical order
 	Tribs(user string) ([]*Trib, error)
 
 	// Follow someone's timeline
