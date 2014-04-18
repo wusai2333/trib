@@ -326,8 +326,7 @@
       type: "POST",
       data: JSON.stringify({
         Who: me,
-        Whom: showing,
-        Clock: lclock
+        Whom: showing
       }),
       success: _updateFollow,
       cache: false
@@ -377,7 +376,8 @@
       type: "POST",
       data: JSON.stringify({
         Who: me,
-        Message: text
+        Message: text,
+        Clock: lclock
       }),
       success: postDone,
       cache: false
