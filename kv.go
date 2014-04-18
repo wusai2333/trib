@@ -77,8 +77,5 @@ type Storage interface {
 // Key-Storage interface
 type BinStorage interface {
 	// Fetch a storage based on the given bin name.
-	// The key will always satisfy IsValidBinName(name).
-	// If IsValidBinName(name) is false, the implementation
-	// should panic.
 	Bin(name string) Storage
 }

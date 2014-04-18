@@ -397,8 +397,8 @@ way, make sure you do it before you send a signal over <code>Ready</code>, and
 don't forget to send a <code>false</code> to <code>Ready</code> when the initialization
 fails.</li>
 </ul><p>The keeper can do whatever it wants to do, but the keeper should do no
-more than maintaining the bin storage in a consistent state. A keeper
-should understand how a bin storage client translates the keys,
+more than maintaining the bin storage in a consistent state. It is 
+okay for a keeper to understand how a bin storage client translates the keys,
 but should not need to parse anything further in the keys or values.
 This means that with <code>NewBinClient()</code>, <code>ServeBack()</code> (implemented in
 Lab1) and <code>ServeKeeper()</code> calls, they should together provide a
@@ -531,10 +531,10 @@ Tribbler front-end that uses this distributed storage:</p>
 </code></pre>
 
 <p>You have used this utility before. The only new thing here is the
-<code>-lab</code> flag, which tells it to read the <code>trib.rc</code> file and use our lab
+<code>-lab</code> flag, which tells it to read the <code>bins.rc</code> file and use our lab
 implementation. This will start a stateless front-end (which you
 implemented in this lab) that will connect to the back-ends service
-addresses specified in <code>trib.rc</code>.</p>
+addresses specified in <code>bins.rc</code>.</p>
 
 <p>Again <code>-init</code> will populate the service with some sample data.</p>
 

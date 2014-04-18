@@ -337,8 +337,8 @@ would need in Lab3:
   fails.
 
 The keeper can do whatever it wants to do, but the keeper should do no
-more than maintaining the bin storage in a consistent state. A keeper
-should understand how a bin storage client translates the keys,
+more than maintaining the bin storage in a consistent state. It is 
+okay for a keeper to understand how a bin storage client translates the keys,
 but should not need to parse anything further in the keys or values.
 This means that with `NewBinClient()`, `ServeBack()` (implemented in
 Lab1) and `ServeKeeper()` calls, they should together provide a
@@ -479,10 +479,10 @@ $ trib-front -init -addr=:rand -lab
 ```
 
 You have used this utility before. The only new thing here is the
-`-lab` flag, which tells it to read the `trib.rc` file and use our lab
+`-lab` flag, which tells it to read the `bins.rc` file and use our lab
 implementation. This will start a stateless front-end (which you
 implemented in this lab) that will connect to the back-ends service
-addresses specified in `trib.rc`.
+addresses specified in `bins.rc`.
 
 Again `-init` will populate the service with some sample data.
 
