@@ -114,7 +114,6 @@ func handleApi(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		e = server.Post(p.Who, p.Message, p.Clock)
-		log.Println(p.Clock)
 		reply(NewBool(e == nil, e))
 
 	default:
