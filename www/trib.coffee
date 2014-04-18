@@ -327,7 +327,6 @@ updateFollow = ->
         data: JSON.stringify({
             Who: me
             Whom: showing
-            Clock: lclock
         })
         success: _updateFollow
         cache: false
@@ -375,6 +374,7 @@ _postTrib = ->
         data: JSON.stringify({
             Who: me
             Message: text
+            Clock: lclock
         })
         success: postDone
         cache: false
