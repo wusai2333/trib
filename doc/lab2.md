@@ -223,7 +223,8 @@ himself. When calling with `who` equals to `whom`, the functions
 return error. When the user does not exist, the functions return
 error.
 
-A user can follow at most `trib.MaxFollowing=2000` users. Returns
+A user can follow at most `trib.MaxFollowing=2000` users (unless
+the last couple of `Follow()` calls happen concurrently). Returns
 error when trying to follow more than that.
 
 ***
