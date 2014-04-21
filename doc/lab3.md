@@ -3,6 +3,8 @@
 Welcome to Lab3. The goal of this lab is to take the bin storage that
 we implemented in Lab2 and make it fault-tolerant.
 
+Lab3 will be a team project.
+
 ## Get Your Repo Up-to-date
 
 ```
@@ -14,18 +16,26 @@ $ git pull /classes/cse223b/sp14/labs/triblab lab3
 
 Not many changes, only some small things, should be painless.
 
-## System and Failure Model
+It does not come with more unit tests (because it is not very easy to cleanly spawn and kill processes in unit tests). You need to test by
+yourself with `bins-*` tools.
 
-There could be up to 1000 back-ends. Back-ends may join and leave at 
-any time, but there will be at least 1 back-end online. Also, you can
-assume that each back-end join or leave event will have a time
+## System Scale and Failure Model
+
+There could be up to 300 back-ends. Back-ends may join and leave at
+will, but at any time there will be at least 1 back-end online. Also,
+you can assume that each back-end join/leave event will have a time
 interval of 30 seconds in between, and this time duration will be
 enough for you to migrate storage.
 
-There will be at least 3 keepers. Keepers may join and leave at 
-any time, but there will be at least 1 keeper online. Also, you can
-assume that each keeper join or leave event will have a time interval
-of 1 minute in between.
+There will be at least 3 keepers. Keepers may join and leave at will,
+but at any time there will be at least 1 keeper online. Also, you can
+assume that each keeper join/leave event will have a time interval
+of 1 minute in between. Each time the keeper respawns, it will get a
+new `Id` field in `KeeperConfig` structure.
+
+For starting, we will start at least one back-end, and then at least one
+keeper. After the keeper sends `true` to the `Ready` channel, a
+front-end may now start and issue `BinStorage` calls.
 
 ## Consistency Model
 
@@ -33,7 +43,68 @@ To tolerate failures, you have to save the data of each key on
 multiple places, and we will have a slightly relaxed consistency
 model.
 
-- `Clock()` will still be the same.
+`Clock()`, `Set()`, `Get()` and `Keys()` will remain the same semantics.
+
+When concurrent `ListAppend()` happens, when calling `ListGet()`, the
+caller might see the values that are currently being added appear in
+arbitrary order. However, after all the concurrent `ListAppend()`'s
+successfully returned, `ListGet()` should always return the list with
+a consistent order.
+
+Here is an example of an valid call and return sequence:
+
+- Initially, the list `"k"` is empty.
+- A invokes `ListAppend("k", "a")`
+- B invokes `ListAppend("k", "b")`
+- C calls `ListGet("k")` and gets `["b"]`, note that how `"b"` appears
+  first in the list here.
+- D calls `ListGet("k")` and gets `["a", "b"]`
+- A's `ListAppend()` call returns
+- B's `ListAppend()` call returns
+- C calls `ListGet("k")` again and gets `["a", "b"]`
+- D calls `ListGet("k")` again and gets `["a", "b"]`
+
+For the Tribbler service, we specify that, when the user is performs
+concurrent `Follow()` and/or `Unfollow()`, they may fail without
+returning an error (as a special case, concurrent `Follow()` the same
+person by a user might both return no error). Also, when a user tries
+to follow more than 2000 users, the Tribbler service logic is free to
+silently remove a user from his following list without notifying the
+user with an error. A user would check his currently following list
+with the `Following()` call afterwards.
+
+## Entry Functions
+
+The entry functions will remain exactly the same as lab2. Only that
+the `KeeperConfig` now will have more keepers. 
+
+## Additional Assumptions
+
+- No network error; when a TCP connection is lost (RPC client returning `ErrShutdown`), you can assume that the RPC server crashed.
+- When a bin-client, back-end, or keeper is killed, all data in that process will be lost, nothing will be carried over a respawn.
+- Iterating all the data stored on a back-end can be done in 20 seconds.
+
+## Requirement
+
+- No data loss when there are at least 3 back-ends online all the time.
+- Key-value storage call always returns without an error, even when a node
+  and/or a keeper just joined or left.
+
+## Building Hints
+
+- You can use logging to save everything (in lists on the back-ends)
+- You need to replicate each piece of data.
+- Let the keeper(s) keep track on the status of all the nodes, and do the
+  data migration when a back-end joins or leaves.
+- Keepers should also keep track on the status of each other.
+
+For the ease of debugging, you can maintain some log messages (by using
+ `log` package, or by writing to a TCP socket or log file).
+However, for the convenience of grading, please turn them off by default 
+when you turn in your code.
+
+Also, try use a machine different than c08-11 for testing and debugging,
+this will lower your probability of running into a port collision.
 
 ## Turning In
 

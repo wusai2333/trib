@@ -586,7 +586,7 @@ might directly use that argument as the new post's clock field.
 Technically, you can do that in your code internally as long as you
 can satisfy the ordering requirements specified for <code>Home()</code> and
 <code>Tribs()</code> (you might find it very hard).  Nonetheless, intuitively,
-the clock argument tells the <em>oldest</em> tribble a user have seen
+the clock argument tells the <em>latest</em> tribble a user have seen
 (which might be 0 if the user has not seen any tribble yet), hence
 the new posted tribble seems to better have a clock value that is
 larger than the argument.</li>
