@@ -596,7 +596,7 @@ implementation might do:
   Technically, you can do that in your code internally as long as you
   can satisfy the ordering requirements specified for `Home()` and
   `Tribs()` (you might find it very hard).  Nonetheless, intuitively,
-  the clock argument tells the *oldest* tribble a user have seen
+  the clock argument tells the *latest* tribble a user have seen
   (which might be 0 if the user has not seen any tribble yet), hence
   the new posted tribble seems to better have a clock value that is
   larger than the argument.
