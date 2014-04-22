@@ -20,10 +20,10 @@ var (
 func main() {
 	flag.Parse()
 
-	if *nback > 10 {
+	if *nback > 300 {
 		log.Fatal(fmt.Errorf("too many back-ends"))
 	}
-	if *nkeep > 10 {
+	if *nkeep > 300 {
 		log.Fatal(fmt.Errorf("too many keepers"))
 	}
 
@@ -46,11 +46,11 @@ func main() {
 			host := fmt.Sprintf("172.22.14.%d", ipOffset+i%nmachine)
 			rc.Backs[i] = fmt.Sprintf("%s:%d", host, p+i/nmachine)
 		}
+
 		p += *nback / nmachine
-		if *nback%nmachine == 0 {
+		if *nback%nmachine > 0 {
 			p++
 		}
-		p++
 
 		for i := 0; i < *nkeep; i++ {
 			host := fmt.Sprintf("172.22.14.%d", ipOffset+i%nmachine)
