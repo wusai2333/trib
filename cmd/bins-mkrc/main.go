@@ -23,7 +23,7 @@ func main() {
 	if *nback > 300 {
 		log.Fatal(fmt.Errorf("too many back-ends"))
 	}
-	if *nkeep > 300 {
+	if *nkeep > 10 {
 		log.Fatal(fmt.Errorf("too many keepers"))
 	}
 

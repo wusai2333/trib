@@ -33,14 +33,14 @@ you can assume that each back-end join/leave event will have a time
 interval of 30 seconds in between, and this time duration will be
 enough for you to migrate storage.
 
-There will be at least 3 keepers. Keepers may join and leave at will,
-but at any time there will be at least 1 keeper online. Also, you can
-assume that each keeper join/leave event will have a time interval of
-1 minute in between. When it says "leave" here, it assumes that the
-process of the back-end or the keeper is killed; everything in that
-process will be lost.  Each time the keeper comes back at the same
-`Index`, although all states are lost, it will get a new `Id` field in
-the `KeeperConfig` structure.
+There will be at least 3 and up to 10 keepers. Keepers may join and
+leave at will, but at any time there will be at least 1 keeper online.
+Also, you can assume that each keeper join/leave event will have a
+time interval of 1 minute in between. When it says "leave" here, it
+assumes that the process of the back-end or the keeper is killed;
+everything in that process will be lost.  Each time the keeper comes
+back at the same `Index`, although all states are lost, it will get a
+new `Id` field in the `KeeperConfig` structure.
 
 For starting, we will start at least one back-end, and then at least one
 keeper. After the keeper sends `true` to the `Ready` channel, a
