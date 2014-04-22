@@ -9,8 +9,13 @@ Lab3 can be submitted in teams of up to 3 people.
 
 ```
 $ cd ~/gopath/src/trib
+$ git branch lab3
+$ git checkout lab3
 $ git pull /classes/cse223b/sp14/labs/trib lab3
+$
 $ cd ~/gopath/src/triblab
+$ git branch lab3
+$ git checkout lab3
 $ git pull /classes/cse223b/sp14/labs/triblab lab3
 ```
 
@@ -30,9 +35,12 @@ enough for you to migrate storage.
 
 There will be at least 3 keepers. Keepers may join and leave at will,
 but at any time there will be at least 1 keeper online. Also, you can
-assume that each keeper join/leave event will have a time interval
-of 1 minute in between. Each time the keeper respawns, it will get a
-new `Id` field in `KeeperConfig` structure.
+assume that each keeper join/leave event will have a time interval of
+1 minute in between. When it says "leave" here, it assumes that the
+process of the back-end or the keeper is killed; everything in that
+process will be lost.  Each time the keeper comes back at the same
+`Index`, although all states are lost, it will get a new `Id` field in
+the `KeeperConfig` structure.
 
 For starting, we will start at least one back-end, and then at least one
 keeper. After the keeper sends `true` to the `Ready` channel, a
@@ -99,8 +107,8 @@ the `KeeperConfig` now will have more keepers.
 - If at all times, there will always be at least 3 back-ends online
   (might be different three ones at any moment in time), there should
   be no data loss.
-- Key-value storage call always returns without an error, even when a node
-  and/or a keeper just joined or left.
+- Key-value storage call always returns without an error, even when a
+  node and/or a keeper just joined or left.
 
 ## Building Hints
 

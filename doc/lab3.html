@@ -10,8 +10,13 @@ we implemented in Lab2 and make it fault-tolerant.</p>
 <a name="user-content-get-your-repo-up-to-date" class="anchor" href="#get-your-repo-up-to-date"><span class="octicon octicon-link"></span></a>Get Your Repo Up-to-date</h2>
 
 <pre><code>$ cd ~/gopath/src/trib
+$ git branch lab3
+$ git checkout lab3
 $ git pull /classes/cse223b/sp14/labs/trib lab3
+$
 $ cd ~/gopath/src/triblab
+$ git branch lab3
+$ git checkout lab3
 $ git pull /classes/cse223b/sp14/labs/triblab lab3
 </code></pre>
 
@@ -32,9 +37,12 @@ enough for you to migrate storage.</p>
 
 <p>There will be at least 3 keepers. Keepers may join and leave at will,
 but at any time there will be at least 1 keeper online. Also, you can
-assume that each keeper join/leave event will have a time interval
-of 1 minute in between. Each time the keeper respawns, it will get a
-new <code>Id</code> field in <code>KeeperConfig</code> structure.</p>
+assume that each keeper join/leave event will have a time interval of
+1 minute in between. When it says "leave" here, it assumes that the
+process of the back-end or the keeper is killed; everything in that
+process will be lost.  Each time the keeper comes back at the same
+<code>Index</code>, although all states are lost, it will get a new <code>Id</code> field in
+the <code>KeeperConfig</code> structure.</p>
 
 <p>For starting, we will start at least one back-end, and then at least one
 keeper. After the keeper sends <code>true</code> to the <code>Ready</code> channel, a
@@ -108,8 +116,8 @@ back-end and write it to another back-end.</li>
 <li>If at all times, there will always be at least 3 back-ends online
 (might be different three ones at any moment in time), there should
 be no data loss.</li>
-<li>Key-value storage call always returns without an error, even when a node
-and/or a keeper just joined or left.</li>
+<li>Key-value storage call always returns without an error, even when a
+node and/or a keeper just joined or left.</li>
 </ul><h2>
 <a name="user-content-building-hints" class="anchor" href="#building-hints"><span class="octicon octicon-link"></span></a>Building Hints</h2>
 
@@ -131,11 +139,15 @@ this will lower your probability of running into a port collision.</p>
 <h2>
 <a name="user-content-turning-in" class="anchor" href="#turning-in"><span class="octicon octicon-link"></span></a>Turning In</h2>
 
-<p>First, make sure that you have committed every piece of your code into
-the repository <code>triblab</code>. Then just type <code>make turnin</code> under the root
-of your repository. It will generate a <code>turnin.zip</code> that contains
-everything in your gitt repo, and will then copy the zip file to a
-place where only the lab instructors can read.</p>
+<p>If you are submitting as a team, please create a file called
+<code>teammates</code> under the root of <code>triblab</code> repo that lists the login ids
+of the members of your team in each line.</p>
+
+<p>Make sure that you have committed every piece of your code (and the
+<code>teammates</code> file) into the repository <code>triblab</code>. Then just type 
+<code>make turnin-lab3</code> under the root of your repository. It will generate a
+<code>turnin.zip</code> that contains everything in your gitt repo, and will then
+copy the zip file to a place where only the lab instructors can read.</p>
 
 <h2>
 <a name="user-content-happy-lab3-" class="anchor" href="#happy-lab3-"><span class="octicon octicon-link"></span></a>Happy Lab3. :)</h2>
