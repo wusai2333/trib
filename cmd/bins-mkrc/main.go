@@ -46,8 +46,8 @@ func main() {
 			host := fmt.Sprintf("172.22.14.%d", ipOffset+i%nmachine)
 			rc.Backs[i] = fmt.Sprintf("%s:%d", host, p+i/nmachine)
 		}
-		p += *nback/nmachine
-		if *nback % nmachine == 0 {
+		p += *nback / nmachine
+		if *nback%nmachine == 0 {
 			p++
 		}
 		p++
