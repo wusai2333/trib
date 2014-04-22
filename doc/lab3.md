@@ -50,10 +50,10 @@ front-end may now start and issue `BinStorage` calls.
 
 To tolerate failures, you have to save the data of each key on
 multiple places, and we will have a slightly relaxed consistency
-model.
+model. 
 
-`Clock()`, `Set()`, `Get()` and `Keys()` will remain the same
-semantics.
+`Clock()` and the key-value interface calles (`Set()`, `Get()` and
+`Keys()`) will remain the same semantics.
 
 When concurrent `ListAppend()` happens, when calling `ListGet()`, the
 caller might see the values that are currently being added appear in
@@ -76,21 +76,17 @@ Here is an example of an valid call and return sequence:
 - C calls `ListGet("k")` again and gets `["a", "b"]`
 - D calls `ListGet("k")` again and gets `["a", "b"]`
 
-<!-- maybe also some words on other list calls. -->
+`ListRemove()` removes all matched values that are appended into
+the list in the past, and sets the `n` field propoerly.
+When (and only when) concurrent `ListRemove()` on the same key and 
+value is called, it is okay to double count on `n`.
 
-For the Tribbler service, we specify that, when the user performs
-concurrent `Follow()` and/or `Unfollow()`, they may fail silently
-without returning an error (as a special case, concurrent `Follow()`
-the same person by a user might both return no error). Also, when a
-user tries to follow more than 2000 users, the Tribbler service logic
-is free to silently remove a user from his following list without
-notifying the user with an error. A user would check his currently
-following list with the `Following()` call afterwards.
+`ListKeys()` remains the same semantics.
 
 ## Entry Functions
 
-The entry functions will remain exactly the same as lab2. Only that
-the `KeeperConfig` now will have more keepers. 
+The entry functions will remain exactly the same as they are in Lab2,
+but only that the `KeeperConfig` might now have multiple keepers.
 
 ## Additional Assumptions
 

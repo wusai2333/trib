@@ -53,10 +53,10 @@ front-end may now start and issue <code>BinStorage</code> calls.</p>
 
 <p>To tolerate failures, you have to save the data of each key on
 multiple places, and we will have a slightly relaxed consistency
-model.</p>
+model. </p>
 
-<p><code>Clock()</code>, <code>Set()</code>, <code>Get()</code> and <code>Keys()</code> will remain the same
-semantics.</p>
+<p><code>Clock()</code> and the key-value interface calles (<code>Set()</code>, <code>Get()</code> and
+<code>Keys()</code>) will remain the same semantics.</p>
 
 <p>When concurrent <code>ListAppend()</code> happens, when calling <code>ListGet()</code>, the
 caller might see the values that are currently being added appear in
@@ -83,20 +83,18 @@ the list.</li>
 </li>
 <li>D calls <code>ListGet("k")</code> again and gets <code>["a", "b"]</code>
 </li>
-</ul><p>For the Tribbler service, we specify that, when the user performs
-concurrent <code>Follow()</code> and/or <code>Unfollow()</code>, they may fail silently
-without returning an error (as a special case, concurrent <code>Follow()</code>
-the same person by a user might both return no error). Also, when a
-user tries to follow more than 2000 users, the Tribbler service logic
-is free to silently remove a user from his following list without
-notifying the user with an error. A user would check his currently
-following list with the <code>Following()</code> call afterwards.</p>
+</ul><p><code>ListRemove()</code> removes all matched values that are appended into
+the list in the past, and sets the <code>n</code> field propoerly.
+When (and only when) concurrent <code>ListRemove()</code> on the same key and 
+value is called, it is okay to double count on <code>n</code>.</p>
+
+<p><code>ListKeys()</code> remains the same semantics.</p>
 
 <h2>
 <a name="user-content-entry-functions" class="anchor" href="#entry-functions"><span class="octicon octicon-link"></span></a>Entry Functions</h2>
 
-<p>The entry functions will remain exactly the same as lab2. Only that
-the <code>KeeperConfig</code> now will have more keepers. </p>
+<p>The entry functions will remain exactly the same as they are in Lab2,
+but only that the <code>KeeperConfig</code> might now have multiple keepers.</p>
 
 <h2>
 <a name="user-content-additional-assumptions" class="anchor" href="#additional-assumptions"><span class="octicon octicon-link"></span></a>Additional Assumptions</h2>
