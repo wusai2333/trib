@@ -121,10 +121,14 @@ this will lower your probability of running into a port collision.
 
 ## Turning In
 
-First, make sure that you have committed every piece of your code into
-the repository `triblab`. Then just type `make turnin` under the root
-of your repository. It will generate a `turnin.zip` that contains
-everything in your gitt repo, and will then copy the zip file to a
-place where only the lab instructors can read.
+If you are submitting as a team, please create a file called
+`teammates` under the root of `triblab` repo that lists the login ids
+of the members of your team in each line.
+
+Make sure that you have committed every piece of your code (and the
+`teammates` file) into the repository `triblab`. Then just type 
+`make turnin-lab3` under the root of your repository. It will generate a
+`turnin.zip` that contains everything in your gitt repo, and will then
+copy the zip file to a place where only the lab instructors can read.
 
 ## Happy Lab3. :)
