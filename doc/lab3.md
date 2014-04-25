@@ -28,8 +28,11 @@ yourself with `bins-*` tools.
 ## System Scale and Failure Model
 
 There could be up to 300 back-ends. Back-ends may join and leave at
-will, but at any time there will be at least 1 back-end online. Also,
-you can assume that each back-end join/leave event will have a time
+will, but you can assume that at any time there will be at least
+one back-end online (so that your system is functional). Your
+design is required to be fault-tolerant where if there are at least
+three back-ends online at all times, there should be no data loss. 
+You can assume that each back-end join/leave event will have a time
 interval of 30 seconds in between, and this time duration will be
 enough for you to migrate storage.
 
@@ -100,6 +103,9 @@ but only that the `KeeperConfig` might now have multiple keepers.
 
 ## Requirement
 
+- Although you might change how data is stored in the back-ends,
+  your implementation should pass all past test cases, which means
+  your system should be functional with a single back-end.
 - If at all times, there will always be at least 3 back-ends online
   (might be different three ones at any moment in time), there should
   be no data loss.
