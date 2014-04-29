@@ -39,6 +39,15 @@ func NewStorage() *Storage {
 	return NewStorageId(0)
 }
 
+func (self *Storage) Nkeys() int {
+	self.strLock.Lock()
+	defer self.strLock.Unlock()
+	self.listLock.Lock()
+	defer self.listLock.Unlock()
+
+	return len(self.strs) + len(self.lists)
+}
+
 func (self *Storage) Clock(atLeast uint64, ret *uint64) error {
 	self.clockLock.Lock()
 	defer self.clockLock.Unlock()
