@@ -212,7 +212,7 @@ func (self *Storage) ListRemove(kv *trib.KeyValue, n *int) error {
 	}
 
 	if Logging {
-		log.Printf("ListAppend(%q, %q) => %d", kv.Key, kv.Value, *n)
+		log.Printf("ListRemove(%q, %q) => %d", kv.Key, kv.Value, *n)
 	}
 
 	return nil
