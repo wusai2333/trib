@@ -20,6 +20,10 @@ func Notify(addr, s string) error {
 	return c.Close()
 }
 
+func NotifyFail(addr, s string) error {
+	return Notify(addr, "!"+s)
+}
+
 func notify(c chan bool, addr, s string) {
 	var e error
 	for {
@@ -27,7 +31,7 @@ func notify(c chan bool, addr, s string) {
 		if b {
 			e = Notify(addr, s)
 		} else {
-			e = Notify(addr, "!"+s)
+			e = NotifyFail(addr, s)
 		}
 
 		if e != nil {

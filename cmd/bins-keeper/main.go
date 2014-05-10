@@ -9,11 +9,13 @@ import (
 
 	"trib"
 	"trib/local"
+	"trib/ready"
 	"triblab"
 )
 
 var (
-	frc = flag.String("rc", trib.DefaultRCPath, "bin storage config file")
+	frc       = flag.String("rc", trib.DefaultRCPath, "bin storage config file")
+	readyAddr = flag.String("ready", "", "ready notification address")
 )
 
 func noError(e error) {
@@ -44,9 +46,15 @@ func main() {
 		if b {
 			log.Printf("bin storage keeper serving on %s",
 				keeperConfig.Addr())
+			if *readyAddr != "" {
+				ready.Notify(*readyAddr, keeperConfig.Addr())
+			}
 		} else {
 			log.Printf("bin storage keeper on %s init failed",
 				keeperConfig.Addr())
+			if *readyAddr != "" {
+				ready.NotifyFail(*readyAddr, keeperConfig.Addr())
+			}
 		}
 	}
 

@@ -9,6 +9,7 @@ import (
 
 	"trib"
 	"trib/local"
+	"trib/ready"
 	"trib/store"
 	"triblab"
 )
@@ -39,6 +40,11 @@ func main() {
 		}
 
 		backConfig := rc.BackConfig(i, store.NewStorage())
+
+		if *readyAddr != "" {
+			backConfig.Ready = ready.Chan(*readyAddr, backConfig.Addr)
+		}
+
 		log.Printf("bin storage back-end serving on %s", backConfig.Addr)
 		noError(triblab.ServeBack(backConfig))
 	}
