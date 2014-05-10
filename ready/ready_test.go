@@ -29,4 +29,14 @@ func TestReady(t *testing.T) {
 	s := <-c
 
 	as(s == msg)
+
+	csend := Chan(addr, msg)
+
+	csend <- true
+	s = <-c
+	as(s == msg)
+
+	csend <- false
+	s = <-c
+	as(s == "!"+msg)
 }

@@ -22,15 +22,17 @@ func Notify(addr, s string) error {
 
 func notify(c chan bool, addr, s string) {
 	var e error
-	b := <-c
-	if b {
-		e = Notify(addr, s)
-	} else {
-		e = Notify(addr, "!"+s)
-	}
+	for {
+		b := <-c
+		if b {
+			e = Notify(addr, s)
+		} else {
+			e = Notify(addr, "!"+s)
+		}
 
-	if e != nil {
-		log.Print(e)
+		if e != nil {
+			log.Print(e)
+		}
 	}
 }
 
