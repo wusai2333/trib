@@ -14,8 +14,9 @@ import (
 )
 
 var (
-	frc     = flag.String("rc", trib.DefaultRCPath, "bin storage config file")
-	verbose = flag.Bool("v", false, "verbose logging")
+	frc       = flag.String("rc", trib.DefaultRCPath, "bin storage config file")
+	verbose   = flag.Bool("v", false, "verbose logging")
+	readyAddr = flag.String("ready", "", "ready notification address")
 )
 
 func noError(e error) {
