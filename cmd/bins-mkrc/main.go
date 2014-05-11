@@ -10,11 +10,12 @@ import (
 )
 
 var (
-	local = flag.Bool("local", false, "always use local ports")
-	nback = flag.Int("nback", 1, "number of back-ends")
-	nkeep = flag.Int("nkeep", 1, "number of keepers")
-	frc   = flag.String("rc", trib.DefaultRCPath, "bin storage config file")
-	full  = flag.Bool("full", false, "setup of 10 back-ends and 3 keepers")
+	local   = flag.Bool("local", false, "always use local ports")
+	nback   = flag.Int("nback", 1, "number of back-ends")
+	nkeep   = flag.Int("nkeep", 1, "number of keepers")
+	frc     = flag.String("rc", trib.DefaultRCPath, "bin storage config file")
+	full    = flag.Bool("full", false, "setup of 10 back-ends and 3 keepers")
+	fixPort = flag.Bool("fix", false, "fix port numbers; don't use random ones")
 )
 
 func main() {
@@ -32,7 +33,10 @@ func main() {
 		*nkeep = 3
 	}
 
-	p := randaddr.RandPort()
+	p := 3000
+	if !*fixPort {
+		p = randaddr.RandPort()
+	}
 
 	rc := new(trib.RC)
 	rc.Backs = make([]string, *nback)
