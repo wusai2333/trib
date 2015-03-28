@@ -9,6 +9,12 @@ import (
 	"trib/randaddr"
 )
 
+// For now, we assume that we have sequentially-IP'd hosts that don't span more
+// than one octet.
+const IP_PREFIX = "169.228.66"
+const FIRST_IP = 143
+const NUM_HOSTS = 10
+
 var (
 	local   = flag.Bool("local", false, "always use local ports")
 	nback   = flag.Int("nback", 1, "number of back-ends")
@@ -24,12 +30,12 @@ func main() {
 	if *nback > 300 {
 		log.Fatal(fmt.Errorf("too many back-ends"))
 	}
-	if *nkeep > 10 {
+	if *nkeep > NUM_HOSTS {
 		log.Fatal(fmt.Errorf("too many keepers"))
 	}
 
 	if *full {
-		*nback = 10
+		*nback = NUM_HOSTS
 		*nkeep = 3
 	}
 
@@ -43,11 +49,11 @@ func main() {
 	rc.Keepers = make([]string, *nkeep)
 
 	if !*local {
-		const ipOffset = 211
-		const nmachine = 10
+		const ipOffset = FIRST_IP
+		const nmachine = NUM_HOSTS
 
 		for i := 0; i < *nback; i++ {
-			host := fmt.Sprintf("172.22.14.%d", ipOffset+i%nmachine)
+			host := fmt.Sprintf("%s.%d", IP_PREFIX, ipOffset+i%nmachine)
 			rc.Backs[i] = fmt.Sprintf("%s:%d", host, p+i/nmachine)
 		}
 
@@ -57,7 +63,7 @@ func main() {
 		}
 
 		for i := 0; i < *nkeep; i++ {
-			host := fmt.Sprintf("172.22.14.%d", ipOffset+i%nmachine)
+			host := fmt.Sprintf("%s.%d", IP_PREFIX, ipOffset+i%nmachine)
 			rc.Keepers[i] = fmt.Sprintf("%s:%d", host, p)
 		}
 	} else {
