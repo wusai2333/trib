@@ -18,8 +18,8 @@ all of the lab assignments.
 
 You will write the labs in Google's [golang](http://golang.org).  It is a young
 language with a syntax somewhere between C/C++ and Python. It comes with a very
-rich standard library, and also language-level support for light-weight but
-powerful concurrency semantics with *go routines* and *channels*.
+rich standard library, and language-level support for light-weight but powerful
+concurrency semantics with *go routines* and *channels*.
 
 Here is some key documentation on the language:
 
@@ -33,27 +33,27 @@ especially from the official site. We highly recommend the official Go tutorial
 (or "Tour") linked above.
 
 - Go code is organized into many separate *packages*.
-- Different from C/C++, when defining a *variable* or *constant*, the
-  *type* of it is written after the variable name.
+- Unlike C/C++, when defining a *variable*, the *type* of it is written after
+  the variable name.
 - Go language has pointers, but has no pointer arithmetic. For example, you
   cannot increase a pointer by 1 to point the next element in memory.
-- Go language has fixed length *arrays*, but most of the time, people
+- Go language has fixed length *arrays*, but most of the time people
   use *slices*, which are sliced views of an underlying array that are
   often implicitly declared. Slices feel very much like Python lists.
 - *maps* are built-in hash-based dictionaries.
 - A function can have multiple return values.
-- Exceptions are called `panic` and `recover`. However
-  `panic` should only be used in dire cases. Error handling should
-  be done with returned Error structs.  
-- `for` is the only loop keyword.
-- *Foreach* is implemented with `range` keyword.
+- Exceptions are called `panic` and `recover`. However `panic` should only be
+  used in dire cases. Error handling should be done with returned `Error`
+  structs.
+- `for` is the only looping mechanism.
+- *Foreach* is implemented with the `range` keyword.
 - Semicolons at the end of statements are optional, but discouraged.
 - Variables are garbage collected. The language is hence type safe and pointer
   safe. When you have a pointer, the content it points to is always valid.
-- Identifier that starts with a capital letter is *public* and visible to other
-  packages; others are *private* and only visible inside its own package.
+- Any identifier that starts with a capital letter is *public* and visible to
+  other packages; others are *private* and only visible inside its own package.
 - *Inheritance* is done by compositions of anonymous members.
-- Virtual functions are binded via *interfaces*. Unlike Java, *interface* does
+- Virtual functions are bound via *interfaces*. Unlike Java, *interface* does
   not require explicit binding (via the *implements* keyword). As long as the
   type has the set of methods implemented, it can be automatically assigned to
   an inteface. As a result, it is okay to write the implementation first and
@@ -63,7 +63,7 @@ especially from the official site. We highly recommend the official Go tutorial
 ## The Tribbler Story
 
 Some cowboy programmer wrote a simple online microblogging service called
-Tribbler, and leveraging the power of the Web, it becomes quite popular.
+Tribbler and, leveraging the power of the Web, it becomes quite popular.
 However, the program runs in a single process on a single machine; it does not
 scale, cannot support many concurrent connections, and is vulnerable to machine
 crashes. Knowing that you are taking the distributed computing system course at
@@ -106,20 +106,20 @@ The program should show the URL it is running under (it uses a randomly
 generated port).
 
 Open your browser and type in the given address. For example, if the machine you
-logged in was `vm151.sysnet.ucsd.edu`, and Tribbler is running on port 27944,
+logged into was `vm151.sysnet.ucsd.edu`, and Tribbler is running on port 27944,
 then open `http://vm151.sysnet.ucsd.edu:27944`.  You should see a list of
 Tribbler users. You can view their tribs and login as them (with no
 authentication).
 
 This is how Tribbler looks to users.  It is a single web page that performs AJAX
-calls (a type of web-based RPC) to the backend web server. The webserver then in
+calls (a type of web-based RPC) to the back-end web server. The webserver then in
 turn calls the Tribbler logic functions and returns the results back to the Web
 page in the browser.
 
 If you find it difficult to access the lab machines outside of UCSD's campus,
 you need to setup the UCSD VPN or use an SSH tunnel. Information about the
 former is available
-[here](http://blink.ucsd.edu/technology/network/connections/off-campus/VPN/)
+[here](http://blink.ucsd.edu/technology/network/connections/off-campus/VPN/).
 
 ## Source Code Organization
 
@@ -136,7 +136,7 @@ follows:
 - `trib/cmd/bins-back` is a bin storage service back-end launcher.
 - `trib/cmd/bins-keeper` is a bin stroage service keeper launcher.
 - `trib/cmd/bins-mkrc` generates a bin storage configuration file.
-- `trib/entries` defines helper several functions on constructing a Tribbler
+- `trib/entries` defines several helper functions for constructing a Tribbler
   front-end or a back-end.
 - `trib/ref` is a reference monolithic implementation of the `trib.Server`
   interface. All the server logic runs in one single process.  It is not
@@ -160,9 +160,9 @@ of Go!), so these packages aren't huge and intimidating.
 
 Through the entire lab, you do not need to (and should not) modify anything
 in the `trib` repository. If you feel that you have to change some
-code to complete your lab, please discuss it with the TA. You are always welcome
-to read the code in the `trib` repository. If you find a bug and
-report it, you might get some bonus credit.
+code to complete your lab, please first discuss it with the TA. You are always
+welcome to read the code in the `trib` repository. If you find a bug and report
+it, you might get some bonus credit.
 
 ## Your Job
 
@@ -172,18 +172,18 @@ package.  It is in the second repo that we checked out.
 It would be good practice for you to periodically commit your code into your
 `triblab` git repo. **Only commited files in that `triblab` will be submitted
 for grading**, so even if you aren't using the git repository for your own
-version control (pro tip: use it), you need to commit all of your files at least
-once right before before turning in. If you've never used git before, make sure
-you understand what this means before trying to submit your code.
+version control (pro tip: use it), you will need to commit all of your files at
+least once right before before turning in. If you've never used git before, make
+sure you understand what this means before trying to submit your code.
 
 ## Lab Roadmap
 
-- **Lab 1**. Wrap the key-value storage service with RPC, so that a remote
+- **Lab 1**. Wrap the key-value storage service with RPC so that a remote
   client can store data remotely.
 - **Lab 2**. Reimplement the Tribbler service, splitting the current
-  Tribbler logic into stateless scalable front-ends and scalable key-value
-  storage back-ends. The front-ends will call the back-ends via the RPC
-  mechanism implemented in Lab 1. When this lab is done, we should have both the
+  Tribbler logic into stateless scalable front-ends and scalable key-value store
+  back-ends. The front-ends will call the back-ends via the RPC mechanism
+  implemented in Lab 1. When this lab is done, you will have made both the
   front-end and the back-end scalable.
 - **Lab 3**. We make the back-ends fault-tolerent with replication
   and by using techniques like distributed hash tables. At the end of this lab,

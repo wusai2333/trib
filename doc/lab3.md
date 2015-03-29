@@ -36,7 +36,7 @@ There will be at least 1 and up to 10 keepers. Keepers may join and
 leave at will, but at any time there will be at least 1 keeper online.
 (Thus, if there is only one keeper, it will not go offline.) Also, you can
 assume that each keeper join/leave event will have a time interval of
-at least 1 minute in between. When a process 'leaves', assum that the process is
+at least 1 minute in between. When a process 'leaves', assumee that the process is
 killed-- everything in that process will be lost, and it will not have an
 opportunity to clean up.
 
@@ -59,7 +59,7 @@ same semantics as before.
 
 When concurrent `ListAppend()`s happen, calls to `ListGet()` might result in
 values that are currently being added, and may appear in arbitrary order.
-However, after all concurrent `ListAppend()`'s return, `ListGet()` should always
+However, after all concurrent `ListAppend()`s return, `ListGet()` should always
 return the list with a consistent order.
 
 Here is an example of an valid call and return sequence:

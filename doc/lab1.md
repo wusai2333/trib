@@ -26,7 +26,7 @@ $ git pull origin master
 
 The instructions here assume you used the the default directory setup. If you
 did something else crazy, we assume you can figure out the appropriate
-corrections. You can also contact a friend or the TA for assistance.
+corrections. You can also ask the TA for help with merging.
 
 ## The Key-value Pair Service Interface
 
@@ -61,13 +61,13 @@ type KeyString interface {
 that returns true when the string matches has the prefix and suffix of the
 pattern.
 
-The second part ks the key-list pair interface, that handles list-valued
+The second part is the key-list pair interface that handles list-valued
 key-value pairs.
 
 ```
 // Key-list interfaces.
 // Default value for all lists is an empty list.
-// After the call, list.L should never by nil.
+// After the call, list.L should never be nil.
 type KeyList interface {
 	// Get the list associated with 'key'.
 	ListGet(key string, list *List) error
@@ -100,7 +100,7 @@ type Storage interface {
 }
 ```
 
-Note that the function signature of these methods are already RPC-friendly.
+Note that the function signatures of these methods are already RPC-friendly.
 You should implement the RPC interface with Go language's
 [`rpc`](http://golang.org/pkg/net) package.  By doing this, another person's
 client that speaks the same protocol will be able to talk to your server as
@@ -130,9 +130,9 @@ This function creates an instance of a back-end server based on configuration
 The struct has several fields:
 
 - `Addr` is the address the server should listen on, in the form of
-  `<host>:<port>`. Go uses this address in its [standard
-  `net` package](http://golang.org/pkg/net), so you should be able to
-  use it directly on opening connections.
+  `<host>:<port>`. Go uses this address in its
+  [`net`](http://golang.org/pkg/net) package, so you should be able to use it
+  directly on opening connections.
 - `Store` is the storage device you will use for storing data.  You should not
   store persistent data anywhere else.  `Store` will never be nil.
 - `Ready` is a channel for notifying the other parts in the program
@@ -159,10 +159,10 @@ address for an http RPC server. It returns an implementation of `trib.Storage`,
 which will provide the interface, and forward all calls as RPCs to the server.
 You can assume that `addr` will always be a valid TCP address.
 
-Note that when `NewClient()` is called, the server might not yet have started.
-While it is okay to try to connect the server at this time, you should not
-report any error if your attempt fails.  It might be better to establish the
-connection when you need to perform your first RPC function call.
+Note that when `NewClient()` is called, the server may not have started yet.
+While it is okay to try to connect to the server at this time, you should not
+report any error if your attempt fails.  It might be best to wait to establish
+the connection until you need it to perform your first RPC function call.
 
 ## The RPC Package
 
@@ -260,8 +260,8 @@ func NewClient(addr string) trib.Storage {
 Now all you need to do for the client half is to fill in the code skeleton with
 the correct RPC logic.
 
-To do an RPC call, we need to import the `rpc` package, so at the start of
-`client.go` file, lets import `rpc` after the package name statement.
+To do an RPC call, we need to import the `rpc` package, so at the start of the
+`client.go` file, let's import `rpc` after the package name statement.
 
 ```
 import (
@@ -329,9 +329,9 @@ $ kv-server
 
 *(You might need to add `$GOPATH/bin` to your `$PATH` to run this.)*
 
-You should see an address print out; for instance, you might see
-`localhost:12086`.  (Note that you can also specify your own address via the
-command line. The default address, however, is `localhost:rand`.)
+You should see an address print out (e.g. `localhost:12086`).  By default, the
+server will choose an address of the form `localhost:rand`. If desired, you can
+override this setting with a command line flag.
 
 Now you can play with your server via the `kv-client` program.
 For example:
@@ -370,14 +370,13 @@ $ kv-client localhost:12086 clock 200
   as the server is back up and running, your RPC client should act as normal
   again (without needing to create a new client).
 - When the server and the clients are running on the lab machines,
-  your RPC should introduce less than 0.1 second of additional latency.
+  your RPC should introduce less than 100 milliseconds of additional latency.
 
 ## Turning In
 
 First, make sure that you have committed every piece of your code into
 the repository `triblab`. Then just type `make turnin-lab1` under the root
-of the repository.  It will generate a `turnin.zip` file that contains
-everything in your git repository, and then copy it away into an appropriate
-location for the lab instructors.
+of the repository.  The script will generate a `turnin.zip` file that contains
+everything in your git repository, and then copy into an appropriate location.
 
 ## Happy Lab 1!
