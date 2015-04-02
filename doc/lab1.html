@@ -29,7 +29,7 @@ $ git pull origin master
 
 <p>The instructions here assume you used the the default directory setup. If you
 did something else crazy, we assume you can figure out the appropriate
-corrections. You can also contact a friend or the TA for assistance.</p>
+corrections. You can also ask the TA for help with merging.</p>
 
 <h2>
 <a id="user-content-the-key-value-pair-service-interface" class="anchor" href="#the-key-value-pair-service-interface" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Key-value Pair Service Interface</h2>
@@ -64,12 +64,12 @@ type KeyString interface {
 that returns true when the string matches has the prefix and suffix of the
 pattern.</p>
 
-<p>The second part ks the key-list pair interface, that handles list-valued
+<p>The second part is the key-list pair interface that handles list-valued
 key-value pairs.</p>
 
 <pre><code>// Key-list interfaces.
 // Default value for all lists is an empty list.
-// After the call, list.L should never by nil.
+// After the call, list.L should never be nil.
 type KeyList interface {
     // Get the list associated with 'key'.
     ListGet(key string, list *List) error
@@ -101,7 +101,7 @@ an auto-incrementing clock feature:</p>
 }
 </code></pre>
 
-<p>Note that the function signature of these methods are already RPC-friendly.
+<p>Note that the function signatures of these methods are already RPC-friendly.
 You should implement the RPC interface with Go language's
 <a href="http://golang.org/pkg/net"><code>rpc</code></a> package.  By doing this, another person's
 client that speaks the same protocol will be able to talk to your server as
@@ -134,9 +134,9 @@ The struct has several fields:</p>
 <ul>
 <li>
 <code>Addr</code> is the address the server should listen on, in the form of
-<code>&lt;host&gt;:&lt;port&gt;</code>. Go uses this address in its <a href="http://golang.org/pkg/net">standard
-<code>net</code> package</a>, so you should be able to
-use it directly on opening connections.</li>
+<code>&lt;host&gt;:&lt;port&gt;</code>. Go uses this address in its
+<a href="http://golang.org/pkg/net"><code>net</code></a> package, so you should be able to use it
+directly on opening connections.</li>
 <li>
 <code>Store</code> is the storage device you will use for storing data.  You should not
 store persistent data anywhere else.  <code>Store</code> will never be nil.</li>
@@ -166,10 +166,10 @@ address for an http RPC server. It returns an implementation of <code>trib.Stora
 which will provide the interface, and forward all calls as RPCs to the server.
 You can assume that <code>addr</code> will always be a valid TCP address.</p>
 
-<p>Note that when <code>NewClient()</code> is called, the server might not yet have started.
-While it is okay to try to connect the server at this time, you should not
-report any error if your attempt fails.  It might be better to establish the
-connection when you need to perform your first RPC function call.</p>
+<p>Note that when <code>NewClient()</code> is called, the server may not have started yet.
+While it is okay to try to connect to the server at this time, you should not
+report any error if your attempt fails.  It might be best to wait to establish
+the connection until you need it to perform your first RPC function call.</p>
 
 <h2>
 <a id="user-content-the-rpc-package" class="anchor" href="#the-rpc-package" aria-hidden="true"><span class="octicon octicon-link"></span></a>The RPC Package</h2>
@@ -265,8 +265,8 @@ type in our entry function <code>NewClient()</code>. Remove the <code>panic("tod
 <p>Now all you need to do for the client half is to fill in the code skeleton with
 the correct RPC logic.</p>
 
-<p>To do an RPC call, we need to import the <code>rpc</code> package, so at the start of
-<code>client.go</code> file, lets import <code>rpc</code> after the package name statement.</p>
+<p>To do an RPC call, we need to import the <code>rpc</code> package, so at the start of the
+<code>client.go</code> file, let's import <code>rpc</code> after the package name statement.</p>
 
 <pre><code>import (
     "net/rpc"
@@ -332,9 +332,9 @@ key-value pair service (as a local <code>trib/store.Storage</code> does without 
 
 <p><em>(You might need to add <code>$GOPATH/bin</code> to your <code>$PATH</code> to run this.)</em></p>
 
-<p>You should see an address print out; for instance, you might see
-<code>localhost:12086</code>.  (Note that you can also specify your own address via the
-command line. The default address, however, is <code>localhost:rand</code>.)</p>
+<p>You should see an address print out (e.g. <code>localhost:12086</code>).  By default, the
+server will choose an address of the form <code>localhost:rand</code>. If desired, you can
+override this setting with a command line flag.</p>
 
 <p>Now you can play with your server via the <code>kv-client</code> program.
 For example:</p>
@@ -374,7 +374,7 @@ client cannot connect), your RPC client should return an error.  As soon
 as the server is back up and running, your RPC client should act as normal
 again (without needing to create a new client).</li>
 <li>When the server and the clients are running on the lab machines,
-your RPC should introduce less than 0.1 second of additional latency.</li>
+your RPC should introduce less than 100 milliseconds of additional latency.</li>
 </ul>
 
 <h2>
@@ -382,9 +382,8 @@ your RPC should introduce less than 0.1 second of additional latency.</li>
 
 <p>First, make sure that you have committed every piece of your code into
 the repository <code>triblab</code>. Then just type <code>make turnin-lab1</code> under the root
-of the repository.  It will generate a <code>turnin.zip</code> file that contains
-everything in your git repository, and then copy it away into an appropriate
-location for the lab instructors.</p>
+of the repository.  The script will generate a <code>turnin.zip</code> file that contains
+everything in your git repository, and then copy into an appropriate location.</p>
 
 <h2>
 <a id="user-content-happy-lab-1" class="anchor" href="#happy-lab-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Happy Lab 1!</h2>

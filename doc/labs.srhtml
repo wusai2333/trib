@@ -60,6 +60,8 @@
       border: none;
     }
 </style>
+<link rel="stylesheet" href="gfm.css">
+
 
 <ul class="labs">
     <li><a href="labs.html">Lab Home</a></li>
@@ -72,8 +74,8 @@
 <h2>
 <a id="user-content-machines" class="anchor" href="#machines" aria-hidden="true"><span class="octicon octicon-link"></span></a>Machines</h2>
 
-<p>We have set up a cluster of 10 machines. You should use those for
-all of the lab assignments.</p>
+<p>We have set up a cluster of 10 machines. You should use these for
+all of the lab assignments:</p>
 
 <ul>
 <li>vm143.sysnet.ucsd.edu</li>
@@ -88,13 +90,15 @@ all of the lab assignments.</p>
 <li>vm152.sysnet.ucsd.edu</li>
 </ul>
 
+<p>They are all available exclusively via SSH.</p>
+
 <h2>
 <a id="user-content-programming-language" class="anchor" href="#programming-language" aria-hidden="true"><span class="octicon octicon-link"></span></a>Programming Language</h2>
 
 <p>You will write the labs in Google's <a href="http://golang.org">golang</a>.  It is a young
 language with a syntax somewhere between C/C++ and Python. It comes with a very
-rich standard library, and also language-level support for light-weight but
-powerful concurrency semantics with <em>go routines</em> and <em>channels</em>.</p>
+rich standard library, and language-level support for light-weight but powerful
+concurrency semantics with <em>go routines</em> and <em>channels</em>.</p>
 
 <p>Here is some key documentation on the language:</p>
 
@@ -111,32 +115,31 @@ especially from the official site. We highly recommend the official Go tutorial
 
 <ul>
 <li>Go code is organized into many separate <em>packages</em>.</li>
-<li>Different from C/C++, when defining a <em>variable</em> or <em>constant</em>, the
-<em>type</em> of it is written after the variable name.</li>
+<li>Unlike C/C++, when defining a <em>variable</em>, the <em>type</em> of it is written after
+the variable name.</li>
 <li>Go language has pointers, but has no pointer arithmetic. For example, you
 cannot increase a pointer by 1 to point the next element in memory.</li>
-<li>Go language has fixed length <em>arrays</em>, but most of the time, people
+<li>Go language has fixed length <em>arrays</em>, but most of the time people
 use <em>slices</em>, which are sliced views of an underlying array that are
 often implicitly declared. Slices feel very much like Python lists.</li>
 <li>
 <em>maps</em> are built-in hash-based dictionaries.</li>
 <li>A function can have multiple return values.</li>
-<li>Exceptions are called <code>panic</code> and <code>recover</code>. However
-<code>panic</code> should only be used in dire cases. Error handling should
-be done with returned Error structs.<br>
-</li>
+<li>Exceptions are called <code>panic</code> and <code>recover</code>. However <code>panic</code> should only be
+used in dire cases. Error handling should be done with returned <code>Error</code>
+structs.</li>
 <li>
-<code>for</code> is the only loop keyword.</li>
+<code>for</code> is the only looping mechanism.</li>
 <li>
-<em>Foreach</em> is implemented with <code>range</code> keyword.</li>
+<em>Foreach</em> is implemented with the <code>range</code> keyword.</li>
 <li>Semicolons at the end of statements are optional, but discouraged.</li>
 <li>Variables are garbage collected. The language is hence type safe and pointer
 safe. When you have a pointer, the content it points to is always valid.</li>
-<li>Identifier that starts with a capital letter is <em>public</em> and visible to other
-packages; others are <em>private</em> and only visible inside its own package.</li>
+<li>Any identifier that starts with a capital letter is <em>public</em> and visible to
+other packages; others are <em>private</em> and only visible inside its own package.</li>
 <li>
 <em>Inheritance</em> is done by compositions of anonymous members.</li>
-<li>Virtual functions are binded via <em>interfaces</em>. Unlike Java, <em>interface</em> does
+<li>Virtual functions are bound via <em>interfaces</em>. Unlike Java, <em>interface</em> does
 not require explicit binding (via the <em>implements</em> keyword). As long as the
 type has the set of methods implemented, it can be automatically assigned to
 an inteface. As a result, it is okay to write the implementation first and
@@ -148,7 +151,7 @@ declare the interface afterwards.</li>
 <a id="user-content-the-tribbler-story" class="anchor" href="#the-tribbler-story" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Tribbler Story</h2>
 
 <p>Some cowboy programmer wrote a simple online microblogging service called
-Tribbler, and leveraging the power of the Web, it becomes quite popular.
+Tribbler and, leveraging the power of the Web, it becomes quite popular.
 However, the program runs in a single process on a single machine; it does not
 scale, cannot support many concurrent connections, and is vulnerable to machine
 crashes. Knowing that you are taking the distributed computing system course at
@@ -189,20 +192,20 @@ directory. Let's give it a try:</p>
 generated port).</p>
 
 <p>Open your browser and type in the given address. For example, if the machine you
-logged in was <code>vm151.sysnet.ucsd.edu</code>, and Tribbler is running on port 27944,
+logged into was <code>vm151.sysnet.ucsd.edu</code>, and Tribbler is running on port 27944,
 then open <code>http://vm151.sysnet.ucsd.edu:27944</code>.  You should see a list of
 Tribbler users. You can view their tribs and login as them (with no
 authentication).</p>
 
 <p>This is how Tribbler looks to users.  It is a single web page that performs AJAX
-calls (a type of web-based RPC) to the backend web server. The webserver then in
+calls (a type of web-based RPC) to the back-end web server. The webserver then in
 turn calls the Tribbler logic functions and returns the results back to the Web
 page in the browser.</p>
 
 <p>If you find it difficult to access the lab machines outside of UCSD's campus,
 you need to setup the UCSD VPN or use an SSH tunnel. Information about the
 former is available
-<a href="http://blink.ucsd.edu/technology/network/connections/off-campus/VPN/">here</a></p>
+<a href="http://blink.ucsd.edu/technology/network/connections/off-campus/VPN/">here</a>.</p>
 
 <h2>
 <a id="user-content-source-code-organization" class="anchor" href="#source-code-organization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Source Code Organization</h2>
@@ -230,7 +233,7 @@ follows:</p>
 <li>
 <code>trib/cmd/bins-mkrc</code> generates a bin storage configuration file.</li>
 <li>
-<code>trib/entries</code> defines helper several functions on constructing a Tribbler
+<code>trib/entries</code> defines several helper functions for constructing a Tribbler
 front-end or a back-end.</li>
 <li>
 <code>trib/ref</code> is a reference monolithic implementation of the <code>trib.Server</code>
@@ -261,9 +264,9 @@ of Go!), so these packages aren't huge and intimidating.</p>
 
 <p>Through the entire lab, you do not need to (and should not) modify anything
 in the <code>trib</code> repository. If you feel that you have to change some
-code to complete your lab, please discuss it with the TA. You are always welcome
-to read the code in the <code>trib</code> repository. If you find a bug and
-report it, you might get some bonus credit.</p>
+code to complete your lab, please first discuss it with the TA. You are always
+welcome to read the code in the <code>trib</code> repository. If you find a bug and report
+it, you might get some bonus credit.</p>
 
 <h2>
 <a id="user-content-your-job" class="anchor" href="#your-job" aria-hidden="true"><span class="octicon octicon-link"></span></a>Your Job</h2>
@@ -274,22 +277,22 @@ package.  It is in the second repo that we checked out.</p>
 <p>It would be good practice for you to periodically commit your code into your
 <code>triblab</code> git repo. <strong>Only commited files in that <code>triblab</code> will be submitted
 for grading</strong>, so even if you aren't using the git repository for your own
-version control (pro tip: use it), you need to commit all of your files at least
-once right before before turning in. If you've never used git before, make sure
-you understand what this means before trying to submit your code.</p>
+version control (pro tip: use it), you will need to commit all of your files at
+least once right before before turning in. If you've never used git before, make
+sure you understand what this means before trying to submit your code.</p>
 
 <h2>
 <a id="user-content-lab-roadmap" class="anchor" href="#lab-roadmap" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lab Roadmap</h2>
 
 <ul>
 <li>
-<strong>Lab 1</strong>. Wrap the key-value storage service with RPC, so that a remote
+<strong>Lab 1</strong>. Wrap the key-value storage service with RPC so that a remote
 client can store data remotely.</li>
 <li>
 <strong>Lab 2</strong>. Reimplement the Tribbler service, splitting the current
-Tribbler logic into stateless scalable front-ends and scalable key-value
-storage back-ends. The front-ends will call the back-ends via the RPC
-mechanism implemented in Lab 1. When this lab is done, we should have both the
+Tribbler logic into stateless scalable front-ends and scalable key-value store
+back-ends. The front-ends will call the back-ends via the RPC mechanism
+implemented in Lab 1. When this lab is done, you will have made both the
 front-end and the back-end scalable.</li>
 <li>
 <strong>Lab 3</strong>. We make the back-ends fault-tolerent with replication

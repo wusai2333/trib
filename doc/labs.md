@@ -1,7 +1,7 @@
 ## Machines
 
-We have set up a cluster of 10 machines. You should use those for
-all of the lab assignments.
+We have set up a cluster of 10 machines. You should use these for
+all of the lab assignments:
 
 - vm143.sysnet.ucsd.edu
 - vm144.sysnet.ucsd.edu
@@ -13,6 +13,8 @@ all of the lab assignments.
 - vm150.sysnet.ucsd.edu
 - vm151.sysnet.ucsd.edu
 - vm152.sysnet.ucsd.edu
+
+They are all available exclusively via SSH.
 
 ## Programming Language
 

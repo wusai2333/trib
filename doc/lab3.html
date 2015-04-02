@@ -38,7 +38,7 @@ enough for you to migrate storage.</p>
 leave at will, but at any time there will be at least 1 keeper online.
 (Thus, if there is only one keeper, it will not go offline.) Also, you can
 assume that each keeper join/leave event will have a time interval of
-at least 1 minute in between. When a process 'leaves', assum that the process is
+at least 1 minute in between. When a process 'leaves', assumee that the process is
 killed-- everything in that process will be lost, and it will not have an
 opportunity to clean up.</p>
 
@@ -62,7 +62,7 @@ same semantics as before.</p>
 
 <p>When concurrent <code>ListAppend()</code>s happen, calls to <code>ListGet()</code> might result in
 values that are currently being added, and may appear in arbitrary order.
-However, after all concurrent <code>ListAppend()</code>'s return, <code>ListGet()</code> should always
+However, after all concurrent <code>ListAppend()</code>s return, <code>ListGet()</code> should always
 return the list with a consistent order.</p>
 
 <p>Here is an example of an valid call and return sequence:</p>

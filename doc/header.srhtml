@@ -60,6 +60,8 @@
       border: none;
     }
 </style>
+<link rel="stylesheet" href="gfm.css">
+
 
 <ul class="labs">
     <li><a href="labs.html">Lab Home</a></li>
