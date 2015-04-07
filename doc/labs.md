@@ -1,18 +1,33 @@
 ## Machines
 
-We have set up a cluster of 10 machines. You should use these for
-all of the lab assignments:
+We have set up a cluster of 10 machines. You should use these for all of the lab
+assignments:
 
-- vm143.sysnet.ucsd.edu
-- vm144.sysnet.ucsd.edu
-- vm145.sysnet.ucsd.edu
-- vm146.sysnet.ucsd.edu
-- vm147.sysnet.ucsd.edu
-- vm148.sysnet.ucsd.edu
-- vm149.sysnet.ucsd.edu
-- vm150.sysnet.ucsd.edu
-- vm151.sysnet.ucsd.edu
-- vm152.sysnet.ucsd.edu
+<ul id="machine_list"></ul>
+<script>
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex ;
+    while (0 !== currentIndex) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+    return array;
+}
+vms = ["vm143", "vm144", "vm145", "vm146", "vm147",
+       "vm148", "vm149", "vm150", "vm151", "vm152"];
+vms = shuffle(vms);
+
+for (var i = 0; i < vms.length; ++i) {
+    var vm = vms[i];
+    var node = document.createElement("li");
+    var textnode = document.createTextNode(vm + ".sysnet.ucsd.edu");
+    node.appendChild(textnode);
+    document.getElementById("machine_list").appendChild(node);
+}
+</script>
 
 They are all available exclusively via SSH.
 

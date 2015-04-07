@@ -1,8 +1,8 @@
 all:
-	gogfm -q labs.md > labs.html
-	gogfm -q lab1.md > lab1.html
-	gogfm -q lab2.md > lab2.html
-	gogfm -q lab3.md > lab3.html
+	pandoc -f markdown_github-hard_line_breaks labs.md > labs.html
+	pandoc -f markdown_github-hard_line_breaks lab1.md > lab1.html
+	pandoc -f markdown_github-hard_line_breaks lab2.md > lab2.html
+	pandoc -f markdown_github-hard_line_breaks lab3.md > lab3.html
 	cat header.srhtml labs.html footer.srhtml > labs.srhtml
 	cat header.srhtml lab1.html footer.srhtml > lab1.srhtml
 	cat header.srhtml lab2.html footer.srhtml > lab2.srhtml
