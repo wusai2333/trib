@@ -17,25 +17,24 @@ First we need to update the `trib` repo to pull down any recent changes that we
 
 ```
 $ cd ~/gopath/src/trib
-$ git pull /classes/cse223b/sp14/labs/trib lab2
+$ git pull origin master
 ```
 
 This should be painless, but if you changed anything in the `trib` repo, you'll
-need to merge the changes by hand. As a reminder, changes to the trib repo
+need to merge the changes by hand. As a reminder, changes to the `trib` repo
 aren't necessary, and you shouldn't be doing them.
 
 You'll also want to merge in any changes from the `triblab` repo. Hopefully,
-this will also be painless, as we don't (as of this writing) expect many
+this will also be painless, as we don't (as of this writing) expect any
 changes.
 
 ```
 $ cd ~/gopath/src/triblab
-$ git pull /classes/cse223b/sp14/labs/triblab master
+$ git pull origin master
 ```
 
-If you have made changes to those files. Then you need to merge the
-changes yourself.  If you have trouble on merging the changes (on any of the
-repos), and don't know how to solve the conflicts, please ask the TA for help.
+If you have trouble on merging the changes (on any of the repos), and don't know
+how to solve the conflicts, please ask the TA for help.
 
 ## System Architecture
 
@@ -569,6 +568,25 @@ implementation might do:
 - **Not handling old tribbles**: Note that only the most recent 100 tribbles of
   a user matter. Not handling old tribbles might lead to worse and worse
   performance over time and eventually break your performance promises.
+
+## `Readme.md`
+
+Please include a `Readme.md` file. `Readme.md` should be a text file (ideally in
+[Markdown](https://daringfireball.net/projects/markdown/syntax) format) that
+describes how your system works at a high level. You should be able to describe
+how your Bin Storage works in a few sentences, and Tribbler in a few more.
+
+The purpose of this document is two-fold:
+ - If your `Readme` is well written, it'll make my job of grading *considerably*
+   easier.
+ - An overview document forces you to think about your overall strategy, and
+   forces you to try to find an elegant solution (that you can describe
+   succinctly).
+ 
+This `Readme` *will* count towards your grade, but *will not* be a significant
+number of points overall. It's worth spending some time on, but NOT at the
+expensive of good, working code. You'll primarily be graded on clarity and
+coverage of the big ideas of your solutions.
 
 ## Turning In Your Code
 

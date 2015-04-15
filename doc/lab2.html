@@ -4,12 +4,12 @@
 <h2 id="get-your-repo-up-to-date">Get Your Repo Up-to-date</h2>
 <p>First we need to update the <code>trib</code> repo to pull down any recent changes that we (the instructors) may have made:</p>
 <pre><code>$ cd ~/gopath/src/trib
-$ git pull /classes/cse223b/sp14/labs/trib lab2</code></pre>
-<p>This should be painless, but if you changed anything in the <code>trib</code> repo, you'll need to merge the changes by hand. As a reminder, changes to the trib repo aren't necessary, and you shouldn't be doing them.</p>
-<p>You'll also want to merge in any changes from the <code>triblab</code> repo. Hopefully, this will also be painless, as we don't (as of this writing) expect many changes.</p>
+$ git pull origin master</code></pre>
+<p>This should be painless, but if you changed anything in the <code>trib</code> repo, you'll need to merge the changes by hand. As a reminder, changes to the <code>trib</code> repo aren't necessary, and you shouldn't be doing them.</p>
+<p>You'll also want to merge in any changes from the <code>triblab</code> repo. Hopefully, this will also be painless, as we don't (as of this writing) expect any changes.</p>
 <pre><code>$ cd ~/gopath/src/triblab
-$ git pull /classes/cse223b/sp14/labs/triblab master</code></pre>
-<p>If you have made changes to those files. Then you need to merge the changes yourself. If you have trouble on merging the changes (on any of the repos), and don't know how to solve the conflicts, please ask the TA for help.</p>
+$ git pull origin master</code></pre>
+<p>If you have trouble on merging the changes (on any of the repos), and don't know how to solve the conflicts, please ask the TA for help.</p>
 <h2 id="system-architecture">System Architecture</h2>
 <p>The overall system architecture looks like this:</p>
 <p><img src="./arch.png" alt="System Arch" /></p>
@@ -189,6 +189,14 @@ b
 <li><strong>Generating the clock from the timestamp</strong>: While 64-bit clock can cover a very wide time range even in the unit of nanoseconds, you should keep in mind that the front-ends are running on different servers with arbitrary physical time differences. It is not wise to generate the logical <em>clock</em> from the physical <em>time</em>.</li>
 <li><strong>Not handling old tribbles</strong>: Note that only the most recent 100 tribbles of a user matter. Not handling old tribbles might lead to worse and worse performance over time and eventually break your performance promises.</li>
 </ul>
+<h2 id="readme.md"><code>Readme.md</code></h2>
+<p>Please include a <code>Readme.md</code> file. <code>Readme.md</code> should be a text file (ideally in <a href="https://daringfireball.net/projects/markdown/syntax">Markdown</a> format) that describes how your system works at a high level. You should be able to describe how your Bin Storage works in a few sentences, and Tribbler in a few more.</p>
+<p>The purpose of this document is two-fold:</p>
+<ul>
+<li>If your <code>Readme</code> is well written, it'll make my job of grading <em>considerably</em> easier.</li>
+<li>An overview document forces you to think about your overall strategy, and forces you to try to find an elegant solution (that you can describe succinctly).</li>
+</ul>
+<p>This <code>Readme</code> <em>will</em> count towards your grade, but <em>will not</em> be a significant number of points overall. It's worth spending some time on, but NOT at the expensive of good, working code. You'll primarily be graded on clarity and coverage of the big ideas of your solutions.</p>
 <h2 id="turning-in-your-code">Turning In Your Code</h2>
 <p>First, make sure that you have committed every piece of your code into the repository <code>triblab</code>. Then just type <code>make turnin-lab2</code> under the root of the repository. It will generate a <code>turnin.zip</code> file that contains everything in your git repository, and then it will copy that file to a place where only the lab instructors can read it.</p>
 <h2 id="happy-lab-2">Happy Lab 2!</h2>
